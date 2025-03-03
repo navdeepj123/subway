@@ -1,0 +1,110 @@
+<%- include ("partials/header2.ejs") %> <!-- Includes the header -->
+
+<style>
+    /* CSS styles for the table */
+    .menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.menu-item {
+    width: 250px;
+    height: 350px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.menu-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.menu-item img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 10px;
+}
+
+.menu-item h3 {
+    font-size: 20px;
+    margin: 10px 0;
+}
+
+.menu-item p {
+    font-size: 16px;
+} 
+</style>
+
+<section id="Subs" class="menu">
+    <!-- Subs menu content -->
+    <h2 align="center">Subs List</h2>
+    <section id="menu" class="menu">
+        <h2></h2>
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_594x334.jpg" alt="Sub 1">
+            <h3>Vegiie Delight</h3>
+            <p>Tomato, mozzarella, basil.</p>
+            <p>Price: $9.90</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Sub 2">
+            <h3>Chipotle Meatball & Pepperoni</h3>
+            <p>Tomato, mozzarella, pepperoni, meatball.</p>
+            <p>Price: $11.00</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Sub 3">
+            <h3>Spicy Chicken</h3>
+            <p>Chicken, toped with spicy mayo, english-style Cheese.</p>
+            <p>Price: $11.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Leg_Ham_594x334.jpg" alt="Sub 4">
+            <h3>Leg Ham</h3>
+            <p>smoked leg ham, try with honey mustard dressing.</p>
+            <p>Price: $9.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Italian_BMT_594x334.jpg" alt="Sub 5">
+            <h3>Italian B.M.T</h3>
+            <p>salami, layered pepperoni,leg ham .</p>
+            <p>Price: $14.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/NZ_FootlongSub_RoastBeef_594x334.png" alt="Sub 6">
+            <h3>Roast Beef</h3>
+            <p>Carved roast beef, sweet chilli sause.</p>
+            <p>Price: $14.49</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Patty_594x334.jpg" alt="Sub 7">
+            <h3>Pizza Four Cheese</h3>
+            <p>Mozzarella, veggie patty, vegetables.</p>
+            <p>Price: $13.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Buffalo_Chicken_594x334.jpg" alt="Sub 8">
+            <h3>Buffalo Chicken</h3>
+            <p>Chicken breast strips, spicy buffalo sause.</p>
+            <p>Price: $14.49</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+    </section>
+</section>  
+ 
+
+<%- include ("partials/footer.ejs") %> <!-- Includes the footer -->

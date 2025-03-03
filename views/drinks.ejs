@@ -1,0 +1,109 @@
+<%- include ("partials/header2.ejs") %> <!-- Includes the header -->
+
+<style>
+    /* CSS styles for the table */
+    .menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.menu-item {
+    width: 250px;
+    height: 350px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.menu-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.menu-item img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+}
+
+.menu-item h3 {
+    font-size: 20px;
+    margin: 10px 0;
+}
+
+.menu-item p {
+    font-size: 16px;
+} 
+</style>
+
+<section id="drinks" class="menu">
+    <h2>Drinks Menu</h2>
+    <section id="menu" class="menu">
+        <div class="menu-item">
+            <img src="https://th.bing.com/th/id/R.afe43d5e13e9066c7fe8fc083813b009?rik=nF8Dpom5FKH99w&pid=ImgRaw&r=0" alt="Cola">
+            <h3>Cola</h3>
+            <p>Classic cola served with ice.</p>
+            <p>Price: $2.49</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://th.bing.com/th/id/R.a0564ba453cfbf2c445763fad6c4ef31?rik=DWJKHo3pvObsgg&pid=ImgRaw&r=0" alt="Lemonade">
+            <h3>Lemonade</h3>
+            <p>Refreshing lemonade with a twist of lemon.</p>
+            <p>Price: $2.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://th.bing.com/th/id/OIP.JHmV1A1EXzsvwVjE8n9ALgHaD_?pid=ImgDet&rs=1" alt="Iced Tea">
+            <h3>Iced Tea</h3>
+            <p>Chilled iced tea served with a slice of lemon.</p>
+            <p>Price: $2.29</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://th.bing.com/th/id/OIP.yRWndmhKtrlHVqusSl29KgHaFj?pid=ImgDet&rs=1" alt="Mango Smoothie">
+            <h3>Mango Smoothie</h3>
+            <p>Smooth and creamy mango smoothie.</p>
+            <p>Price: $4.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://th.bing.com/th/id/OIP.PCT4H4UkbrmyHzfpumP80QHaFb?pid=ImgDet&rs=1" alt="Cappuccino">
+            <h3>Cappuccino</h3>
+            <p>Rich and frothy cappuccino.</p>
+            <p>Price: $3.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://th.bing.com/th/id/R.7e58040d86a99b0718407d4494ec7ca5?rik=Zt2r3RoiejtTMA&pid=ImgRaw&r=0" alt="Fruit Punch">
+            <h3>Fruit Punch</h3>
+            <p>Tropical fruit punch with a blend of fruit flavors.</p>
+            <p>Price: $2.79</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://th.bing.com/th/id/R.ff9a41c60a6430ed0fb0eb607c801ab1?rik=3WRtmMz%2boV7%2bDw&pid=ImgRaw&r=0" alt="Milkshake">
+            <h3>Milkshake</h3>
+            <p>Thick and creamy milkshake with your choice of flavor.</p>
+            <p>Price: $4.49</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://th.bing.com/th/id/R.3fe0e193ff6b5285a00762c5bf1f6215?rik=z1Po6Cu3MLL%2fgw&riu=http%3a%2f%2fcdn.trendhunterstatic.com%2fthumbs%2fsparkling-water-flavored.jpeg&ehk=eOFcLSI6pijd2Fd%2bRpG09StEbPL3QAWq2pnMxwtIjZY%3d&risl=&pid=ImgRaw&r=0&sres=1&sresct=1" alt="Sparkling Water">
+            <h3>Sparkling Water</h3>
+            <p>Sparkling water with a hint of natural flavor.</p>
+            <p>Price: $2.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <!-- Add more drink items as needed -->
+    </section>
+</section>
+
+<%- include ("partials/footer.ejs") %> <!-- Includes the footer -->
+

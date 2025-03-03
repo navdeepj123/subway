@@ -1,0 +1,109 @@
+<%- include ("partials/header2.ejs") %> <!-- Includes the header -->
+
+<style>
+    /* CSS styles for the table */
+    .menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.menu-item {
+    width: 250px;
+    height: 350px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.menu-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.menu-item img {
+    max-width: 60%;
+    max-height: 70%;
+    border-radius: 10px;
+}
+
+.menu-item h3 {
+    font-size: 20px;
+    margin: 10px 0;
+}
+
+.menu-item p {
+    font-size: 16px;
+} 
+</style>
+
+<section id="desserts" class="menu">
+    <h2>Desserts Menu</h2>
+    <section id="menu" class="menu">
+        <div class="menu-item">
+            <img src="https://imagesvc.meredithcorp.io/v3/mm/image?q=85&c=sc&poi=face&w=768&h=384&url=https:%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F19%2F2011%2F09%2F10%2Fcrisco-double-decadence-chocolate-cake-with-glossy-frosting-768x768-1.jpg" alt="Chocolate Cake">
+            <h3>Chocolate Cake</h3>
+            <p>Decadent chocolate cake with a rich and creamy chocolate frosting.</p>
+            <p>Price: $6.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://th.bing.com/th/id/OIP.4_DSx6nDF3FRroiucbLy8wHaE7?pid=ImgDet&rs=1" alt="Tiramisu">
+            <h3>Tiramisu</h3>
+            <p>Classic Italian tiramisu with layers of coffee-soaked ladyfingers and mascarpone cheese.</p>
+            <p>Price: $8.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://th.bing.com/th/id/OIP.HsDaT57fP7_mWRc4noHjlQHaFX?pid=ImgDet&rs=1" alt="Molten Lava Cake">
+            <h3>Molten Lava Cake</h3>
+            <p>Warm chocolate cake with a gooey, molten chocolate center, served with vanilla ice cream.</p>
+            <p>Price: $6.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://th.bing.com/th/id/OIP.rFCNyHGdjH8jSgRoYOl_iAHaGV?pid=ImgDet&rs=1" alt="Fudge Brownie Sundae">
+            <h3>Fudge Brownie Sundae</h3>
+            <p>Fudge brownie chunks with vanilla ice cream, hot fudge.</p>
+            <p>Price: $8.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://th.bing.com/th/id/R.7478a8d052eaeb2936d176299a50524b?rik=bUlMGf4naJ5%2fTA&riu=http%3a%2f%2fthebestblogrecipes.com%2fwp-content%2fuploads%2f2015%2f06%2fFlaky-Apple-Pie-3a.jpg&ehk=zI4BvJHpug%2b%2b3cKi8XeSKzCZ7uFcrDRm4JzADSQMAts%3d&risl=&pid=ImgRaw&r=0" alt="Apple Pie">
+            <h3>Apple Pie</h3>
+            <p>Homemade apple pie with a flaky crust and a hint of cinnamon, served warm.</p>
+            <p>Price: $6.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://th.bing.com/th/id/R.74d766b48e43c3132a9f73f4744ff6a6?rik=KjGXYix0ganmlA&pid=ImgRaw&r=0" alt="Creme Brulee">
+            <h3>Creme Brulee</h3>
+            <p>Classic French creme brulee with a caramelized sugar topping.</p>
+            <p>Price: $7.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://th.bing.com/th/id/OIP.aGc8ouoruJYuaPanPoKHpAHaEK?pid=ImgDet&rs=1" alt="Red Velvet Cupcake">
+            <h3>Red Velvet Cupcake</h3>
+            <p>Moist red velvet cupcake with cream cheese frosting and red velvet crumbs.</p>
+            <p>Price: $4.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+    </div>
+    <div class="menu-item">
+        <img src="https://th.bing.com/th/id/OIP.yr_M_kxeFOXWZMk0F1SHSQHaE8?pid=ImgDet&rs=1" alt="Chocolate Mousse">
+        <h3>Chocolate Mousse</h3>
+        <p>Silky and creamy chocolate mousse topped with whipped cream and chocolate chips</p>
+        <p>Price: $5.99</p>
+        <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+    </div>
+
+    </section>
+</section>
+
+<%- include ("partials/footer.ejs") %> <!-- Includes the footer -->
