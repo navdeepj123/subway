@@ -1,436 +1,110 @@
 <%- include ("partials/header2.ejs") %> <!-- Includes the header -->
 
 <style>
-    /* Improved CSS styles for the menu */
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f9f9f9;
-        margin: 0;
-        padding: 0;
-    }
-
+    /* CSS styles for the table */
     .menu {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: center;
-        padding: 20px;
-    }
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
 
-    .menu-item {
-        width: 280px;
-        height: auto; /* Adjusted height for flexibility */
-        background-color: #fff;
-        border: 1px solid #ddd;
-        padding: 20px;
-        text-align: center;
-        transition: transform 0.3s, box-shadow 0.3s;
-        border-radius: 10px;
-        overflow: hidden;
-        position: relative;
-        animation: fadeIn 0.5s ease-in; /* Animation for menu items */
-    }
+.menu-item {
+    width: 250px;
+    height: 350px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-radius: 10px;
+    overflow: hidden;
+}
 
-    .menu-item:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    }
+.menu-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
 
-    .menu-item img {
-        max-width: 100%;
-        max-height: 150px;
-        border-radius: 10px;
-        margin-bottom: 10px;
-    }
+.menu-item img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 10px;
+}
 
-    .menu-item h3 {
-        font-size: 22px;
-        margin: 10px 0;
-        color: #333;
-    }
+.menu-item h3 {
+    font-size: 20px;
+    margin: 10px 0;
+}
 
-    .menu-item p {
-        font-size: 16px;
-        color: #666;
-        font-weight: 500;
-        margin: 5px 0;
-    }
-
-    .price {
-        font-size: 20px;
-        font-weight: bold;
-        color: #e44d26;
-        margin: 10px 0;
-    }
-
-    .quantity-selector {
-        margin: 10px 0;
-    }
-
-    .quantity-selector input {
-        width: 50px;
-        text-align: center;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 5px;
-    }
-
-    .btn {
-        background-color: #28a745;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-        border-radius: 5px;
-        transition: background 0.3s;
-        margin-top: 10px;
-    }
-
-    .btn:hover {
-        background-color: #218838;
-    }
-
-    /* Customization Options */
-    .customization {
-        margin: 10px 0;
-        text-align: left;
-    }
-
-    .customization label {
-        display: block;
-        margin: 5px 0;
-        font-size: 14px;
-        color: #555;
-    }
-
-    .customization select, .customization input[type="checkbox"] {
-        margin: 5px 0;
-    }
-
-    /* Nutritional Information */
-    .nutrition-info {
-        display: none;
-        margin: 10px 0;
-        font-size: 14px;
-        color: #555;
-    }
-
-    .nutrition-btn {
-        background-color: #007bff;
-        color: white;
-        padding: 5px 10px;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-        font-size: 14px;
-        margin: 5px 0;
-    }
-
-    .nutrition-btn:hover {
-        background-color: #0056b3;
-    }
-
-    /* Shopping Cart */
-    #cart {
-        margin: 20px auto;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        max-width: 600px;
-        text-align: center;
-        background-color: #fff;
-    }
-
-    #cart-items {
-        margin: 10px 0;
-    }
-
-    #cart-items div {
-        margin: 5px 0;
-        font-size: 16px;
-        color: #333;
-    }
-
-    #total-price {
-        font-weight: bold;
-        color: #e44d26;
-    }
-
-    /* Delivery and Pickup Options */
-    .delivery-options {
-        margin: 20px 0;
-        text-align: center;
-    }
-
-    .delivery-options label {
-        margin: 0 10px;
-        font-size: 16px;
-        color: #555;
-    }
-
-    /* Social Media Integration */
-    .social-media {
-        text-align: center;
-        margin: 20px 0;
-    }
-
-    .social-media a {
-        margin: 0 10px;
-        color: #007bff;
-        text-decoration: none;
-        font-size: 16px;
-    }
-
-    .social-media a:hover {
-        text-decoration: underline;
-    }
-
-    /* Contact Information */
-    .contact-info {
-        text-align: center;
-        margin: 20px 0;
-        font-size: 16px;
-        color: #555;
-    }
-
-    /* Animations */
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
+.menu-item p {
+    font-size: 16px;
+} 
 </style>
 
-<!-- Menu Section -->
 <section id="Subs" class="menu">
+    <!-- Subs menu content -->
     <h2 align="center">Subs List</h2>
     <section id="menu" class="menu">
-        <!-- Veggie Delight -->
+        <h2></h2>
         <div class="menu-item">
-            <span class="badge">🔥 Popular</span>
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_594x334.jpg" alt="Veggie Delight">
-            <h3>Veggie Delight</h3>
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_594x334.jpg" alt="Sub 1">
+            <h3>Vegiie Delight</h3>
             <p>Tomato, mozzarella, basil.</p>
-            <p class="price">Price: $<span class="base-price">9.90</span></p>
-            <div class="customization">
-                <label>Bread:</label>
-                <select>
-                    <option value="white">White</option>
-                    <option value="whole-wheat">Whole Wheat</option>
-                    <option value="gluten-free">Gluten-Free</option>
-                </select>
-                <label>Extra Toppings ($0.50 each):</label>
-                <div>
-                    <input type="checkbox" id="lettuce1" name="toppings" value="0.50">
-                    <label for="lettuce1">Lettuce</label>
-                    <input type="checkbox" id="tomato1" name="toppings" value="0.50">
-                    <label for="tomato1">Tomato</label>
-                    <input type="checkbox" id="olives1" name="toppings" value="0.50">
-                    <label for="olives1">Olives</label>
-                </div>
-            </div>
-            <button class="nutrition-btn">View Nutrition Info</button>
-            <div class="nutrition-info">
-                <p>Calories: 350</p>
-                <p>Protein: 10g</p>
-                <p>Carbs: 45g</p>
-            </div>
-            <div class="quantity-selector">
-                <label>Qty:</label>
-                <input type="number" value="1" min="1">
-            </div>
-            <button class="btn">Add to Cart</button>
+            <p>Price: $9.90</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
         </div>
-
-        <!-- Chipotle Meatball & Pepperoni -->
         <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Chipotle Meatball & Pepperoni">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Sub 2">
             <h3>Chipotle Meatball & Pepperoni</h3>
             <p>Tomato, mozzarella, pepperoni, meatball.</p>
-            <p class="price">Price: $<span class="base-price">11.00</span></p>
-            <div class="customization">
-                <label>Bread:</label>
-                <select>
-                    <option value="white">White</option>
-                    <option value="whole-wheat">Whole Wheat</option>
-                    <option value="gluten-free">Gluten-Free</option>
-                </select>
-                <label>Extra Toppings ($0.50 each):</label>
-                <div>
-                    <input type="checkbox" id="lettuce2" name="toppings" value="0.50">
-                    <label for="lettuce2">Lettuce</label>
-                    <input type="checkbox" id="tomato2" name="toppings" value="0.50">
-                    <label for="tomato2">Tomato</label>
-                    <input type="checkbox" id="olives2" name="toppings" value="0.50">
-                    <label for="olives2">Olives</label>
-                </div>
-            </div>
-            <button class="nutrition-btn">View Nutrition Info</button>
-            <div class="nutrition-info">
-                <p>Calories: 450</p>
-                <p>Protein: 20g</p>
-                <p>Carbs: 50g</p>
-            </div>
-            <div class="quantity-selector">
-                <label>Qty:</label>
-                <input type="number" value="1" min="1">
-            </div>
-            <button class="btn">Add to Cart</button>
+            <p>Price: $11.00</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
         </div>
-
-        <!-- Spicy Chicken -->
         <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Spicy Chicken">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Sub 3">
             <h3>Spicy Chicken</h3>
-            <p>Chicken, topped with spicy mayo, English-style cheese.</p>
-            <p class="price">Price: $<span class="base-price">11.99</span></p>
-            <div class="customization">
-                <label>Bread:</label>
-                <select>
-                    <option value="white">White</option>
-                    <option value="whole-wheat">Whole Wheat</option>
-                    <option value="gluten-free">Gluten-Free</option>
-                </select>
-                <label>Extra Toppings ($0.50 each):</label>
-                <div>
-                    <input type="checkbox" id="lettuce3" name="toppings" value="0.50">
-                    <label for="lettuce3">Lettuce</label>
-                    <input type="checkbox" id="tomato3" name="toppings" value="0.50">
-                    <label for="tomato3">Tomato</label>
-                    <input type="checkbox" id="olives3" name="toppings" value="0.50">
-                    <label for="olives3">Olives</label>
-                </div>
-            </div>
-            <button class="nutrition-btn">View Nutrition Info</button>
-            <div class="nutrition-info">
-                <p>Calories: 400</p>
-                <p>Protein: 25g</p>
-                <p>Carbs: 40g</p>
-            </div>
-            <div class="quantity-selector">
-                <label>Qty:</label>
-                <input type="number" value="1" min="1">
-            </div>
-            <button class="btn">Add to Cart</button>
+            <p>Chicken, toped with spicy mayo, english-style Cheese.</p>
+            <p>Price: $11.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
         </div>
-
-        <!-- Leg Ham -->
         <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Leg_Ham_594x334.jpg" alt="Leg Ham">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Leg_Ham_594x334.jpg" alt="Sub 4">
             <h3>Leg Ham</h3>
-            <p>Smoked leg ham, try with honey mustard dressing.</p>
-            <p class="price">Price: $<span class="base-price">9.99</span></p>
-            <div class="customization">
-                <label>Bread:</label>
-                <select>
-                    <option value="white">White</option>
-                    <option value="whole-wheat">Whole Wheat</option>
-                    <option value="gluten-free">Gluten-Free</option>
-                </select>
-                <label>Extra Toppings ($0.50 each):</label>
-                <div>
-                    <input type="checkbox" id="lettuce4" name="toppings" value="0.50">
-                    <label for="lettuce4">Lettuce</label>
-                    <input type="checkbox" id="tomato4" name="toppings" value="0.50">
-                    <label for="tomato4">Tomato</label>
-                    <input type="checkbox" id="olives4" name="toppings" value="0.50">
-                    <label for="olives4">Olives</label>
-                </div>
-            </div>
-            <button class="nutrition-btn">View Nutrition Info</button>
-            <div class="nutrition-info">
-                <p>Calories: 300</p>
-                <p>Protein: 15g</p>
-                <p>Carbs: 35g</p>
-            </div>
-            <div class="quantity-selector">
-                <label>Qty:</label>
-                <input type="number" value="1" min="1">
-            </div>
-            <button class="btn">Add to Cart</button>
+            <p>smoked leg ham, try with honey mustard dressing.</p>
+            <p>Price: $9.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Italian_BMT_594x334.jpg" alt="Sub 5">
+            <h3>Italian B.M.T</h3>
+            <p>salami, layered pepperoni,leg ham .</p>
+            <p>Price: $14.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/NZ_FootlongSub_RoastBeef_594x334.png" alt="Sub 6">
+            <h3>Roast Beef</h3>
+            <p>Carved roast beef, sweet chilli sause.</p>
+            <p>Price: $14.49</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Patty_594x334.jpg" alt="Sub 7">
+            <h3>Pizza Four Cheese</h3>
+            <p>Mozzarella, veggie patty, vegetables.</p>
+            <p>Price: $13.99</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
+        </div>
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Buffalo_Chicken_594x334.jpg" alt="Sub 8">
+            <h3>Buffalo Chicken</h3>
+            <p>Chicken breast strips, spicy buffalo sause.</p>
+            <p>Price: $14.49</p>
+            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
         </div>
     </section>
-</section>
-
-<!-- Shopping Cart -->
-<section id="cart">
-    <h2>Your Cart</h2>
-    <div id="cart-items"></div>
-    <p>Total: $<span id="total-price">0.00</span></p>
-    <button id="checkout-btn">Checkout</button>
-</section>
-
-<!-- Delivery and Pickup Options -->
-<div class="delivery-options">
-    <label><input type="radio" name="delivery" value="delivery" checked> Delivery</label>
-    <label><input type="radio" name="delivery" value="pickup"> Pickup</label>
-    <div id="delivery-address">
-        <input type="text" placeholder="Enter your address">
-    </div>
-    <div id="pickup-time">
-        <input type="time" placeholder="Select pickup time">
-    </div>
-</div>
-
-<!-- Social Media Integration -->
-<div class="social-media">
-    <p>Follow us:</p>
-    <a href="#" class="social-link">Facebook</a>
-    <a href="#" class="social-link">Instagram</a>
-    <a href="#" class="social-link">Twitter</a>
-</div>
-
-<!-- Contact Information -->
-<div class="contact-info">
-    <p>Need help? Call us at <strong>123-456-7890</strong> or email <strong>support@subs.com</strong>.</p>
-</div>
+</section>  
+ 
 
 <%- include ("partials/footer.ejs") %> <!-- Includes the footer -->
-
-<script>
-    // JavaScript for Dynamic Price Calculation
-    document.querySelectorAll('.menu-item').forEach(item => {
-        const basePrice = parseFloat(item.querySelector('.base-price').innerText);
-        const priceElement = item.querySelector('.price');
-        const checkboxes = item.querySelectorAll('input[type="checkbox"]');
-
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', () => {
-                let totalPrice = basePrice;
-                checkboxes.forEach(cb => {
-                    if (cb.checked) {
-                        totalPrice += parseFloat(cb.value);
-                    }
-                });
-                priceElement.innerHTML = `Price: $<span class="base-price">${totalPrice.toFixed(2)}</span>`;
-            });
-        });
-    });
-
-    // JavaScript for Nutrition Info Toggle
-    document.querySelectorAll('.nutrition-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            const nutritionInfo = button.nextElementSibling;
-            nutritionInfo.style.display = nutritionInfo.style.display === 'block' ? 'none' : 'block';
-        });
-    });
-
-    // JavaScript for Shopping Cart
-    document.querySelectorAll('.btn').forEach(button => {
-        button.addEventListener('click', () => {
-            const menuItem = button.closest('.menu-item');
-            const itemName = menuItem.querySelector('h3').innerText;
-            const itemPrice = parseFloat(menuItem.querySelector('.base-price').innerText);
-            const itemQuantity = parseInt(menuItem.querySelector('input[type="number"]').value);
-
-            const cartItem = document.createElement('div');
-            cartItem.innerText = `${itemQuantity}x ${itemName} - $${(itemPrice * itemQuantity).toFixed(2)}`;
-            document.getElementById('cart-items').appendChild(cartItem);
-
-            // Update Total Price
-            const totalPrice = parseFloat(document.getElementById('total-price').innerText);
-            document.getElementById('total-price').innerText = (totalPrice + itemPrice * itemQuantity).toFixed(2);
-        });
-    });
-</script>
