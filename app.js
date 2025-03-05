@@ -34,6 +34,13 @@ app.get('/contactUs', function (req, res) {
     res.render('contactUs', { title: 'Contact Us' });
 });
 
+// Route to handle contact form submissions
+app.post("/send-message", (req, res) => {
+    const { name, email, message } = req.body;
+    console.log(`New message from ${name} (${email}): ${message}`);
+    res.send("Message received! We will get back to you soon.");
+});
+
 // Route to render Menu page
 app.get('/Menu', function (req, res) {
     res.render('Menu', { title: 'Menu' });
@@ -46,7 +53,7 @@ app.get('/privacyPolicy', function (req, res) {
 
 // Route to render learn more page
 app.get('/learnmore', function (req, res) {
-    res.render('learnmore', { title: 'LearnMore' });
+    res.render('learnmore', { title: 'Learn More' });
 });
 
 // Route to render login page
@@ -82,22 +89,22 @@ app.get('/register', function (req, res) {
     res.render("register", { title: 'Register' });
 });
 
-// Route to render registration page
+// Route to render Subs page
 app.get('/Subs', function (req, res) {
-    res.render("Subs", { title: 'subs' });
+    res.render("Subs", { title: 'Subs' });
 });
 
-// Route to render registration page
+// Route to render Wraps page
 app.get('/wraps', function (req, res) {
-    res.render("wraps", { title: 'wraps' });
+    res.render("wraps", { title: 'Wraps' });
 });
 
-// Route to render registration page
+// Route to render Drinks page
 app.get('/drinks', function (req, res) {
-    res.render("drinks", { title: 'drinks' });
+    res.render("drinks", { title: 'Drinks' });
 });
 
-// Route to render registration page
+// Route to render Dessert page
 app.get('/Dessert', function (req, res) {
     res.render("Dessert", { title: 'Dessert' });
 });
@@ -110,7 +117,7 @@ app.post('/register', function (req, res) {
         var sql = `INSERT INTO users(name,password) VALUES ("${name}","${password}")`;
         conn.query(sql, function (error, results) {
             if (error) throw error;
-            console.log('record inserted');
+            console.log('Record inserted');
             res.render('login');
         });
     } else {
@@ -168,6 +175,13 @@ app.post('/submit-review', (req, res) => {
         });
 });
 
-// Start the server and listen on port 3000
-app.listen(3000);
-console.log('Node app is running on port 3000');
+// Route to render Opening & Closing hours page
+app.get('/openingHours', function (req, res) {
+    res.render('openingHours', { title: 'Opening Hours' });
+});
+
+// Start the server and listen on port 3001
+const port = process.env.PORT || 3001;
+app.listen(port, () => {
+    console.log(`Node app is running on port ${port}`);
+});
