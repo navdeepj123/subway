@@ -181,7 +181,7 @@ app.get('/openingHours', function (req, res) {
 });
 
 // Start the server and listen on port 3001
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Node app is running on port ${port}`);
 });
