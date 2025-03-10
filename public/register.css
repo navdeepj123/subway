@@ -22,29 +22,36 @@ p {
 }
 
 /* Navbar styles */
+.navbar {
+    background-color: #000033; /* Dark navy */
+    padding: 10px 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
 .navbar-nav {
-    margin: 0;
-    padding: 0;
-    position: relative;
     display: flex;
+    justify-content: center;
     list-style-type: none;
+    padding: 0;
+    margin: 0;
 }
 
 .nav-item {
-    justify-content: flex-end;
-    margin-left: 15px; /* Adjust spacing between menu items */
+    margin: 0 15px; /* Adjust spacing between menu items */
 }
 
 .nav-link {
     color: white;
     text-decoration: none;
-    padding: 10px;
     font-weight: bold;
+    transition: color 0.3s ease-in-out;
 }
 
 .nav-link:hover {
-    background-color: #800020; /* Wine color */
-    color: white;
+    color: #ffcc00; /* Yellow hover effect */
 }
 
 /* Styles for additional information */
@@ -71,11 +78,28 @@ p {
 
 /* Footer styles */
 .site-footer {
-    background-color: #333;
+    background-color: #000033; /* Dark navy */
     color: white;
     padding: 15px 0;
     text-align: center;
     width: 100%;
-    position: relative; /* Remove fixed positioning */
+    position: absolute;
     bottom: 0;
+    left: 0;
+}
+
+.site-footer a {
+    color: #ffcc00; /* Yellow */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.site-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Adjust content spacing to avoid overlap with fixed navbar */
+.container {
+    padding-top: 80px; /* Adjust according to navbar height */
+    padding-bottom: 60px; /* Prevent overlap with footer */
 }

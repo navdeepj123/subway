@@ -58,30 +58,34 @@ app.get('/learnmore', function (req, res) {
 
 // Route to render login page
 app.get('/login', function (req, res) {
-    res.render('login.ejs');
+    res.render('login', { errorMessage: null, csrfToken: 'your_csrf_token' });
 });
-
+app.get("/login", (req, res) => {
+    res.render("login", { errorMessage: req.flash("error") || "" });
+});
 // Route to authenticate user login
 app.post('/auth', function (req, res) {
     let name = req.body.username;
     let password = req.body.password;
-    if (name && password) {
-        conn.query('SELECT * FROM users WHERE name = ? AND password=?', [name, password],
-            function (error, results, fields) {
-                if (error) throw error;
-                if (results.length > 0) {
-                    req.session.loggedin = true;
-                    req.session.username = name;
-                    res.redirect('/membersOnly');
-                } else {
-                    res.send('Incorrect Username and/or Password!');
-                }
-                res.end();
-            });
-    } else {
-        res.send('Please enter Username and Password!');
-        res.end();
+    if (!name || !password) {
+        return res.render('login', { errorMessage: 'Please enter both Username and Password!', csrfToken: 'your_csrf_token' });
     }
+
+    conn.query('SELECT * FROM users WHERE name = ? AND password=?', [name, password],
+        function (error, results) {
+            if (error) {
+                console.error('Database error:', error);
+                return res.render('login', { errorMessage: 'Internal Server Error. Try again later.', csrfToken: 'your_csrf_token' });
+            }
+
+            if (results.length > 0) {
+                req.session.loggedin = true;
+                req.session.username = name;
+                return res.redirect('/membersOnly');
+            } else {
+                return res.render('login', { errorMessage: 'Incorrect Username or Password!', csrfToken: 'your_csrf_token' });
+            }
+        });
 });
 
 // Route to render registration page
@@ -89,22 +93,30 @@ app.get('/register', function (req, res) {
     res.render("register", { title: 'Register' });
 });
 
-// Route to render Subs page
+// Route to render subs page
+
 app.get('/Subs', function (req, res) {
     res.render("Subs", { title: 'Subs' });
 });
 
+
+
 // Route to render Wraps page
+
 app.get('/wraps', function (req, res) {
     res.render("wraps", { title: 'Wraps' });
 });
 
+
 // Route to render Drinks page
+
 app.get('/drinks', function (req, res) {
     res.render("drinks", { title: 'Drinks' });
 });
 
+
 // Route to render Dessert page
+
 app.get('/Dessert', function (req, res) {
     res.render("Dessert", { title: 'Dessert' });
 });
@@ -114,6 +126,16 @@ app.post('/register', function (req, res) {
     let name = req.body.username;
     let password = req.body.password;
     if (name && password) {
+
+        var sql = `INSERT INTO users(name,password) VALUES (?, ?)`;
+        conn.query(sql, [name, password], function (error, results) {
+            if (error) {
+                console.error('Error inserting record:', error);
+                return res.render('register', { title: 'Register', errorMessage: 'Error registering user. Try again later.' });
+            }
+            console.log('Record inserted');
+            res.render('login', { errorMessage: 'Registration successful. Please log in.', csrfToken: 'your_csrf_token' });
+
         var sql = `INSERT INTO users(name,password) VALUES ("${name}","${password}")`;
         conn.query(sql, function (error, results) {
             if (error) throw error;
@@ -121,7 +143,7 @@ app.post('/register', function (req, res) {
             res.render('login');
         });
     } else {
-        console.log("Error");
+        res.render('register', { title: 'Register', errorMessage: 'Please fill in all fields.' });
     }
 });
 
@@ -175,6 +197,10 @@ app.post('/submit-review', (req, res) => {
         });
 });
 
+// Start the server and listen on port 3000
+app.listen(3000);
+console.log('Node app is running on port 3000');
+
 // Route to render Opening & Closing hours page
 app.get('/openingHours', function (req, res) {
     res.render('openingHours', { title: 'Opening Hours' });
@@ -185,3 +211,4 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Node app is running on port ${port}`);
 });
+
