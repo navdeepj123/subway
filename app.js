@@ -53,7 +53,9 @@ app.get('/learnmore', function (req, res) {
 app.get('/login', function (req, res) {
     res.render('login', { errorMessage: null, csrfToken: 'your_csrf_token' });
 });
-
+app.get("/login", (req, res) => {
+    res.render("login", { errorMessage: req.flash("error") || "" });
+});
 // Route to authenticate user login
 app.post('/auth', function (req, res) {
     let name = req.body.username;
