@@ -2,19 +2,13 @@ var express = require('express');
 var app = express();
 var session = require('express-session');
 var mysql = require('mysql');
-<<<<<<< Updated upstream
-var conn = require('./dbConfig');
-=======
-<<<<<<< Updated upstream
+
 var conn = require('./dbConfig'); // Custom database configuration file
->>>>>>> Stashed changes
+
 
 app.set('view engine', 'ejs');
 
-<<<<<<< Updated upstream
-=======
-// Middleware for session management
-=======
+
 var conn = require('./dbConfig'); // Your DB configuration file
 
 // Setup view engine as EJS
@@ -26,32 +20,74 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Session management middleware
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+
 app.use(session({
     secret: 'yoursecret',
     resave: true,
     saveUninitialized: true
 }));
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-// Middleware to serve static files
->>>>>>> Stashed changes
+
 app.use('/public', express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Home Route
+
+// Initialize an empty cart in the session if it's not there already
+app.use((req, res, next) => {
+    if (!req.session.cart) {
+        req.session.cart = [];
+    }
+    next();
+});
+
+// Route to render home page
 app.get('/', function (req, res) {
     res.render('home', { title: 'Home' });
 });
 
-// Login and Register Routes
+// Route to render Contact Us page
+app.get('/contactUs', function (req, res) {
+    res.render('contactUs', { title: 'Contact Us' });
+});
+
+// Add to cart route (when a user clicks "Add to Cart" on menu)
+app.post('/add-to-cart', (req, res) => {
+    const item = {
+        name: req.body.name,
+        price: parseFloat(req.body.price),
+    };
+    req.session.cart.push(item); // Add item to the session cart array
+    res.redirect('/cart'); // Redirect user to cart page
+});
+
+// Route to render cart page (showing items added to the cart)
+app.get('/cart', (req, res) => {
+    const cart = req.session.cart; // Get cart from session
+    let total = 0;
+    cart.forEach(item => {
+        total += item.price; // Calculate the total price
+    });
+    
+    res.render('cart', { cart, total }); // Render cart page with items and total price
+});
+
+// Route to render Privacy Policy page
+app.get('/privacyPolicy', function (req, res) {
+    res.render('privacyPolicy', { title: 'Privacy Policy' });
+});
+
+// Route to render Learn More page
+app.get('/learnmore', function (req, res) {
+    res.render('learnmore', { title: 'Learn More' });
+});
+
+// Route to render login page
 app.get('/login', function (req, res) {
     res.render('login', { title: 'Login' });
 });
+
+// Route to render register page
 app.get('/register', function (req, res) {
     res.render("register", { title: 'Register' });
 });
@@ -60,8 +96,7 @@ app.get('/register', function (req, res) {
 app.post('/auth', function (req, res) {
     let name = req.body.username;
     let password = req.body.password;
-<<<<<<< Updated upstream
-    
+
     if (!name || !password) {
         return res.send('Please enter Username and Password!');
 =======
@@ -202,18 +237,18 @@ app.get('/reviews', (req, res) => {
                 let starCount = row.Rating.length; // Get number of stars
                 if (starCount >= 1 && starCount <= 5) {
                     ratingCounts[starCount] = row.count;
->>>>>>> Stashed changes
+
                 }
                 res.end();
             });
-<<<<<<< Updated upstream
+
     } else {
         res.send('Please enter Username and Password!');
         res.end();
->>>>>>> Stashed changes
+
     }
 
-    conn.query('SELECT * FROM users WHERE name = ? AND password=?', [name, password], function (error, results) {
+    conn.query('SELECT * FROM users WHERE name = ? AND password = ?', [name, password], function (error, results) {
         if (error) {
             console.error('Database error:', error);
             return res.status(500).send('Internal Server Error');
@@ -228,7 +263,27 @@ app.get('/reviews', (req, res) => {
     });
 });
 
-// ✅ New Route for Menu Page (Fix for Missing Menu Items)
+// Route to handle user registration
+app.post('/register', function (req, res) {
+    let name = req.body.username;
+    let password = req.body.password;
+    
+    if (name && password) {
+        let sql = 'INSERT INTO users (name, password) VALUES (?, ?)';
+        conn.query(sql, [name, password], function (error, results) {
+            if (error) {
+                console.error('Database error:', error);
+                return res.status(500).send('Internal Server Error');
+            }
+            console.log('User registered successfully');
+            res.redirect('/login');
+        });
+    } else {
+        res.send('Please enter a Username and Password.');
+    }
+});
+
+// Route to render the Menu page
 app.get('/menu', (req, res) => {
     if (!req.session.loggedin) {
         return res.redirect('/login');
@@ -245,6 +300,26 @@ app.get('/menu', (req, res) => {
     res.render('menu', { title: 'Menu', session: req.session, menuItems });
 });
 
+// Route to render Subs page
+app.get('/Subs', function (req, res) {
+    res.render("Subs", { title: 'Subs' });
+});
+
+// Route to render Wraps page
+app.get('/wraps', function (req, res) {
+    res.render("wraps", { title: 'Wraps' });
+});
+
+// Route to render Drinks page
+app.get('/drinks', function (req, res) {
+    res.render("drinks", { title: 'Drinks' });
+});
+
+// Route to render Dessert page
+app.get('/Dessert', function (req, res) {
+    res.render("Dessert", { title: 'Dessert' });
+});
+
 // Route to display reviews along with likes and comments
 app.get('/reviews', (req, res) => {
     conn.query('SELECT * FROM `submit_review` ORDER BY CreatedAt DESC', (error, reviews) => {
@@ -259,10 +334,11 @@ app.get('/reviews', (req, res) => {
                 console.error('Database error:', err);
                 return res.status(500).send('Internal Server Error');
             }
+
             let ratingCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
             let totalReviews = reviews.length;
             results.forEach(row => {
-                let starCount = row.Rating.length;
+                let starCount = row.Rating;
                 if (starCount >= 1 && starCount <= 5) {
                     ratingCounts[starCount] = row.count;
                 }
@@ -298,33 +374,9 @@ app.post('/submit-review', (req, res) => {
         });
 });
 
-// Route to like a review
-app.post('/like-review', (req, res) => {
-    const { review_id } = req.body;
-    conn.query('UPDATE `submit_review` SET likes = likes + 1 WHERE id = ?', [review_id], (error) => {
-        if (error) {
-            console.error('Database error:', error);
-            return res.status(500).send('Internal Server Error');
-        }
-        res.redirect('/reviews');
-    });
-});
-
-// Route to add a comment to a review
-app.post('/comment-review', (req, res) => {
-    const { review_id, comment } = req.body;
-    if (!req.session.loggedin) {
-        return res.redirect('/login');
-    }
-    conn.query('INSERT INTO `comments` (review_id, username, text) VALUES (?, ?, ?)',
-        [review_id, req.session.username, comment],
-        (error) => {
-            if (error) {
-                console.error('Database error:', error);
-                return res.status(500).send('Internal Server Error');
-            }
-            res.redirect('/reviews');
-        });
+// Route to render Opening & Closing hours page
+app.get('/openingHours', function (req, res) {
+    res.render('openingHours', { title: 'Opening Hours' });
 });
 
 // Logout route
@@ -333,9 +385,7 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-app.listen(3000);
-console.log('Node app is running on port 3000');
-=======
+
 
             // Fetch all comments for reviews
             conn.query('SELECT * FROM comments ORDER BY created_at ASC', (error2, comments) => {
@@ -392,4 +442,10 @@ app.post('/comment-review', (req, res) => {
 app.listen(3000, () => {
     console.log('🚀 Server running at http://localhost:3000');
 });
->>>>>>> Stashed changes
+
+// Start the server and listen on port 3000
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Node app is running on port ${port}`);
+});
+
