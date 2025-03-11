@@ -16,7 +16,16 @@ app.use('/public', express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Home Route
+
+// Initialize an empty cart in the session if it's not there already
+app.use((req, res, next) => {
+    if (!req.session.cart) {
+        req.session.cart = [];
+    }
+    next();
+});
+
+// Route to render home page
 app.get('/', function (req, res) {
     res.render('home', { title: 'Home' });
 });
@@ -26,11 +35,25 @@ app.get('/contactUs', function (req, res) {
     res.render('contactUs', { title: 'Contact Us' });
 });
 
-// Route to handle contact form submissions
-app.post("/send-message", (req, res) => {
-    const { name, email, message } = req.body;
-    console.log(`New message from ${name} (${email}): ${message}`);
-    res.send("Message received! We will get back to you soon.");
+// Add to cart route (when a user clicks "Add to Cart" on menu)
+app.post('/add-to-cart', (req, res) => {
+    const item = {
+        name: req.body.name,
+        price: parseFloat(req.body.price),
+    };
+    req.session.cart.push(item); // Add item to the session cart array
+    res.redirect('/cart'); // Redirect user to cart page
+});
+
+// Route to render cart page (showing items added to the cart)
+app.get('/cart', (req, res) => {
+    const cart = req.session.cart; // Get cart from session
+    let total = 0;
+    cart.forEach(item => {
+        total += item.price; // Calculate the total price
+    });
+    
+    res.render('cart', { cart, total }); // Render cart page with items and total price
 });
 
 // Route to render Privacy Policy page
