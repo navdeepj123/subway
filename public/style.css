@@ -24,7 +24,7 @@ p {
 /* Navbar styles */
 .navbar-nav {
     margin: 0;
-    padding: 0;
+    padding: 1px 0;
     position: relative;
     display: flex;
     list-style-type: none;
