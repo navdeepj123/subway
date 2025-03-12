@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .cart-items {
+            list-style: none;
+            padding: 0;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .cart-item .name {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .cart-item .price {
+            font-size: 16px;
+            color: #888;
+        }
+
+        .cart-item button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .cart-item button:hover {
+            background-color: #d32f2f;
+        }
+
+        .total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .cart-footer {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .cart-footer a {
+            text-decoration: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+        }
+
+        .cart-footer a:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Your Cart</h1>
+
+        <ul class="cart-items">
+            <% if (cart.length > 0) { %>
+                <% cart.forEach((item, index) => { %>
+                    <li class="cart-item">
+                        <span class="name"><%= item.name %></span>
+                        <span class="price">$<%= item.price.toFixed(2) %></span>
+                        <form action="/remove-from-cart" method="POST" style="display:inline;">
+                            <input type="hidden" name="index" value="<%= index %>">
+                            <button type="submit">Remove</button>
+                        </form>
+                    </li>
+                <% }); %>
+            <% } else { %>
+                <li class="cart-item">Your cart is empty.</li>
+            <% } %>
+        </ul>
+
+        <div class="total">
+            <span>Total:</span>
+            <span>$<%= total.toFixed(2) %></span>
+        </div>
+
+        <div class="cart-footer">
+            <a href="/Menu">Continue Shopping</a>
+        </div>
+    </div>
+
+</body>
+</html>
