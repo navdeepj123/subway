@@ -53,7 +53,7 @@ app.get('/privacyPolicy', function (req, res) {
 
 // Route to render learn more page
 app.get('/learnmore', function (req, res) {
-    res.render('learnmore', { title: 'Learn More' });
+    res.render('learnmore', { title: 'LearnMore' });
 });
 
 // Route to render login page
@@ -94,29 +94,21 @@ app.get('/register', function (req, res) {
 });
 
 // Route to render subs page
-
 app.get('/Subs', function (req, res) {
-    res.render("Subs", { title: 'Subs' });
+    res.render("Subs", { title: 'subs' });
 });
 
-
-
-// Route to render Wraps page
-
+// Route to render wraps page
 app.get('/wraps', function (req, res) {
-    res.render("wraps", { title: 'Wraps' });
+    res.render("wraps", { title: 'wraps' });
 });
 
-
-// Route to render Drinks page
-
+// Route to render drinks page
 app.get('/drinks', function (req, res) {
-    res.render("drinks", { title: 'Drinks' });
+    res.render("drinks", { title: 'drinks' });
 });
 
-
-// Route to render Dessert page
-
+// Route to render dessert page
 app.get('/Dessert', function (req, res) {
     res.render("Dessert", { title: 'Dessert' });
 });
@@ -126,7 +118,6 @@ app.post('/register', function (req, res) {
     let name = req.body.username;
     let password = req.body.password;
     if (name && password) {
-
         var sql = `INSERT INTO users(name,password) VALUES (?, ?)`;
         conn.query(sql, [name, password], function (error, results) {
             if (error) {
@@ -135,12 +126,6 @@ app.post('/register', function (req, res) {
             }
             console.log('Record inserted');
             res.render('login', { errorMessage: 'Registration successful. Please log in.', csrfToken: 'your_csrf_token' });
-
-        var sql = `INSERT INTO users(name,password) VALUES ("${name}","${password}")`;
-        conn.query(sql, function (error, results) {
-            if (error) throw error;
-            console.log('Record inserted');
-            res.render('login');
         });
     } else {
         res.render('register', { title: 'Register', errorMessage: 'Please fill in all fields.' });
@@ -200,15 +185,3 @@ app.post('/submit-review', (req, res) => {
 // Start the server and listen on port 3000
 app.listen(3000);
 console.log('Node app is running on port 3000');
-
-// Route to render Opening & Closing hours page
-app.get('/openingHours', function (req, res) {
-    res.render('openingHours', { title: 'Opening Hours' });
-});
-
-// Start the server and listen on port 3001
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Node app is running on port ${port}`);
-});
-
