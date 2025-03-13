@@ -16,171 +16,157 @@ app.use(session({
 }));
 
 // Middleware to serve static files
-app.use('/public', express.static('public'));
+app.use(express.static("public"));
+app.use('/public', express.static(__dirname + '/public'));
 
-// Middleware to parse JSON bodies
+
+
+// Middleware to parse JSON bodies and URL-encoded data
 app.use(express.json());
-
-// Middleware to parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
-// Route to render home page
+// Middleware to make user data available in all views
+app.use((req, res, next) => {
+    res.locals.user = req.session.user || null; // Stores user session data in res.locals for easy access in EJS
+    next();
+});
+
+// Home Page Route
 app.get('/', function (req, res) {
-    res.render('home');
+    res.render('home', { user: req.session.user, page: 'home' });
 });
 
-// Route to render contact us page
+// Contact Us Page
 app.get('/contactUs', function (req, res) {
-    res.render('contactUs', { title: 'Contact Us' });
+    res.render('contactUs', { title: 'Contact Us', user: req.session.user, page: 'contactUs' });
 });
 
-// Route to handle contact form submissions
+// Handle Contact Form Submission
 app.post("/send-message", (req, res) => {
     const { name, email, message } = req.body;
     console.log(`New message from ${name} (${email}): ${message}`);
     res.send("Message received! We will get back to you soon.");
 });
 
-// Route to render Menu page
-app.get('/Menu', function (req, res) {
-    res.render('Menu', { title: 'Menu' });
-});
-
-// Route to render privacy policy page
-app.get('/privacyPolicy', function (req, res) {
-    res.render('privacyPolicy', { title: 'Privacy Policy' });
-});
-
-// Route to render learn more page
-app.get('/learnmore', function (req, res) {
-    res.render('learnmore', { title: 'Learn More' });
-});
-
-// Route to render login page
+// Login Page
 app.get('/login', function (req, res) {
-    res.render('login.ejs');
+    res.render('login', { user: req.session.user, page: 'login' });
 });
 
-// Route to authenticate user login
+// Register Page
+app.get('/register', function (req, res) {
+    res.render('register', { user: req.session.user, page: 'register' });
+});
+
+// Authenticate Login
 app.post('/auth', function (req, res) {
     let name = req.body.username;
     let password = req.body.password;
+
     if (name && password) {
-        conn.query('SELECT * FROM users WHERE name = ? AND password=?', [name, password],
-            function (error, results, fields) {
-                if (error) throw error;
-                if (results.length > 0) {
-                    req.session.loggedin = true;
-                    req.session.username = name;
-                    res.redirect('/membersOnly');
-                } else {
-                    res.send('Incorrect Username and/or Password!');
-                }
-                res.end();
-            });
+        conn.query('SELECT * FROM users WHERE name = ? AND password=?', [name, password], function (error, results) {
+            if (error) throw error;
+
+            if (results.length > 0) {
+                req.session.user = { username: name };
+                res.redirect('/Menu'); // Redirect to Menu after login
+            } else {
+                res.send('Incorrect Username and/or Password!');
+            }
+        });
     } else {
         res.send('Please enter Username and Password!');
-        res.end();
     }
 });
 
-// Route to render registration page
-app.get('/register', function (req, res) {
-    res.render("register", { title: 'Register' });
+// Logout Route
+app.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
 });
 
-// Route to render Subs page
-app.get('/Subs', function (req, res) {
-    res.render("Subs", { title: 'Subs' });
+// Restricted Pages: Only logged-in users can access these
+const ensureAuthenticated = (req, res, next) => {
+    if (!req.session.user) return res.redirect('/login');
+    next();
+};
+
+// Menu Page (restricted)
+app.get('/Menu', ensureAuthenticated, function (req, res) {
+    res.render('Menu', { title: 'Menu', user: req.session.user, page: 'menu' });
 });
 
-// Route to render Wraps page
-app.get('/wraps', function (req, res) {
-    res.render("wraps", { title: 'Wraps' });
+// Food Category Pages (restricted)
+app.get('/Subs', ensureAuthenticated, function (req, res) {
+    res.render("Subs", { title: 'Subs', user: req.session.user, page: 'subs' });
 });
 
-// Route to render Drinks page
-app.get('/drinks', function (req, res) {
-    res.render("drinks", { title: 'Drinks' });
+app.get('/Wraps', ensureAuthenticated, function (req, res) {
+    res.render("Wraps", { title: 'Wraps', user: req.session.user, page: 'wraps' });
 });
 
-// Route to render Dessert page
-app.get('/Dessert', function (req, res) {
-    res.render("Dessert", { title: 'Dessert' });
+app.get('/Drinks', ensureAuthenticated, function (req, res) {
+    res.render("Drinks", { title: 'Drinks', user: req.session.user, page: 'drinks' });
 });
 
-// Route to handle user registration
+app.get('/Dessert', ensureAuthenticated, function (req, res) {
+    res.render("Dessert", { title: 'Dessert', user: req.session.user, page: 'dessert' });
+});
+
+// User Registration
 app.post('/register', function (req, res) {
     let name = req.body.username;
     let password = req.body.password;
+
     if (name && password) {
-        var sql = `INSERT INTO users(name,password) VALUES ("${name}","${password}")`;
-        conn.query(sql, function (error, results) {
+        var sql = `INSERT INTO users(name,password) VALUES (?,?)`;
+        conn.query(sql, [name, password], function (error) {
             if (error) throw error;
             console.log('Record inserted');
-            res.render('login');
+            res.redirect('/login');
         });
     } else {
         console.log("Error");
     }
 });
 
-// Route to render members-only page (accessible only if logged in)
-app.get('/membersOnly', function (req, res, next) {
-    if (req.session.loggedin) {
-        res.render('membersOnly.ejs');
-    }
-    else {
-        res.send('Please login to view this page!');
-    }
+// Members Only Page (restricted)
+app.get('/membersOnly', ensureAuthenticated, function (req, res) {
+    res.render('membersOnly.ejs', { user: req.session.user, page: 'membersOnly' });
 });
 
-// Route to handle user logout
-app.get('/logout', (req, res) => {
-    req.session.destroy(); // Destroy session to logout user
-    res.redirect('/');
-});
-
-// Route to handle GET requests to the reviews page
+// Reviews Page
 app.get('/reviews', (req, res) => {
-    // Fetch existing reviews from the database
     conn.query('SELECT * FROM `submit-review`', (error, results) => {
         if (error) {
             console.error('Error executing database query:', error);
             res.status(500).send('Internal Server Error');
             return;
         }
-
-        // Render the 'reviews.ejs' template with the retrieved reviews
-        res.render('reviews', { reviews: results });
+        res.render('reviews', { reviews: results, user: req.session.user, page: 'reviews' });
     });
 });
 
-// Route to handle POST requests to submit reviews
+// Submit Reviews
 app.post('/submit-review', (req, res) => {
     const { name, rating, comment } = req.body;
 
-    // Insert the submitted review into the database
-    conn.query('INSERT INTO `submit-review` (`Name`, `Rating`, `Comment`) VALUES (?, ?, ?)',
-        [name, rating, comment],
-        (error, results) => {
-            if (error) {
-                console.error('Error executing database query:', error);
-                res.status(500).send('Internal Server Error');
-                return;
-            }
-
-            // Redirect back to the reviews page after submission
-            res.redirect('/reviews');
-        });
+    conn.query('INSERT INTO `submit-review` (`Name`, `Rating`, `Comment`) VALUES (?, ?, ?)', [name, rating, comment], (error) => {
+        if (error) {
+            console.error('Error executing database query:', error);
+            res.status(500).send('Internal Server Error');
+            return;
+        }
+        res.redirect('/reviews');
+    });
 });
 
-// Route to render Opening & Closing hours page
+// Opening Hours Page
 app.get('/openingHours', function (req, res) {
-    res.render('openingHours', { title: 'Opening Hours' });
+    res.render('openingHours', { title: 'Opening Hours', user: req.session.user, page: 'openingHours' });
 });
 
-// Start the server and listen on port 3001
+// Start the server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Node app is running on port ${port}`);

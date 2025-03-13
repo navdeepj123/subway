@@ -1,0 +1,62 @@
+/* 🌿 Fix Navbar Layout */
+.navbar {
+    background: linear-gradient(to right, #A5D6A7, #66BB6A); /* Light Green Gradient */
+    padding: 15px 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    border-bottom: 3px solid #388E3C;
+}
+
+/* 🚀 Align Navbar Items Horizontally */
+.navbar-nav {
+    list-style: none;
+    display: flex;  /* Ensures horizontal alignment */
+    align-items: center;
+    justify-content: space-between;
+    padding: 0;
+    margin: 0;
+}
+
+/* 🎨 Navbar Items */
+.nav-item {
+    margin: 0 15px;  /* Adds space between links */
+}
+
+/* 🔗 Navbar Links */
+.nav-link {
+    color: white !important;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px 15px;
+    transition: all 0.3s ease-in-out;
+    border-radius: 5px;
+}
+
+/* 🔥 Hover Effect */
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffeb3b !important;
+    transform: scale(1.05);
+}
+
+/* 🟢 Fix Navbar Brand */
+.navbar-brand {
+    font-size: 24px;
+    font-weight: bold;
+    color: white !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* 🔄 Make Navbar Responsive */
+@media (max-width: 991px) {
+    .navbar-nav {
+        flex-direction: column; /* Stack items in mobile view */
+        text-align: center;
+    }
+    
+    .nav-item {
+        padding: 5px 0;
+    }
+}

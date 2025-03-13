@@ -1,67 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to Subway</title>
     <link rel="stylesheet" href="/public/css/styles.css"> <!-- Link to CSS file -->
 </head>
+
 <body>
+    <%- include('partials/header.ejs') %> <!-- Include the header which contains navbar -->
+    <%- include ('partials/navbar.ejs') %>
 
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <ul class="nav-links">
-            <li><a href="/openingHours">Opening-hours</a></li>
-            <li><a href="/login">Login/Register</a></li>
-            <li><a href="/privacyPolicy">Privacy Policy</a></li> <!-- Added Privacy Policy -->
-            <li><a href="/contactUs">Contact Us</a></li> <!-- Added Contact Us -->
-        </ul>
-    </nav>
-
-    <!-- Hero Section -->
     <div class="hero">
         <div class="hero-content">
             <h1>Fresh & Healthy, Just for You</h1>
             <p>Delicious, customizable meals made with the freshest ingredients.</p>
         </div>
     </div>
-
+    
     <!-- Menu Categories -->
     <div class="container">
         <h2 class="menu-heading">Explore Our Menu</h2>
         <div class="menu-container">
             <div class="menu-item">
                 <a href="/subs">
-                    <img src="/public\Images\subs.jpg" alt="Subs">
+                    <img src="/public/Images/subs.jpg" alt="Subs">
                     <h3>Subs</h3>
                 </a>
             </div>
             <div class="menu-item">
                 <a href="/wraps">
-                    <img src="/public\Images\wrap.jpeg" alt="Wraps">
+                    <img src="/public/Images/wrap.jpeg" alt="Wraps">
                     <h3>Wraps</h3>
                 </a>
             </div>
             <div class="menu-item">
                 <a href="/drinks">
-                    <img src="/public\Images\drink.jpeg" alt="Drinks">
+                    <img src="/public/Images/drink.jpeg" alt="Drinks">
                     <h3>Drinks</h3>
                 </a>
             </div>
             <div class="menu-item">
                 <a href="/desserts">
-                    <img src="/public\Images\dess.jpeg" alt="Desserts">
+                    <img src="/public/Images/dess.jpeg" alt="Desserts">
                     <h3>Desserts</h3>
                 </a>
             </div>
         </div>
     </div>
-
+    
     <!-- Footer -->
     <footer>
         <p>© 2025 Subway. All rights reserved.</p>
     </footer>
-
+    
     <style>
         /* Navigation Bar */
         .navbar {
