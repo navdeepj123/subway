@@ -1,110 +1,172 @@
-<%- include ("partials/header2.ejs") %> <!-- Includes the header -->
+<!-- views/subs.ejs -->
+
+<%- include("partials/header2.ejs") %> <!-- Includes the header -->
+
+<!-- Cart Button -->
+<a href="/cart" class="cart-btn">
+    <img src="https://img.icons8.com/ios/452/shopping-cart.png" alt="cart" width="30" height="30">
+    Cart
+</a>
 
 <style>
-    /* CSS styles for the table */
+    /* CSS styles for the menu */
     .menu {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
 
-.menu-item {
-    width: 250px;
-    height: 350px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    padding: 20px;
-    text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
-    border-radius: 10px;
-    overflow: hidden;
-}
+    .menu-item {
+        width: 250px;
+        height: 350px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 20px;
+        text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+        border-radius: 10px;
+        overflow: hidden;
+    }
 
-.menu-item:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
+    .menu-item:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
 
-.menu-item img {
-    max-width: 100%;
-    max-height: 100%;
-    border-radius: 10px;
-}
+    .menu-item img {
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 10px;
+    }
 
-.menu-item h3 {
-    font-size: 20px;
-    margin: 10px 0;
-}
+    .menu-item h3 {
+        font-size: 20px;
+        margin: 10px 0;
+    }
 
-.menu-item p {
-    font-size: 16px;
-} 
+    .menu-item p {
+        font-size: 16px;
+    }
+
+    .cart-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #007bff;
+        color: white;
+        padding: 10px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        text-decoration: none;
+    }
+
+    .cart-btn img {
+        margin-right: 5px;
+    }
 </style>
 
 <section id="Subs" class="menu">
-    <!-- Subs menu content -->
     <h2 align="center">Subs List</h2>
-    <section id="menu" class="menu">
-        <h2></h2>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_594x334.jpg" alt="Sub 1">
-            <h3>Vegiie Delight</h3>
-            <p>Tomato, mozzarella, basil.</p>
-            <p>Price: $9.90</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Sub 2">
-            <h3>Chipotle Meatball & Pepperoni</h3>
-            <p>Tomato, mozzarella, pepperoni, meatball.</p>
-            <p>Price: $11.00</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Sub 3">
-            <h3>Spicy Chicken</h3>
-            <p>Chicken, toped with spicy mayo, english-style Cheese.</p>
-            <p>Price: $11.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Leg_Ham_594x334.jpg" alt="Sub 4">
-            <h3>Leg Ham</h3>
-            <p>smoked leg ham, try with honey mustard dressing.</p>
-            <p>Price: $9.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Italian_BMT_594x334.jpg" alt="Sub 5">
-            <h3>Italian B.M.T</h3>
-            <p>salami, layered pepperoni,leg ham .</p>
-            <p>Price: $14.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/NZ_FootlongSub_RoastBeef_594x334.png" alt="Sub 6">
-            <h3>Roast Beef</h3>
-            <p>Carved roast beef, sweet chilli sause.</p>
-            <p>Price: $14.49</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Patty_594x334.jpg" alt="Sub 7">
-            <h3>Pizza Four Cheese</h3>
-            <p>Mozzarella, veggie patty, vegetables.</p>
-            <p>Price: $13.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Buffalo_Chicken_594x334.jpg" alt="Sub 8">
-            <h3>Buffalo Chicken</h3>
-            <p>Chicken breast strips, spicy buffalo sause.</p>
-            <p>Price: $14.49</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-    </section>
-</section>  
- 
 
-<%- include ("partials/footer.ejs") %> <!-- Includes the footer -->
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_594x334.jpg" alt="Sub 1">
+        <h3>Veggie Delight</h3>
+        <p>Tomato, mozzarella, basil.</p>
+        <p>Price: $9.90</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Veggie Delight">
+            <input type="hidden" name="price" value="9.90">
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Sub 2">
+        <h3>Chipotle Meatball & Pepperoni</h3>
+        <p>Tomato, mozzarella, pepperoni, meatball.</p>
+        <p>Price: $11.00</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Chipotle Meatball & Pepperoni">
+            <input type="hidden" name="price" value="11.00">
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Sub 3">
+        <h3>Spicy Chicken</h3>
+        <p>Chicken, topped with spicy mayo, English-style cheese.</p>
+        <p>Price: $11.99</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Spicy Chicken">
+            <input type="hidden" name="price" value="11.99">
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Leg_Ham_594x334.jpg" alt="Sub 4">
+        <h3>Leg Ham</h3>
+        <p>Smoked leg ham, try with honey mustard dressing.</p>
+        <p>Price: $9.99</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Leg Ham">
+            <input type="hidden" name="price" value="9.99">
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Italian_BMT_594x334.jpg" alt="Sub 5">
+        <h3>Italian B.M.T</h3>
+        <p>Salami, layered pepperoni, leg ham.</p>
+        <p>Price: $14.99</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Italian B.M.T">
+            <input type="hidden" name="price" value="14.99">
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/NZ_FootlongSub_RoastBeef_594x334.png" alt="Sub 6">
+        <h3>Roast Beef</h3>
+        <p>Carved roast beef, sweet chili sauce.</p>
+        <p>Price: $14.49</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Roast Beef">
+            <input type="hidden" name="price" value="14.49">
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Patty_594x334.jpg" alt="Sub 7">
+        <h3>Pizza Four Cheese</h3>
+        <p>Mozzarella, veggie patty, vegetables.</p>
+        <p>Price: $13.99</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Pizza Four Cheese">
+            <input type="hidden" name="price" value="13.99">
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Buffalo_Chicken_594x334.jpg" alt="Sub 8">
+        <h3>Buffalo Chicken</h3>
+        <p>Chicken breast strips, spicy buffalo sauce.</p>
+        <p>Price: $14.49</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Buffalo Chicken">
+            <input type="hidden" name="price" value="14.49">
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+</section>
+
+<%- include("partials/footer.ejs") %> <!-- Includes the footer -->

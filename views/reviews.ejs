@@ -4,88 +4,50 @@
 <link rel="stylesheet" type="text/css" href="/public/reviews.css">
 
 <div class="container">
+    <h2>Customer Reviews</h2>
 
     <!-- Leave a Review Section -->
-    <div class="user-review-form">
-        <h3>Leave Your Review</h3>
-        <% if (session.loggedin) { %>
+    <% if (session.loggedin) { %>
+        <div class="user-review-form">
+            <h3>Leave a Review</h3>
             <form action="/submit-review" method="POST">
-                <label for="name">Your Name:</label><br>
-                <input type="text" id="name" name="name" value="<%= session.username %>" readonly><br>
-                <label for="rating">Rating:</label><br>
-                <select id="rating" name="rating" required>
-                    <option value="⭐">⭐</option>
-                    <option value="⭐⭐">⭐⭐</option>
-                    <option value="⭐⭐⭐">⭐⭐⭐</option>
-                    <option value="⭐⭐⭐⭐">⭐⭐⭐⭐</option>
-                    <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐</option>
+                <label>Your Name:</label><br>
+                <input type="text" name="name" value="<%= session.username %>" readonly><br>
+                <label>Rating:</label><br>
+                <select name="rating" required>
+                    <option value="5">⭐⭐⭐⭐⭐</option>
+                    <option value="4">⭐⭐⭐⭐</option>
+                    <option value="3">⭐⭐⭐</option>
+                    <option value="2">⭐⭐</option>
+                    <option value="1">⭐</option>
                 </select><br>
-                <label for="comment">Your Comment:</label><br>
-                <textarea id="comment" name="comment" rows="4" required></textarea><br>
-                <button type="submit">Submit</button>
+                <label>Your Comment:</label><br>
+                <textarea name="comment" rows="4" required></textarea><br>
+                <button type="submit">Submit Review</button>
             </form>
+        </div>
+    <% } else { %>
+        <p><a href="/login">Log in</a> to leave a review.</p>
+    <% } %>
+
+    <!-- Display Total Reviews -->
+    <h3>Total Reviews: <%= totalReviews %></h3>
+
+    <!-- Display All Reviews -->
+    <div class="reviews-container">
+        <% if (reviews.length === 0) { %>
+            <p>No reviews yet. Be the first to leave one!</p>
         <% } else { %>
-            <p><a href="/login">Log in</a> to leave a review.</p>
+            <% reviews.forEach(review => { %>
+                <div class="review">
+                    <strong><%= review.Name %></strong> - <%= review.Rating %> ⭐
+                    <p>"<%= review.Comment %>"</p>
+                    <small>Posted on: <%= new Date(review.CreatedAt).toLocaleString() %></small>
+                </div>
+                <hr>
+            <% }); %>
         <% } %>
     </div>
-
-    <!-- Rating Distribution Graph -->
-    <div class="rating-summary">
-        <h3>Customer Ratings</h3>
-        <div class="rating-bar-container">
-            <% if (totalReviews > 0) { %>
-                <% [5,4,3,2,1].forEach(star => { %>
-                    <div class="rating-bar">
-                        <span class="rating-label"><%= star %> ⭐</span>
-                        <div class="bar" style="width: <%= ((ratingCounts[star] || 0) / (totalReviews || 1)) * 100 %>%;"></div>
-                        <span class="rating-count"><%= ratingCounts[star] || 0 %></span>
-                    </div>
-                <% }); %>
-            <% } else { %>
-                <p>No ratings available yet.</p>
-            <% } %>
-        </div>
-    </div>
-
-    <!-- Customer Reviews Section with Scrollable List -->
-    <div class="reviews-container">
-        <h3 class="reviews-title">Customer Reviews:</h3>
-        <div class="scrollable-reviews">
-            <% if (reviews.length === 0) { %>
-                <p>No reviews yet. Be the first to leave one!</p>
-            <% } else { %>
-                <% reviews.forEach(review => { %>
-                    <div class="review">
-                        <div class="reviewer"><strong><%= review['Name'] %></strong></div> 
-                        <div class="rating"><%= review.Rating %></div> 
-                        <div class="comment">"<%= review.Comment %>"</div>
-                        <div class="review-date">Posted on: <%= new Date(review.CreatedAt).toLocaleString() %></div>
-                        
-                        <!-- Like Button -->
-                        <form action="/like-review" method="POST">
-                            <input type="hidden" name="review_id" value="<%= review.id %>">
-                            <button type="submit">Like (<%= review.likes || 0 %>)</button>
-                        </form>
-                        
-                        <!-- Comment Form -->
-                        <form action="/comment-review" method="POST">
-                            <input type="hidden" name="review_id" value="<%= review.id %>">
-                            <input type="text" name="comment" placeholder="Write a comment..." required>
-                            <button type="submit">Comment</button>
-                        </form>
-                        
-                        <!-- Display Comments for this Review -->
-                        <div class="comments-section">
-                            <% comments.filter(c => c.review_id === review.id).forEach(comment => { %>
-                                <p><strong><%= comment.username %>:</strong> <%= comment.text %></p>
-                            <% }); %>
-                        </div>
-                    </div>
-                <% }); %>
-            <% } %>
-        </div>
-    </div>
-
 </div>
 
 <%- include ("partials/footer.ejs") %>
