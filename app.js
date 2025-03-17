@@ -1,8 +1,8 @@
-var express = require('express');
-var app = express();
-var session = require('express-session');
-var mysql = require('mysql');
-var conn = require('./dbConfig'); // Database configuration file
+const express = require('express');
+const app = express();
+const session = require('express-session');
+const mysql = require('mysql');
+const conn = require('./dbConfig'); // Database configuration file
 
 // Setup view engine as EJS
 app.set('view engine', 'ejs');
@@ -87,29 +87,40 @@ app.get('/dessert', (req, res) => res.render('dessert', { title: 'Dessert', sess
 
 // Add item to cart
 app.post('/add-to-cart', (req, res) => {
-    const { name, price } = req.body;
-    
-    if (!name || !price) {
+    const { name, price, quantity } = req.body;
+
+    if (!name || !price || !quantity) {
         return res.send('Invalid item details');
     }
 
-    req.session.cart.push({ name, price: parseFloat(price) });
+    const cartItem = { name, price: parseFloat(price), quantity: parseInt(quantity) };
+
+    // Check if item already exists in cart
+    const itemIndex = req.session.cart.findIndex(item => item.name === name);
+
+    if (itemIndex > -1) {
+        req.session.cart[itemIndex].quantity += cartItem.quantity; // Increase quantity if item exists
+    } else {
+        req.session.cart.push(cartItem); // Add item if it does not exist
+    }
+
     res.redirect('/cart');
 });
 
 // View Cart
 app.get('/cart', (req, res) => {
     const cart = req.session.cart || [];
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     res.render('cart', { cart, total });
 });
 
 // Remove item from cart
 app.post('/remove-from-cart', (req, res) => {
-    const itemName = req.body.name;
-    
-    req.session.cart = req.session.cart.filter(item => item.name !== itemName);
-    res.redirect('/cart');
+    const { itemName } = req.body;  // Use item name for identification
+    if (req.session.cart) {
+        req.session.cart = req.session.cart.filter(item => item.name !== itemName); // Remove the item by name
+    }
+    res.redirect('/cart');  // Redirect to the cart page after the update
 });
 
 // Clear Cart
@@ -140,11 +151,11 @@ app.get('/reviews', (req, res) => {
                 }
             });
 
-            res.render('reviews', { 
-                reviews, 
-                session: req.session, 
-                ratingCounts, 
-                totalReviews: reviews.length 
+            res.render('reviews', {
+                reviews,
+                session: req.session,
+                ratingCounts,
+                totalReviews: reviews.length
             });
         });
     });
