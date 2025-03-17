@@ -51,52 +51,58 @@
 
 <section id="Wraps" class="menu">
     <h2 align="center">Wraps List</h2>
-    <section id="menu" class="menu">
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_with_Avo_Wrap_594x334.jpg" alt="Wrap 1">
-            <h3>Veggie Delight</h3>
-            <p>Tomato, mozzarella, basil, plain wrap/Gluten free wrap.</p>
-            <p>Price: $6.90</p>
-            <form action="/add-to-cart" method="POST">
-                <input type="hidden" name="name" value="Veggie Delight Wrap">
-                <input type="hidden" name="price" value="6.90">
-                <button type="submit" class="btn btn-primary">Add to Cart</button>
-            </form>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_Wrap_LTO_ANZ_Website_234x140.jpg" alt="Wrap 2">
-            <h3>Chipotle Meatball & Pepperoni</h3>
-            <p>Pepperoni, meatball with plain wrap/Gluten free wrap.</p>
-            <p>Price: $10.00</p>
-            <form action="/add-to-cart" method="POST">
-                <input type="hidden" name="name" value="Chipotle Meatball & Pepperoni Wrap">
-                <input type="hidden" name="price" value="10.00">
-                <button type="submit" class="btn btn-primary">Add to Cart</button>
-            </form>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_Wrap_LTO_ANZ_Website_594x334.jpg" alt="Wrap 3">
-            <h3>Spicy Chicken</h3>
-            <p>Chicken, topped with spicy mayo, English-style Cheese, plain wrap/Gluten free wrap.</p>
-            <p>Price: $7.99</p>
-            <form action="/add-to-cart" method="POST">
-                <input type="hidden" name="name" value="Spicy Chicken Wrap">
-                <input type="hidden" name="price" value="7.99">
-                <button type="submit" class="btn btn-primary">Add to Cart</button>
-            </form>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Carved_Ham_Wrap_594x334.jpg" alt="Wrap 4">
-            <h3>Leg Ham</h3>
-            <p>Smoked leg ham, try with honey mustard dressing, plain wrap/Gluten free wrap.</p>
-            <p>Price: $9.99</p>
-            <form action="/add-to-cart" method="POST">
-                <input type="hidden" name="name" value="Leg Ham Wrap">
-                <input type="hidden" name="price" value="9.99">
-                <button type="submit" class="btn btn-primary">Add to Cart</button>
-            </form>
-        </div>
-    </section>
+
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_with_Avo_Wrap_594x334.jpg" alt="Wrap 1">
+        <h3>Veggie Delight</h3>
+        <p>Tomato, mozzarella, basil, plain wrap/Gluten free wrap.</p>
+        <p>Price: $6.90</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Veggie Delight Wrap">
+            <input type="hidden" name="price" value="6.90">
+            <input type="number" name="quantity" value="1" min="1" required>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_Wrap_LTO_ANZ_Website_234x140.jpg" alt="Wrap 2">
+        <h3>Chipotle Meatball & Pepperoni</h3>
+        <p>Pepperoni, meatball with plain wrap/Gluten free wrap.</p>
+        <p>Price: $10.00</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Chipotle Meatball & Pepperoni Wrap">
+            <input type="hidden" name="price" value="10.00">
+            <input type="number" name="quantity" value="1" min="1" required>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_Wrap_LTO_ANZ_Website_594x334.jpg" alt="Wrap 3">
+        <h3>Spicy Chicken</h3>
+        <p>Chicken, topped with spicy mayo, English-style Cheese, plain wrap/Gluten free wrap.</p>
+        <p>Price: $7.99</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Spicy Chicken Wrap">
+            <input type="hidden" name="price" value="7.99">
+            <input type="number" name="quantity" value="1" min="1" required>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Carved_Ham_Wrap_594x334.jpg" alt="Wrap 4">
+        <h3>Leg Ham</h3>
+        <p>Smoked leg ham, try with honey mustard dressing, plain wrap/Gluten free wrap.</p>
+        <p>Price: $9.99</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Leg Ham Wrap">
+            <input type="hidden" name="price" value="9.99">
+            <input type="number" name="quantity" value="1" min="1" required>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
 </section>
 
 <%- include("partials/footer.ejs") %> <!-- Includes the footer -->
