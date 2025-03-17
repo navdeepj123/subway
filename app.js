@@ -27,8 +27,8 @@ app.use((req, res, next) => {
     next();
 });
 
-// Middleware to restrict access to menu pages before login
-app.use(['/subs', '/wraps', '/drinks', '/dessert', '/logout', '/reviews'], (req, res, next) => {
+// Middleware to restrict access to certain pages before login
+app.use(['/logout', '/reviews'], (req, res, next) => {
     if (!req.session.loggedin) {
         return res.redirect('/login');
     }
@@ -48,7 +48,7 @@ app.get('/register', (req, res) => res.render('register', { title: 'Register' })
 app.post('/auth', (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) return res.send('Please enter Username and Password!');
-    
+
     conn.query('SELECT * FROM users WHERE name = ? AND password = ?', [username, password], (error, results) => {
         if (error) return res.status(500).send('Internal Server Error');
         if (results.length > 0) {
@@ -85,15 +85,37 @@ app.get('/wraps', (req, res) => res.render('wraps', { title: 'Wraps', session: r
 app.get('/drinks', (req, res) => res.render('drinks', { title: 'Drinks', session: req.session }));
 app.get('/dessert', (req, res) => res.render('dessert', { title: 'Dessert', session: req.session }));
 
+// Add item to cart
 app.post('/add-to-cart', (req, res) => {
-    req.session.cart.push({ name: req.body.name, price: parseFloat(req.body.price) });
+    const { name, price } = req.body;
+    
+    if (!name || !price) {
+        return res.send('Invalid item details');
+    }
+
+    req.session.cart.push({ name, price: parseFloat(price) });
     res.redirect('/cart');
 });
 
+// View Cart
 app.get('/cart', (req, res) => {
     const cart = req.session.cart || [];
     const total = cart.reduce((sum, item) => sum + item.price, 0);
     res.render('cart', { cart, total });
+});
+
+// Remove item from cart
+app.post('/remove-from-cart', (req, res) => {
+    const itemName = req.body.name;
+    
+    req.session.cart = req.session.cart.filter(item => item.name !== itemName);
+    res.redirect('/cart');
+});
+
+// Clear Cart
+app.post('/clear-cart', (req, res) => {
+    req.session.cart = [];
+    res.redirect('/cart');
 });
 
 // Reviews
