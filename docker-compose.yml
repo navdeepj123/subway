@@ -3,7 +3,7 @@ name: Deploy to Server
 on:
   push:
     branches:
-      - main  # Change to your deployment branch if needed
+      - main  # Deploy on push to main branch (or your desired branch)
 
 jobs:
   deploy:
@@ -13,18 +13,14 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-    - name: Setup SSH
+    - name: Deploy with SCP
       run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-
-    - name: Deploy to Server
+        # Install sshpass
+        sudo apt-get install -y sshpass
+        
+        # Deploy with SCP using the secrets stored in GitHub
+        sshpass -p "${{ secrets.SERVER_PASSWORD }}" scp -o StrictHostKeyChecking=no my-web-app.tar ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/root/
+        
+    - name: SSH into Server and Extract App
       run: |
-        ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-        cd /var/www/html/my_project
-        git pull origin main  # Pull latest changes
-        systemctl restart apache2  # Restart Apache to load changes
-        exit
-        EOF
+        sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "tar -xvf /root/my-web-app.tar -C /root/"
