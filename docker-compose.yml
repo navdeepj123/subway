@@ -1,9 +1,9 @@
-name: Deploy to Server
+name: Deploy to Apache Server
 
 on:
   push:
     branches:
-      - main
+      - main  # Trigger deployment on push to the main branch (or your desired branch)
 
 jobs:
   deploy:
@@ -13,18 +13,39 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-    - name: Install SSH Pass
-      run: sudo apt-get install -y sshpass
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'  # Adjust to the version of Node.js you need
 
-    - name: Deploy with SCP
+    - name: Install Dependencies
       run: |
-        echo "Deploying to server"
-        # Test SSH connection first
-        sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no -T ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "echo SSH connection successful"
-        
-        # Deploy with SCP using the secrets stored in GitHub
-        sshpass -p "${{ secrets.SERVER_PASSWORD }}" scp -o StrictHostKeyChecking=no my-web-app.tar ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/root/
-        
-    - name: SSH into Server and Extract App
+        # Install dependencies using npm or yarn (depends on your setup)
+        npm install  # Or use yarn install if you're using Yarn
+
+    - name: Build the React App
       run: |
-        sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "tar -xvf /root/my-web-app.tar -C /root/"
+        # Build the React app (or your front-end project)
+        npm run build  # Adjust if you're using yarn (e.g., yarn build)
+
+    - name: Install SSH and SCP Tools
+      run: |
+        # Install sshpass for non-interactive SSH password authentication
+        sudo apt-get install -y sshpass
+
+    - name: Transfer Files to Apache Server using SCP
+      run: |
+        # Use SCP to copy the built files to the Apache server
+        sshpass -p "${{ secrets.SERVER_PASSWORD }}" scp -r ./build/* ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/var/www/html/
+
+    - name: SSH into Apache Server to Set Permissions and Restart Apache
+      run: |
+        # SSH into the server to set proper permissions and restart Apache if needed
+        sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
+          # Set appropriate permissions for the files (optional but recommended)
+          sudo chown -R www-data:www-data /var/www/html/*
+          sudo chmod -R 755 /var/www/html/*
+          
+          # Restart Apache to ensure the new content is served
+          sudo systemctl restart apache2
+        "
