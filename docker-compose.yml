@@ -3,7 +3,7 @@ name: Deploy to Server
 on:
   push:
     branches:
-      - main  # Deploy on push to main branch (or your desired branch)
+      - main
 
 jobs:
   deploy:
@@ -13,10 +13,14 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
+    - name: Install SSH Pass
+      run: sudo apt-get install -y sshpass
+
     - name: Deploy with SCP
       run: |
-        # Install sshpass
-        sudo apt-get install -y sshpass
+        echo "Deploying to server"
+        # Test SSH connection first
+        sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no -T ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "echo SSH connection successful"
         
         # Deploy with SCP using the secrets stored in GitHub
         sshpass -p "${{ secrets.SERVER_PASSWORD }}" scp -o StrictHostKeyChecking=no my-web-app.tar ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/root/
