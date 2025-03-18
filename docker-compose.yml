@@ -13,20 +13,11 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'  # Adjust to the version of Node.js you need
-
-    - name: Install Dependencies
-      run: |
-        # Install dependencies using npm or yarn (depends on your setup)
-        npm install  # Or use yarn install if you're using Yarn
-
     - name: Build the React App
       run: |
         # Build the React app (or your front-end project)
-        npm run build  # Adjust if you're using yarn (e.g., yarn build)
+        npm install
+        npm run build
 
     - name: Install SSH and SCP Tools
       run: |
