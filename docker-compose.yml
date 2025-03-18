@@ -3,31 +3,28 @@ name: Deploy to Server
 on:
   push:
     branches:
-      - main  # Change to your deployment branch
+      - main  # Change to your deployment branch if needed
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+    - name: Checkout Repository
+      uses: actions/checkout@v3
 
-      - name: Install sshpass
-        run: sudo apt-get update && sudo apt-get install -y sshpass
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      - name: Transfer Files to Server
-        run: |
-          sshpass -p "${{ secrets.SERVER_PASSWORD }}" scp -o StrictHostKeyChecking=no my-web-app.tar ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/root/
-
-      - name: Extract and Deploy on Server
-        run: |
-          sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            cd /root
-            rm -rf my-web-app
-            mkdir my-web-app
-            tar -xf my-web-app.tar -C my-web-app
-            cd my-web-app
-            npm install
-            pm2 restart my-app || pm2 start index.js --name "my-app"
-          EOF
+    - name: Deploy to Server
+      run: |
+        ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+        cd /var/www/html/my_project
+        git pull origin main  # Pull latest changes
+        systemctl restart apache2  # Restart Apache to load changes
+        exit
+        EOF
