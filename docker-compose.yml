@@ -3,38 +3,31 @@ name: Deploy to Server
 on:
   push:
     branches:
-      - main  # Change branch if needed
+      - main  # Change to your deployment branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
 
-      - name: Deploy to Server
+      - name: Transfer Files to Server
         run: |
-          ssh -o StrictHostKeyChecking=no your-server-user@your-server-ip << 'EOF'
+          sshpass -p "${{ secrets.SERVER_PASSWORD }}" scp -o StrictHostKeyChecking=no my-web-app.tar ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/root/
+
+      - name: Extract and Deploy on Server
+        run: |
+          sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             cd /root
             rm -rf my-web-app
             mkdir my-web-app
-          EOF
-
-          scp -o StrictHostKeyChecking=no my-web-app.tar your-server-user@your-server-ip:/root/
-
-          ssh -o StrictHostKeyChecking=no your-server-user@your-server-ip << 'EOF'
-            cd /root
             tar -xf my-web-app.tar -C my-web-app
             cd my-web-app
-            # Install dependencies if needed
             npm install
-            # Restart server process if needed
             pm2 restart my-app || pm2 start index.js --name "my-app"
           EOF
-
