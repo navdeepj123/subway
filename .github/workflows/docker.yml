@@ -3,7 +3,7 @@ name: Deploy Web App to Apache Server
 on:
   push:
     branches:
-      - main  # Runs only when code is pushed to main branch
+      - main  # Runs only when code is pushed to the main branch
 
 jobs:
   deploy:
@@ -21,13 +21,12 @@ jobs:
         echo "Server Host: 95.111.218.189"
         echo "Server Username: root"
 
-    - name: Install Dependencies & Build React App
+    - name: Install Dependencies (Express.js)
       run: |
         export CI=false  # Prevent ESLint warnings from failing build
         npm install
-        npm run build
 
-    - name: Transfer Files to Apache Server
+    - name: Transfer Express.js App to Server
       env:
         SERVER_HOST: 95.111.218.189
         SERVER_USERNAME: root
@@ -35,18 +34,24 @@ jobs:
       run: |
         sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
           echo "Successfully connected to $SERVER_HOST"
-          rm -rf /var/www/html/*
+          # Remove old project files (optional)
+          rm -rf /var/www/express-app/
+          mkdir -p /var/www/express-app/
         EOF
         
-        sshpass -p "$SERVER_PASSWORD" scp -r build/* $SERVER_USERNAME@$SERVER_HOST:/var/www/html/
+        # Copy all project files to the server
+        sshpass -p "$SERVER_PASSWORD" scp -r * $SERVER_USERNAME@$SERVER_HOST:/var/www/express-app/
 
-    - name: Restart Apache Server
+    - name: Restart Express.js Server with PM2
       env:
         SERVER_HOST: 95.111.218.189
         SERVER_USERNAME: root
         SERVER_PASSWORD: navdeep123
       run: |
         sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
-          echo "Restarting Apache..."
-          sudo systemctl restart apache2
+          echo "Restarting Express.js app..."
+          cd /var/www/express-app/
+          npm install
+          pm2 restart subway-app || pm2 start app.js --name subway-app
+          pm2 save
         EOF
