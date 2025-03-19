@@ -1,38 +1,49 @@
-name: Deploy Docker Container
+name: Deploy to Apache Server
 
 on:
   push:
     branches:
-      - main  # Change to your deployment branch
+      - main  # Adjust this to your desired branch, usually "main" or "master"
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build Docker Image
-        run: docker build -t your-dockerhub-username/your-app-name .
-
-      - name: Push Docker Image to Docker Hub
-        run: docker push your-dockerhub-username/your-app-name
-
-      - name: Deploy on Server
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}  # Use SSH key for security instead
-          script: |
-            docker pull your-dockerhub-username/your-app-name
-            docker stop my_container || true
-            docker rm my_container || true
-            docker run -d --name my_container -p 80:3000 your-dockerhub-username/your-app-name
+    # Checkout the repository
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+    
+    # Set up Node.js (or any environment your project requires)
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'  # Specify the Node.js version you are using
+    
+    # Install dependencies (npm install)
+    - name: Install dependencies
+      run: |
+        npm install
+    
+    # Build the project (for React or similar front-end frameworks)
+    - name: Build project
+      run: |
+        npm run build  # This assumes you're using create-react-app or similar
+    
+    # Set up SSH pass for password authentication
+    - name: Set up SSH pass
+      run: sudo apt-get install sshpass
+    
+    # Copy the build files to the Apache server (assuming build is in the 'build' folder)
+    - name: Deploy build files to server
+      run: |
+        # Copy files to Apache server's root directory
+        sshpass -p "${{ secrets.SERVER_PASSWORD }}" scp -o StrictHostKeyChecking=no -r ./build/* ${SERVER_USER}@${SERVER_IP}:/var/www/html/
+    
+    # SSH into the server and perform post-deployment tasks if needed (e.g., restart Apache)
+    - name: SSH into the server and restart Apache
+      run: |
+        sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_IP} << 'EOF'
+          # Restart Apache to apply changes
+          sudo systemctl restart apache2
+        EOF

@@ -1,8 +1,8 @@
-var express = require('express');
-var app = express();
-var session = require('express-session');
-var mysql = require('mysql');
-var conn = require('./dbConfig'); // Database configuration file
+const express = require('express');
+const app = express();
+const session = require('express-session');
+const mysql = require('mysql');
+const conn = require('./dbConfig'); // Database configuration file
 
 // Setup view engine as EJS
 app.set('view engine', 'ejs');
@@ -27,8 +27,8 @@ app.use((req, res, next) => {
     next();
 });
 
-// Middleware to restrict access to menu pages before login
-app.use(['/subs', '/wraps', '/drinks', '/dessert', '/logout', '/reviews'], (req, res, next) => {
+// Middleware to restrict access to certain pages before login
+app.use(['/logout', '/reviews'], (req, res, next) => {
     if (!req.session.loggedin) {
         return res.redirect('/login');
     }
@@ -48,7 +48,7 @@ app.get('/register', (req, res) => res.render('register', { title: 'Register' })
 app.post('/auth', (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) return res.send('Please enter Username and Password!');
-    
+
     conn.query('SELECT * FROM users WHERE name = ? AND password = ?', [username, password], (error, results) => {
         if (error) return res.status(500).send('Internal Server Error');
         if (results.length > 0) {
@@ -85,15 +85,48 @@ app.get('/wraps', (req, res) => res.render('wraps', { title: 'Wraps', session: r
 app.get('/drinks', (req, res) => res.render('drinks', { title: 'Drinks', session: req.session }));
 app.get('/dessert', (req, res) => res.render('dessert', { title: 'Dessert', session: req.session }));
 
+// Add item to cart
 app.post('/add-to-cart', (req, res) => {
-    req.session.cart.push({ name: req.body.name, price: parseFloat(req.body.price) });
+    const { name, price, quantity } = req.body;
+
+    if (!name || !price || !quantity) {
+        return res.send('Invalid item details');
+    }
+
+    const cartItem = { name, price: parseFloat(price), quantity: parseInt(quantity) };
+
+    // Check if item already exists in cart
+    const itemIndex = req.session.cart.findIndex(item => item.name === name);
+
+    if (itemIndex > -1) {
+        req.session.cart[itemIndex].quantity += cartItem.quantity; // Increase quantity if item exists
+    } else {
+        req.session.cart.push(cartItem); // Add item if it does not exist
+    }
+
     res.redirect('/cart');
 });
 
+// View Cart
 app.get('/cart', (req, res) => {
     const cart = req.session.cart || [];
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     res.render('cart', { cart, total });
+});
+
+// Remove item from cart
+app.post('/remove-from-cart', (req, res) => {
+    const { itemName } = req.body;  // Use item name for identification
+    if (req.session.cart) {
+        req.session.cart = req.session.cart.filter(item => item.name !== itemName); // Remove the item by name
+    }
+    res.redirect('/cart');  // Redirect to the cart page after the update
+});
+
+// Clear Cart
+app.post('/clear-cart', (req, res) => {
+    req.session.cart = [];
+    res.redirect('/cart');
 });
 
 // Reviews
@@ -118,11 +151,11 @@ app.get('/reviews', (req, res) => {
                 }
             });
 
-            res.render('reviews', { 
-                reviews, 
-                session: req.session, 
-                ratingCounts, 
-                totalReviews: reviews.length 
+            res.render('reviews', {
+                reviews,
+                session: req.session,
+                ratingCounts,
+                totalReviews: reviews.length
             });
         });
     });
