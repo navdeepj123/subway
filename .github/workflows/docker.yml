@@ -1,9 +1,9 @@
-name: Deploy Web App to Server
+name: Deploy Web App to Apache Server
 
 on:
   push:
     branches:
-      - main  # Deploy on push to main branch (or your desired branch)
+      - main  # Runs only when code is pushed to main branch
 
 jobs:
   deploy:
@@ -13,22 +13,40 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-    - name: Install Dependencies
+    - name: Install SSH & SSHPass
+      run: sudo apt-get update && sudo apt-get install -y sshpass
+
+    - name: Debug SSH Variables
       run: |
-        # Install dependencies if you need to, like npm install
+        echo "Server Host: 95.111.218.189"
+        echo "Server Username: root"
+
+    - name: Install Dependencies & Build React App
+      run: |
+        export CI=false  # Prevent ESLint warnings from failing build
         npm install
+        npm run build
 
-    - name: Deploy to Server (without Docker)
+    - name: Transfer Files to Apache Server
+      env:
+        SERVER_HOST: 95.111.218.189
+        SERVER_USERNAME: root
+        SERVER_PASSWORD: navdeep123
       run: |
-        # Copy your project files directly to the server using SCP
-        # You can add specific files or folders you need for your deployment
-        scp -r ./ ${SERVER_USER}@${SERVER_IP}:/path/to/your/deployment/directory/
+        sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
+          echo "Successfully connected to $SERVER_HOST"
+          rm -rf /var/www/html/*
+        EOF
+        
+        sshpass -p "$SERVER_PASSWORD" scp -r build/* $SERVER_USERNAME@$SERVER_HOST:/var/www/html/
 
-    - name: SSH into Server and Set Up
+    - name: Restart Apache Server
+      env:
+        SERVER_HOST: 95.111.218.189
+        SERVER_USERNAME: root
+        SERVER_PASSWORD: navdeep123
       run: |
-        # SSH into the server and perform any post-deployment setup
-        sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_IP} "
-          cd /path/to/your/deployment/directory/
-          npm install  # If you need to install dependencies on the server
-          pm2 restart your-app  # If you use PM2 or any other process manager
-        "
+        sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
+          echo "Restarting Apache..."
+          sudo systemctl restart apache2
+        EOF
