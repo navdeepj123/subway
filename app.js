@@ -19,7 +19,6 @@ app.use(session({
     saveUninitialized: true
 }));
 
-
 // Route to render learn more page
 app.get('/learnmore', function (req, res) {
     res.render('learnmore', { title: 'LearnMore' });
@@ -29,16 +28,26 @@ app.get('/learnmore', function (req, res) {
 app.get('/login', function (req, res) {
     res.render('login', { errorMessage: null, csrfToken: 'your_csrf_token' });
 });
-app.get("/login", (req, res) => {
-    res.render("login", { errorMessage: req.flash("error") || "" });
-});
+
 // Route to authenticate user login
 app.post('/auth', function (req, res) {
     let name = req.body.username;
     let password = req.body.password;
     if (!name || !password) {
-        return res.render('login', { errorMessage: 'Please enter both Username and Password!', csrfToken: 'your_csrf_token' })}
+        return res.render('login', { errorMessage: 'Please enter both Username and Password!', csrfToken: 'your_csrf_token' });
+    }
+
+    conn.query('SELECT * FROM users WHERE name = ? AND password = ?', [name, password], (error, results) => {
+        if (error) return res.status(500).send('Internal Server Error');
+        if (results.length > 0) {
+            req.session.loggedin = true;
+            req.session.username = name;
+            res.redirect('/menu');
+        } else {
+            res.render('login', { errorMessage: 'Incorrect Username and/or Password!', csrfToken: 'your_csrf_token' });
+        }
     });
+});
 
 // Initialize cart in session if not exists
 app.use((req, res, next) => {
@@ -82,6 +91,7 @@ app.post('/auth', (req, res) => {
     });
 });
 
+// User Registration
 app.post('/register', (req, res) => {
     const { username, password } = req.body;
     if (username && password) {
@@ -91,24 +101,7 @@ app.post('/register', (req, res) => {
         });
     } else {
         res.send('Please enter a Username and Password.');
-
     }
-
-    conn.query('SELECT * FROM users WHERE name = ? AND password=?', [name, password],
-        function (error, results) {
-            if (error) {
-                console.error('Database error:', error);
-                return res.render('login', { errorMessage: 'Internal Server Error. Try again later.', csrfToken: 'your_csrf_token' });
-            }
-
-            if (results.length > 0) {
-                req.session.loggedin = true;
-                req.session.username = name;
-                return res.redirect('/membersOnly');
-            } else {
-                return res.render('login', { errorMessage: 'Incorrect Username or Password!', csrfToken: 'your_csrf_token' });
-            }
-        });
 });
 
 // Menu & Cart
@@ -117,7 +110,6 @@ app.get('/menu', (req, res) => {
     req.session.accessMenu = true; // Allow access to related pages after menu login
     res.render('menu', { title: 'Menu', session: req.session });
 });
-
 
 // Route to render subs page
 app.get('/Subs', function (req, res) {
@@ -267,20 +259,6 @@ app.post('/submit-review', (req, res) => {
     });
 });
 
-
 // Start the server and listen on port 3000
 app.listen(3000);
 console.log('Node app is running on port 3000');
-
-// Logout
-app.get('/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
-});
-
-// Start the Server
-const port = process.env.PORT || 3001;
-app.listen(port, () => {
-    console.log(`🚀 Server running at http://localhost:${port}`);
-});
-
