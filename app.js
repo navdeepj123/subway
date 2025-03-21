@@ -19,6 +19,36 @@ app.use(session({
     saveUninitialized: true
 }));
 
+// Route to render learn more page
+app.get('/learnmore', function (req, res) {
+    res.render('learnmore', { title: 'LearnMore' });
+});
+
+// Route to render login page
+app.get('/login', function (req, res) {
+    res.render('login', { errorMessage: null, csrfToken: 'your_csrf_token' });
+});
+
+// Route to authenticate user login
+app.post('/auth', function (req, res) {
+    let name = req.body.username;
+    let password = req.body.password;
+    if (!name || !password) {
+        return res.render('login', { errorMessage: 'Please enter both Username and Password!', csrfToken: 'your_csrf_token' });
+    }
+
+    conn.query('SELECT * FROM users WHERE name = ? AND password = ?', [name, password], (error, results) => {
+        if (error) return res.status(500).send('Internal Server Error');
+        if (results.length > 0) {
+            req.session.loggedin = true;
+            req.session.username = name;
+            res.redirect('/menu');
+        } else {
+            res.render('login', { errorMessage: 'Incorrect Username and/or Password!', csrfToken: 'your_csrf_token' });
+        }
+    });
+});
+
 // Initialize cart in session if not exists
 app.use((req, res, next) => {
     if (!req.session.cart) {
@@ -61,6 +91,7 @@ app.post('/auth', (req, res) => {
     });
 });
 
+// User Registration
 app.post('/register', (req, res) => {
     const { username, password } = req.body;
     if (username && password) {
@@ -79,6 +110,63 @@ app.get('/menu', (req, res) => {
     req.session.accessMenu = true; // Allow access to related pages after menu login
     res.render('menu', { title: 'Menu', session: req.session });
 });
+
+// Route to render subs page
+app.get('/Subs', function (req, res) {
+    res.render("Subs", { title: 'subs' });
+});
+
+// Route to render wraps page
+app.get('/wraps', function (req, res) {
+    res.render("wraps", { title: 'wraps' });
+});
+
+// Route to render drinks page
+app.get('/drinks', function (req, res) {
+    res.render("drinks", { title: 'drinks' });
+});
+
+// Route to render dessert page
+app.get('/Dessert', function (req, res) {
+    res.render("Dessert", { title: 'Dessert' });
+});
+
+// Route to handle user registration
+app.post('/register', function (req, res) {
+    let name = req.body.username;
+    let password = req.body.password;
+    if (name && password) {
+        var sql = `INSERT INTO users(name,password) VALUES (?, ?)`;
+        conn.query(sql, [name, password], function (error, results) {
+            if (error) {
+                console.error('Error inserting record:', error);
+                return res.render('register', { title: 'Register', errorMessage: 'Error registering user. Try again later.' });
+            }
+            console.log('Record inserted');
+            res.render('login', { errorMessage: 'Registration successful. Please log in.', csrfToken: 'your_csrf_token' });
+        });
+    } else {
+        res.render('register', { title: 'Register', errorMessage: 'Please fill in all fields.' });
+    }
+});
+
+// Route to render members-only page (accessible only if logged in)
+app.get('/membersOnly', function (req, res, next) {
+    if (req.session.loggedin) {
+        res.render('membersOnly.ejs');
+    }
+    else {
+        res.send('Please login to view this page!');
+    }
+});
+
+// Route to handle user logout
+app.get('/logout', (req, res) => {
+    req.session.destroy(); // Destroy session to logout user
+    res.redirect('/');
+});
+
+// Route to handle GET requests to the reviews page
 
 app.get('/subs', (req, res) => res.render('subs', { title: 'Subs', session: req.session }));
 app.get('/wraps', (req, res) => res.render('wraps', { title: 'Wraps', session: req.session }));
@@ -130,6 +218,7 @@ app.post('/clear-cart', (req, res) => {
 });
 
 // Reviews
+
 app.get('/reviews', (req, res) => {
     conn.query('SELECT * FROM submit_review ORDER BY CreatedAt DESC', (error, reviews) => {
         if (error) {
@@ -170,14 +259,6 @@ app.post('/submit-review', (req, res) => {
     });
 });
 
-// Logout
-app.get('/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
-});
-
-// Start the Server
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`🚀 Server running at http://localhost:${port}`);
-});
+// Start the server and listen on port 3000
+app.listen(3000);
+console.log('Node app is running on port 3000');

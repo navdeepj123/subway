@@ -1,34 +1,75 @@
-name: Deploy Web App to Server
+name: Deploy Express App with PM2
 
 on:
   push:
     branches:
-      - main  # Deploy on push to main branch (or your desired branch)
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Install Dependencies
-      run: |
-        # Install dependencies if you need to, like npm install
-        npm install
+      - name: Install SSH & SSHPass
+        run: sudo apt-get install -y sshpass
 
-    - name: Deploy to Server (without Docker)
-      run: |
-        # Copy your project files directly to the server using SCP
-        # You can add specific files or folders you need for your deployment
-        scp -r ./ ${SERVER_USER}@${SERVER_IP}:/path/to/your/deployment/directory/
+      - name: Debug SSH Variables
+        run: |
+          echo "Server Host: ${{ secrets.SERVER_HOST }}"
+          echo "Server Username: ${{ secrets.SERVER_USERNAME }}"
 
-    - name: SSH into Server and Set Up
-      run: |
-        # SSH into the server and perform any post-deployment setup
-        sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_IP} "
-          cd /path/to/your/deployment/directory/
-          npm install  # If you need to install dependencies on the server
-          pm2 restart your-app  # If you use PM2 or any other process manager
-        "
+      - name: Transfer Files to Server
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        run: |
+          sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
+            echo "✅ Successfully connected to $SERVER_HOST"
+
+            # Ensure PM2 is installed globally
+            sudo npm install -g pm2 || true
+
+            # Navigate to project directory or create it
+            sudo mkdir -p /var/www/express-app
+            cd /var/www/express-app
+
+            # Stop the existing PM2 process only if it exists
+            npx pm2 stop subway-app || echo "PM2 process not running, skipping stop step"
+
+            # Remove old project files safely
+            sudo rm -rf /var/www/express-app/* || true
+
+            exit
+          EOF
+
+          # Securely copy new files from GitHub Actions to the server
+          sshpass -p "$SERVER_PASSWORD" scp -r * $SERVER_USERNAME@$SERVER_HOST:/var/www/express-app/
+
+      - name: Install Dependencies and Restart App
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        run: |
+          sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
+            echo "🚀 Installing Dependencies and Restarting PM2..."
+
+            # Go to project folder
+            cd /var/www/express-app
+
+            # Install dependencies
+            npm install --production
+
+            # Start or restart the app with PM2
+            npx pm2 start app.js --name subway-app || npx pm2 restart subway-app
+
+            # Save PM2 process list to survive reboots
+            npx pm2 save
+
+            # Exit SSH session
+            exit
+          EOF
