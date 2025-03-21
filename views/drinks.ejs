@@ -7,6 +7,22 @@
     </button>
 </div>
 
+<!-- Filter Section for Drinks -->
+<div class="filter-section" style="text-align: center; margin-bottom: 20px;">
+    <label for="drink-filter">Filter by Category:</label>
+    <select id="drink-filter" onchange="filterDrinks()">
+        <option value="all">All</option>
+        <option value="soft">Soft Drinks</option>
+        <option value="smoothies">Smoothies</option>
+        <option value="coffee">Coffee</option>
+    </select>
+</div>
+
+<!-- Featured Drink of the Day -->
+<div class="featured-drink" style="text-align: center; margin-bottom: 20px; font-size: 18px;">
+    <strong>Drink of the Day:</strong> <span id="drink-of-day">Mango Smoothie - $4.99</span>
+</div>
+
 <style>
     /* CSS styles for the menu */
     .menu {
@@ -47,17 +63,26 @@
     .menu-item p {
         font-size: 16px;
     }
+
+    /* Confirmation message */
+    .confirmation-message {
+        display: none;
+        color: green;
+        font-weight: bold;
+        text-align: center;
+        margin-top: 10px;
+    }
 </style>
 
 <section id="Drinks" class="menu">
     <h2 align="center">Drinks Menu</h2>
 
-    <div class="menu-item">
+    <div class="menu-item" data-category="soft">
         <img src="https://th.bing.com/th/id/R.afe43d5e13e9066c7fe8fc083813b009?rik=nF8Dpom5FKH99w&pid=ImgRaw&r=0" alt="Cola">
         <h3>Cola</h3>
         <p>Classic cola served with ice.</p>
         <p>Price: $2.49</p>
-        <form action="/add-to-cart" method="POST">
+        <form action="/add-to-cart" method="POST" onsubmit="showConfirmation(event)">
             <input type="hidden" name="name" value="Cola">
             <input type="hidden" name="price" value="2.49">
             <input type="number" name="quantity" value="1" min="1" required>
@@ -65,12 +90,12 @@
         </form>
     </div>
 
-    <div class="menu-item">
+    <div class="menu-item" data-category="smoothies">
         <img src="https://th.bing.com/th/id/OIP.yRWndmhKtrlHVqusSl29KgHaFj?pid=ImgDet&rs=1" alt="Mango Smoothie">
         <h3>Mango Smoothie</h3>
         <p>Smooth and creamy mango smoothie.</p>
         <p>Price: $4.99</p>
-        <form action="/add-to-cart" method="POST">
+        <form action="/add-to-cart" method="POST" onsubmit="showConfirmation(event)">
             <input type="hidden" name="name" value="Mango Smoothie">
             <input type="hidden" name="price" value="4.99">
             <input type="number" name="quantity" value="1" min="1" required>
@@ -78,14 +103,47 @@
         </form>
     </div>
 
-        <div class="menu-item" data-name="Cappuccino" data-price="3.99">
-            <img src="https://th.bing.com/th/id/OIP.PCT4H4UkbrmyHzfpumP80QHaFb?pid=ImgDet&rs=1" alt="Cappuccino">
-            <h3>Cappuccino</h3>
-            <p>Rich and frothy cappuccino.</p>
-            <p>Price: $3.99</p>
-            <button onclick="addToCart(this)">Add to Cart</button>
-        </div>
-    </section>
+    <div class="menu-item" data-category="coffee">
+        <img src="https://th.bing.com/th/id/OIP.PCT4H4UkbrmyHzfpumP80QHaFb?pid=ImgDet&rs=1" alt="Cappuccino">
+        <h3>Cappuccino</h3>
+        <p>Rich and frothy cappuccino.</p>
+        <p>Price: $3.99</p>
+        <form action="/add-to-cart" method="POST" onsubmit="showConfirmation(event)">
+            <input type="hidden" name="name" value="Cappuccino">
+            <input type="hidden" name="price" value="3.99">
+            <input type="number" name="quantity" value="1" min="1" required>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
 </section>
+
+<!-- Confirmation message -->
+<div id="confirmation-message" class="confirmation-message">
+    ✅ Item added to cart!
+</div>
+
+<script>
+    function filterDrinks() {
+        let filter = document.getElementById("drink-filter").value;
+        let drinks = document.querySelectorAll(".menu-item");
+
+        drinks.forEach(drink => {
+            let category = drink.getAttribute("data-category");
+
+            if (filter === "all" || category === filter) {
+                drink.style.display = "block";
+            } else {
+                drink.style.display = "none";
+            }
+        });
+    }
+
+    function showConfirmation(event) {
+        event.preventDefault(); // Prevent form submission for demo
+        let confirmation = document.getElementById("confirmation-message");
+        confirmation.style.display = "block";
+        setTimeout(() => confirmation.style.display = "none", 2000);
+    }
+</script>
 
 <%- include("partials/footer.ejs") %> <!-- Includes the footer -->
