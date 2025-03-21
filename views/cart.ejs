@@ -55,6 +55,11 @@
             color: #555;
         }
 
+        .cart-item .quantity {
+            font-size: 16px;
+            color: #555;
+        }
+
         form {
             display: inline;
         }
@@ -119,7 +124,8 @@
             }
 
             .cart-item .name,
-            .cart-item .price {
+            .cart-item .price,
+            .cart-item .quantity {
                 margin-bottom: 10px;
             }
 
@@ -149,7 +155,8 @@
                 <% cart.forEach((item, index) => { %>
                     <li class="cart-item">
                         <span class="name"><%= item.name %></span>
-                        <span class="price">$<%= item.price.toFixed(2) %></span>
+                        <span class="quantity">Quantity: <%= item.quantity %></span>
+                        <span class="price">$<%= (item.price * item.quantity).toFixed(2) %></span>
                         <form action="/remove-from-cart" method="POST" style="display:inline;">
                             <input type="hidden" name="index" value="<%= index %>">
                             <button type="submit">Remove</button>
