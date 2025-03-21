@@ -37,7 +37,8 @@ app.post('/auth', function (req, res) {
     let name = req.body.username;
     let password = req.body.password;
     if (!name || !password) {
-        return res.render('login', { errorMessage: 'Please enter both Username and Password!', csrfToken: 'your_csrf_token' });
+        return res.render('login', { errorMessage: 'Please enter both Username and Password!', csrfToken: 'your_csrf_token' })}
+    });
 
 // Initialize cart in session if not exists
 app.use((req, res, next) => {
@@ -278,7 +279,7 @@ app.get('/logout', (req, res) => {
 });
 
 // Start the Server
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 app.listen(port, () => {
     console.log(`🚀 Server running at http://localhost:${port}`);
 });
