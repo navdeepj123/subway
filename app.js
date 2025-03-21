@@ -113,22 +113,23 @@ app.get('/menu', (req, res) => {
 
 // Route to render subs page
 app.get('/Subs', function (req, res) {
-    res.render("Subs", { title: 'subs' });
+    res.render("Subs", { session: req.session });
 });
 
 // Route to render wraps page
 app.get('/wraps', function (req, res) {
-    res.render("wraps", { title: 'wraps' });
+    res.render("wraps", {  session: req.session});
 });
 
 // Route to render drinks page
-app.get('/drinks', function (req, res) {
-    res.render("drinks", { title: 'drinks' });
+app.get('/drinks', function(req, res) {
+    res.render("drinks", { session: req.session });
 });
+
 
 // Route to render dessert page
 app.get('/Dessert', function (req, res) {
-    res.render("Dessert", { title: 'Dessert' });
+    res.render("Dessert", {  session: req.session});
 });
 
 // Route to handle user registration
