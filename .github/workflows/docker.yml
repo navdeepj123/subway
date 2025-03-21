@@ -3,7 +3,7 @@ name: Deploy Express App with PM2
 on:
   push:
     branches:
-      - main  # Change this if you use a different branch
+      - main
 
 jobs:
   deploy:
@@ -30,17 +30,19 @@ jobs:
           sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
             echo "✅ Successfully connected to $SERVER_HOST"
 
+            # Ensure PM2 is installed globally
+            sudo npm install -g pm2 || true
+
             # Navigate to project directory or create it
             sudo mkdir -p /var/www/express-app
             cd /var/www/express-app
 
-            # Stop the existing PM2 process (if running)
-            npx pm2 stop subway-app || true
+            # Stop the existing PM2 process only if it exists
+            npx pm2 stop subway-app || echo "PM2 process not running, skipping stop step"
 
-            # Remove old project files
-            sudo rm -rf /var/www/express-app/*
+            # Remove old project files safely
+            sudo rm -rf /var/www/express-app/* || true
 
-            # Exit SSH session
             exit
           EOF
 
@@ -65,7 +67,7 @@ jobs:
             # Start or restart the app with PM2
             npx pm2 start app.js --name subway-app || npx pm2 restart subway-app
 
-            # Save PM2 process list
+            # Save PM2 process list to survive reboots
             npx pm2 save
 
             # Exit SSH session
