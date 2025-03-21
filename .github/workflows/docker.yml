@@ -1,4 +1,4 @@
-name: Deploy React App to Apache Server
+name: Deploy Express App to Apache Server
 
 on:
   push:
@@ -21,18 +21,29 @@ jobs:
           echo "Server Host: ${{ secrets.SERVER_HOST }}"
           echo "Server Username: ${{ secrets.SERVER_USERNAME }}"
 
-      - name: Install Node.js Dependencies & Build React App
+      - name: Install Node.js Dependencies
         run: |
-          export CI=false  # Prevent ESLint warnings from failing the build
           npm install
-          npm run build
 
-      - name: Transfer Files to Apache Server
+      - name: Transfer Files to Server
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        run: |
+          sshpass -p "$SERVER_PASSWORD" scp -r * $SERVER_USERNAME@$SERVER_HOST:/var/www/express-app
+
+      - name: Start Express App on Server
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
           sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
-            echo "✅ Successfully connected to $SERVER_HOST"
+            cd /var/www/express-app
+            npm install
+            pm2 stop all
+            pm2 start app.js --name "express-app"
+            pm2 save
           EOF
+
