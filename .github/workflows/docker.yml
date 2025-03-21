@@ -25,6 +25,7 @@ jobs:
         run: |
           export CI=false  # Prevent ESLint warnings from failing the build
           npm install
+          npm run build
  
       - name: Transfer Files to Apache Server
         env:
