@@ -1,56 +1,70 @@
-name: Deploy Web App to Apache Server
-
+name: Deploy React App to Apache Server
+ 
 on:
+
   push:
+
     branches:
-      - main  # Runs only when code is pushed to the main branch
 
+      - main  # Change this if using a different branch
+ 
 jobs:
+
   deploy:
+
     runs-on: ubuntu-latest
-
+ 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
 
-    - name: Install SSH & SSHPass
-      run: sudo apt-get update && sudo apt-get install -y sshpass
+      - name: Checkout Repository
 
-    - name: Debug SSH Variables
-      run: |
-        echo "Server Host: 95.111.218.189"
-        echo "Server Username: root"
+        uses: actions/checkout@v4
+ 
+      - name: Install SSH & SSHPass
 
-    - name: Install Dependencies (Express.js)
-      run: |
-        export CI=false  # Prevent ESLint warnings from failing build
-        npm install
+        run: sudo apt-get install -y sshpass
+ 
+      - name: Debug SSH Variables
 
-    - name: Transfer Express.js App to Server
-      env:
-        SERVER_HOST: 95.111.218.189
-        SERVER_USERNAME: root
-        SERVER_PASSWORD: navdeep123
-      run: |
-        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 $SERVER_USERNAME@$SERVER_HOST "
-          echo 'Successfully connected to $SERVER_HOST'
-          sudo rm -rf /var/www/express-app/
-          sudo mkdir -p /var/www/express-app/
-          sudo chmod -R 777 /var/www/express-app/
-        "
-        
-        sshpass -p "$SERVER_PASSWORD" scp -r * $SERVER_USERNAME@$SERVER_HOST:/var/www/express-app/
+        run: |
 
-    - name: Restart Express.js Server with PM2
-      env:
-        SERVER_HOST: 95.111.218.189
-        SERVER_USERNAME: root
-        SERVER_PASSWORD: navdeep123
-      run: |
-        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 $SERVER_USERNAME@$SERVER_HOST "
-          echo 'Restarting Express.js app...'
-          cd /var/www/express-app/
+          echo "Server Host: ${{ secrets.SERVER_HOST }}"
+
+          echo "Server Username: ${{ secrets.SERVER_USERNAME }}"
+ 
+      - name: Install Node.js Dependencies & Build React App
+
+        run: |
+
+          export CI=false  # Prevent ESLint warnings from failing the build
+
           npm install
-          pm2 restart subway-app || pm2 start app.js --name subway-app
-          pm2 save
-        "
+
+          npm run build
+ 
+      - name: Transfer Files to Apache Server
+
+        env:
+
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+
+          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+
+        run: |
+
+          sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
+
+            echo "✅ Successfully connected to $SERVER_HOST"
+ 
+            #Clear old files and upload new ones
+
+            sudo rm -rf /var/www/html/*
+
+            exit
+
+           EOF
+ 
+           sshpass -p "$SERVER_PASSWORD" scp -r build/* $SERVER_USERNAME@SERVER_HOST:/var/www/html/
+ 
