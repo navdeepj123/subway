@@ -1,9 +1,9 @@
-name: Deploy Express App to Server
+name: Deploy Express App with PM2
 
 on:
   push:
     branches:
-      - main  # Change this if using a different branch
+      - main  # Change this if you use a different branch
 
 jobs:
   deploy:
@@ -21,10 +21,6 @@ jobs:
           echo "Server Host: ${{ secrets.SERVER_HOST }}"
           echo "Server Username: ${{ secrets.SERVER_USERNAME }}"
 
-      - name: Install Node.js Dependencies
-        run: |
-          npm install  # ✅ No 'build' step needed!
-
       - name: Transfer Files to Server
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
@@ -34,28 +30,44 @@ jobs:
           sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
             echo "✅ Successfully connected to $SERVER_HOST"
 
-            # Create Express.js project directory if it doesn't exist
+            # Navigate to project directory or create it
             sudo mkdir -p /var/www/express-app
+            cd /var/www/express-app
 
-            # Clear old files
+            # Stop the existing PM2 process (if running)
+            npx pm2 stop subway-app || true
+
+            # Remove old project files
             sudo rm -rf /var/www/express-app/*
 
+            # Exit SSH session
             exit
           EOF
 
-          # Upload Express.js project files
+          # Securely copy new files from GitHub Actions to the server
           sshpass -p "$SERVER_PASSWORD" scp -r * $SERVER_USERNAME@$SERVER_HOST:/var/www/express-app/
 
-      - name: Start Express App on Server
+      - name: Install Dependencies and Restart App
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
           sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
+            echo "🚀 Installing Dependencies and Restarting PM2..."
+
+            # Go to project folder
             cd /var/www/express-app
-            npm install
-            pm2 stop express-app || true  # Prevents errors if app isn't running
-            pm2 start app.js --name "express-app"
-            pm2 save
+
+            # Install dependencies
+            npm install --production
+
+            # Start or restart the app with PM2
+            npx pm2 start app.js --name subway-app || npx pm2 restart subway-app
+
+            # Save PM2 process list
+            npx pm2 save
+
+            # Exit SSH session
+            exit
           EOF
