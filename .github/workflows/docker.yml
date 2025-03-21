@@ -1,4 +1,4 @@
-name: Deploy React App to Apache Server
+name: Deploy Express App to Server
 
 on:
   push:
@@ -21,33 +21,41 @@ jobs:
           echo "Server Host: ${{ secrets.SERVER_HOST }}"
           echo "Server Username: ${{ secrets.SERVER_USERNAME }}"
 
-      - name: Install Node.js Dependencies & Build React App
+      - name: Install Node.js Dependencies
         run: |
-          export CI=false  # Prevent ESLint warnings from failing the build
-          npm install
-          npm run build
+          npm install  # ✅ No 'build' step needed!
 
-      - name: Verify Build Directory
-        run: |
-          echo "Verifying if build directory exists"
-          ls build
-
-      - name: Transfer Files to Apache Server
+      - name: Transfer Files to Server
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
-          # Step 1: SSH into the server, clear old files, and set up new files
           sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
             echo "✅ Successfully connected to $SERVER_HOST"
 
-            # Clear old files in /var/www/html
-            sudo rm -rf /var/www/html/*
+            # Create Express.js project directory if it doesn't exist
+            sudo mkdir -p /var/www/express-app
+
+            # Clear old files
+            sudo rm -rf /var/www/express-app/*
 
             exit
           EOF
 
-          # Step 2: Upload the build directory to the Apache server
-          sshpass -p "$SERVER_PASSWORD" scp -r build/* $SERVER_USERNAME@$SERVER_HOST:/var/www/html/
+          # Upload Express.js project files
+          sshpass -p "$SERVER_PASSWORD" scp -r * $SERVER_USERNAME@$SERVER_HOST:/var/www/express-app/
 
+      - name: Start Express App on Server
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        run: |
+          sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
+            cd /var/www/express-app
+            npm install
+            pm2 stop express-app || true  # Prevents errors if app isn't running
+            pm2 start app.js --name "express-app"
+            pm2 save
+          EOF
