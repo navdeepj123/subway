@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const session = require('express-session');
 const mysql = require('mysql');
+const bcrypt = require('bcryptjs');
 const conn = require('./dbConfig'); // Database configuration file
 
 // Setup view engine as EJS
@@ -21,7 +22,7 @@ app.use(session({
 
 // Route to render learn more page
 app.get('/learnmore', function (req, res) {
-    res.render('learnmore', { title: 'LearnMore' });
+    res.render('learnmore', { title: 'LearnMore', session: req.session });
 });
 
 // Route to render login page
@@ -37,12 +38,19 @@ app.post('/auth', function (req, res) {
         return res.render('login', { errorMessage: 'Please enter both Username and Password!', csrfToken: 'your_csrf_token' });
     }
 
-    conn.query('SELECT * FROM users WHERE name = ? AND password = ?', [name, password], (error, results) => {
+    conn.query('SELECT * FROM users WHERE name = ?', [name], (error, results) => {
         if (error) return res.status(500).send('Internal Server Error');
         if (results.length > 0) {
-            req.session.loggedin = true;
-            req.session.username = name;
-            res.redirect('/menu');
+            bcrypt.compare(password, results[0].password, (err, match) => {
+                if (err) return res.status(500).send('Internal Server Error');
+                if (match) {
+                    req.session.loggedin = true;
+                    req.session.username = name;
+                    res.redirect('/menu');
+                } else {
+                    res.render('login', { errorMessage: 'Incorrect Username and/or Password!', csrfToken: 'your_csrf_token' });
+                }
+            });
         } else {
             res.render('login', { errorMessage: 'Incorrect Username and/or Password!', csrfToken: 'your_csrf_token' });
         }
@@ -74,106 +82,59 @@ app.get('/openingHours', (req, res) => res.render('openingHours', { title: 'Open
 app.get('/login', (req, res) => res.render('login', { title: 'Login' }));
 app.get('/register', (req, res) => res.render('register', { title: 'Register' }));
 
-// User Authentication
+// User Authentication (with bcrypt)
 app.post('/auth', (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) return res.send('Please enter Username and Password!');
 
-    conn.query('SELECT * FROM users WHERE name = ? AND password = ?', [username, password], (error, results) => {
+    conn.query('SELECT * FROM users WHERE name = ?', [username], (error, results) => {
         if (error) return res.status(500).send('Internal Server Error');
         if (results.length > 0) {
-            req.session.loggedin = true;
-            req.session.username = username;
-            res.redirect('/menu');
+            bcrypt.compare(password, results[0].password, (err, match) => {
+                if (err) return res.status(500).send('Internal Server Error');
+                if (match) {
+                    req.session.loggedin = true;
+                    req.session.username = username;
+                    res.redirect('/menu');
+                } else {
+                    res.send('Incorrect Username and/or Password!');
+                }
+            });
         } else {
             res.send('Incorrect Username and/or Password!');
         }
     });
 });
 
-// User Registration
+// User Registration (with bcrypt)
 app.post('/register', (req, res) => {
     const { username, password } = req.body;
     if (username && password) {
-        conn.query('INSERT INTO users (name, password) VALUES (?, ?)', [username, password], (error) => {
-            if (error) return res.status(500).send('Internal Server Error');
-            res.redirect('/login');
+        bcrypt.hash(password, 10, (err, hashedPassword) => {
+            if (err) return res.status(500).send('Internal Server Error');
+            conn.query('INSERT INTO users (name, password) VALUES (?, ?)', [username, hashedPassword], (error) => {
+                if (error) return res.status(500).send('Internal Server Error');
+                res.redirect('/login');
+            });
         });
     } else {
         res.send('Please enter a Username and Password.');
     }
 });
 
-// Menu & Cart
+// Menu & Cart Routes
 app.get('/menu', (req, res) => {
     if (!req.session.loggedin) return res.redirect('/login');
     req.session.accessMenu = true; // Allow access to related pages after menu login
     res.render('menu', { title: 'Menu', session: req.session });
 });
 
-// Route to render subs page
-app.get('/Subs', function (req, res) {
-    res.render("Subs", { title: 'subs' });
-});
-
-// Route to render wraps page
-app.get('/wraps', function (req, res) {
-    res.render("wraps", { title: 'wraps' });
-});
-
-// Route to render drinks page
-app.get('/drinks', function (req, res) {
-    res.render("drinks", { title: 'drinks' });
-});
-
-// Route to render dessert page
-app.get('/Dessert', function (req, res) {
-    res.render("Dessert", { title: 'Dessert' });
-});
-
-// Route to handle user registration
-app.post('/register', function (req, res) {
-    let name = req.body.username;
-    let password = req.body.password;
-    if (name && password) {
-        var sql = `INSERT INTO users(name,password) VALUES (?, ?)`;
-        conn.query(sql, [name, password], function (error, results) {
-            if (error) {
-                console.error('Error inserting record:', error);
-                return res.render('register', { title: 'Register', errorMessage: 'Error registering user. Try again later.' });
-            }
-            console.log('Record inserted');
-            res.render('login', { errorMessage: 'Registration successful. Please log in.', csrfToken: 'your_csrf_token' });
-        });
-    } else {
-        res.render('register', { title: 'Register', errorMessage: 'Please fill in all fields.' });
-    }
-});
-
-// Route to render members-only page (accessible only if logged in)
-app.get('/membersOnly', function (req, res, next) {
-    if (req.session.loggedin) {
-        res.render('membersOnly.ejs');
-    }
-    else {
-        res.send('Please login to view this page!');
-    }
-});
-
-// Route to handle user logout
-app.get('/logout', (req, res) => {
-    req.session.destroy(); // Destroy session to logout user
-    res.redirect('/');
-});
-
-// Route to handle GET requests to the reviews page
-
 app.get('/subs', (req, res) => res.render('subs', { title: 'Subs', session: req.session }));
 app.get('/wraps', (req, res) => res.render('wraps', { title: 'Wraps', session: req.session }));
 app.get('/drinks', (req, res) => res.render('drinks', { title: 'Drinks', session: req.session }));
 app.get('/dessert', (req, res) => res.render('dessert', { title: 'Dessert', session: req.session }));
 
-// Add item to cart
+// Cart Management
 app.post('/add-to-cart', (req, res) => {
     const { name, price, quantity } = req.body;
 
@@ -199,7 +160,7 @@ app.post('/add-to-cart', (req, res) => {
 app.get('/cart', (req, res) => {
     const cart = req.session.cart || [];
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    res.render('cart', { cart, total });
+    res.render('cart', { cart, total, session: req.session });
 });
 
 // Remove item from cart
@@ -218,7 +179,6 @@ app.post('/clear-cart', (req, res) => {
 });
 
 // Reviews
-
 app.get('/reviews', (req, res) => {
     conn.query('SELECT * FROM submit_review ORDER BY CreatedAt DESC', (error, reviews) => {
         if (error) {
@@ -259,6 +219,13 @@ app.post('/submit-review', (req, res) => {
     });
 });
 
+// Route to handle user logout
+app.get('/logout', (req, res) => {
+    req.session.destroy(); // Destroy session to logout user
+    res.redirect('/');
+});
+
 // Start the server and listen on port 3000
-app.listen(3000);
-console.log('Node app is running on port 3000');
+app.listen(3000, () => {
+    console.log('Node app is running on port 3000');
+});
