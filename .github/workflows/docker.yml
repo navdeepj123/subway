@@ -1,50 +1,56 @@
-name: Deploy Express App to Apache Server
+name: Deploy Web App to Apache Server
 
 on:
   push:
     branches:
-      - main  # Change this if using a different branch
+      - main  # Runs only when code is pushed to the main branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v3
 
-      - name: Install SSH & SSHPass
-        run: sudo apt-get install -y sshpass
+    - name: Install SSH & SSHPass
+      run: sudo apt-get update && sudo apt-get install -y sshpass
 
-      - name: Debug SSH Variables
-        run: |
-          echo "Server Host: ${{ secrets.SERVER_HOST }}"
-          echo "Server Username: ${{ secrets.SERVER_USERNAME }}"
+    - name: Debug SSH Variables
+      run: |
+        echo "Server Host: 95.111.218.189"
+        echo "Server Username: root"
 
-      - name: Install Node.js Dependencies
-        run: |
+    - name: Install Dependencies (Express.js)
+      run: |
+        export CI=false  # Prevent ESLint warnings from failing build
+        npm install
+
+    - name: Transfer Express.js App to Server
+      env:
+        SERVER_HOST: 95.111.218.189
+        SERVER_USERNAME: root
+        SERVER_PASSWORD: navdeep123
+      run: |
+        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 $SERVER_USERNAME@$SERVER_HOST "
+          echo 'Successfully connected to $SERVER_HOST'
+          sudo rm -rf /var/www/express-app/
+          sudo mkdir -p /var/www/express-app/
+          sudo chmod -R 777 /var/www/express-app/
+        "
+        
+        sshpass -p "$SERVER_PASSWORD" scp -r * $SERVER_USERNAME@$SERVER_HOST:/var/www/express-app/
+
+    - name: Restart Express.js Server with PM2
+      env:
+        SERVER_HOST: 95.111.218.189
+        SERVER_USERNAME: root
+        SERVER_PASSWORD: navdeep123
+      run: |
+        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 $SERVER_USERNAME@$SERVER_HOST "
+          echo 'Restarting Express.js app...'
+          cd /var/www/express-app/
           npm install
-
-      - name: Transfer Files to Server
-        env:
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
-          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
-        run: |
-          sshpass -p "$SERVER_PASSWORD" scp -r * $SERVER_USERNAME@$SERVER_HOST:/var/www/express-app
-
-      - name: Start Express App on Server
-        env:
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
-          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
-        run: |
-          sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
-            cd /var/www/express-app
-            npm install
-            pm2 stop all || true  # Prevents errors if no PM2 process is running
-            pm2 start app.js --name "express-app"
-            pm2 save
-          EOF
-
-
+          pm2 restart subway-app || pm2 start app.js --name subway-app
+          pm2 save
+        "
