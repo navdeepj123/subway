@@ -27,6 +27,11 @@ jobs:
           npm install
           npm run build
 
+      - name: Verify Build Directory
+        run: |
+          echo "Verifying if build directory exists"
+          ls build
+
       - name: Transfer Files to Apache Server
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
@@ -45,3 +50,4 @@ jobs:
 
           # Step 2: Upload the build directory to the Apache server
           sshpass -p "$SERVER_PASSWORD" scp -r build/* $SERVER_USERNAME@$SERVER_HOST:/var/www/html/
+
