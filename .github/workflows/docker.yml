@@ -18,8 +18,8 @@ jobs:
 
       - name: Debug SSH Variables
         run: |
-          echo "Server Host: ${{ secrets.95.111.218.189 }}"
-          echo "Server Username: ${{ secrets.root }}"
+          echo "Server Host: ${{ secrets.SERVER_HOST }}"
+          echo "Server Username: ${{ secrets.SERVER_USERNAME }}"
 
       - name: Install Node.js Dependencies
         run: |
@@ -28,22 +28,23 @@ jobs:
       - name: Transfer Files to Server
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USERNAME: ${{ secrets.root }}
-          SERVER_PASSWORD: ${{ secrets.xsp5pyryecz4p6p2 }}
+          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
           sshpass -p "$SERVER_PASSWORD" scp -r * $SERVER_USERNAME@$SERVER_HOST:/var/www/express-app
 
       - name: Start Express App on Server
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USERNAME: ${{ secrets.root }}
-          SERVER_PASSWORD: ${{ secrets.xsp5pyryecz4p6p2 }}
+          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
           sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
             cd /var/www/express-app
             npm install
-            pm2 stop all
+            pm2 stop all || true  # Prevents errors if no PM2 process is running
             pm2 start app.js --name "express-app"
             pm2 save
           EOF
+
 
