@@ -9,143 +9,100 @@
 </a>
 
 <style>
-    /* General styles */
-    body {
-        font-family: 'Arial', sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
-    }
-
+    /* General Layout for the menu */
     .menu {
         display: flex;
         flex-wrap: wrap;
         gap: 20px;
         justify-content: center;
-        padding: 40px 20px;
+        padding: 20px;
     }
 
-    /* Menu Item */
+    /* Menu Item Styling */
     .menu-item {
         width: 250px;
+        height: auto;
         background-color: #fff;
         border: 1px solid #ddd;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        padding: 15px;
+        padding: 20px;
         text-align: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        margin-bottom: 30px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+        border-radius: 10px;
+        overflow: hidden;
+        box-sizing: border-box;
     }
 
+    /* Hover Effect for Menu Items */
     .menu-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        transform: scale(1.05);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
 
-    /* Menu Item Image */
+    /* Image Styling */
     .menu-item img {
         width: 100%;
-        height: 180px;
-        object-fit: cover;
-        border-radius: 8px;
+        height: auto;
+        border-radius: 10px;
         margin-bottom: 15px;
     }
 
-    /* Menu Item Title and Description */
+    /* Title Styling */
     .menu-item h3 {
-        font-size: 20px;
-        color: #333;
+        font-size: 18px;
         margin: 10px 0;
         font-weight: bold;
     }
 
+    /* Description Styling */
     .menu-item p {
         font-size: 14px;
         color: #555;
         margin: 5px 0;
     }
 
-    /* Button styles */
-    .btn {
+    /* Button Styling */
+    .menu-item button {
         background-color: #007bff;
         color: white;
-        border: none;
-        padding: 8px 15px;
-        font-size: 14px;
-        cursor: pointer;
+        padding: 10px;
         border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
         transition: background-color 0.3s ease;
     }
 
-    .btn:hover {
+    /* Button Hover Effect */
+    .menu-item button:hover {
         background-color: #0056b3;
     }
 
-    /* Cart Button Styles */
+    /* Cart Button Styling */
     .cart-btn {
         position: fixed;
         top: 20px;
         right: 20px;
         background-color: #007bff;
         color: white;
-        padding: 12px 16px;
+        padding: 10px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 16px;
         text-decoration: none;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
+    /* Cart Button Image Styling */
     .cart-btn img {
         margin-right: 5px;
-    }
-
-    /* Form for adding to cart */
-    .menu-item form {
-        margin-top: 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .menu-item input[type="number"] {
-        width: 60px;
-        padding: 5px;
-        margin-bottom: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .menu-item {
-            width: 45%;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .menu-item {
-            width: 100%;
-            max-width: 350px;
-        }
-
-        .cart-btn {
-            top: 15px;
-            right: 15px;
-            padding: 10px 12px;
-        }
     }
 </style>
 
 <section id="Subs" class="menu">
     <h2 align="center">Subs List</h2>
 
+    <!-- Menu Item 1 -->
     <div class="menu-item">
         <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_594x334.jpg" alt="Sub 1">
         <h3>Veggie Delight</h3>
@@ -155,10 +112,11 @@
             <input type="hidden" name="name" value="Veggie Delight">
             <input type="hidden" name="price" value="9.90">
             <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn">Add to Cart</button>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
     </div>
 
+    <!-- Menu Item 2 -->
     <div class="menu-item">
         <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Sub 2">
         <h3>Chipotle Meatball & Pepperoni</h3>
@@ -168,10 +126,11 @@
             <input type="hidden" name="name" value="Chipotle Meatball & Pepperoni">
             <input type="hidden" name="price" value="11.00">
             <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn">Add to Cart</button>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
     </div>
 
+    <!-- Menu Item 3 -->
     <div class="menu-item">
         <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Sub 3">
         <h3>Spicy Chicken</h3>
@@ -181,10 +140,11 @@
             <input type="hidden" name="name" value="Spicy Chicken">
             <input type="hidden" name="price" value="11.99">
             <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn">Add to Cart</button>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
     </div>
 
+    <!-- Menu Item 4 -->
     <div class="menu-item">
         <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Leg_Ham_594x334.jpg" alt="Sub 4">
         <h3>Leg Ham</h3>
@@ -194,10 +154,11 @@
             <input type="hidden" name="name" value="Leg Ham">
             <input type="hidden" name="price" value="9.99">
             <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn">Add to Cart</button>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
     </div>
 
+    <!-- Menu Item 5 -->
     <div class="menu-item">
         <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Italian_BMT_594x334.jpg" alt="Sub 5">
         <h3>Italian B.M.T</h3>
@@ -207,10 +168,11 @@
             <input type="hidden" name="name" value="Italian B.M.T">
             <input type="hidden" name="price" value="14.99">
             <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn">Add to Cart</button>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
     </div>
 
+    <!-- Menu Item 6 -->
     <div class="menu-item">
         <img src="https://www.subway.com/ns/images/menu/NZD/ENG/NZ_FootlongSub_RoastBeef_594x334.png" alt="Sub 6">
         <h3>Roast Beef</h3>
@@ -220,10 +182,11 @@
             <input type="hidden" name="name" value="Roast Beef">
             <input type="hidden" name="price" value="14.49">
             <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn">Add to Cart</button>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
     </div>
 
+    <!-- Menu Item 7 -->
     <div class="menu-item">
         <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Patty_594x334.jpg" alt="Sub 7">
         <h3>Pizza Four Cheese</h3>
@@ -233,10 +196,11 @@
             <input type="hidden" name="name" value="Pizza Four Cheese">
             <input type="hidden" name="price" value="13.99">
             <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn">Add to Cart</button>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
     </div>
 
+    <!-- Menu Item 8 -->
     <div class="menu-item">
         <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Buffalo_Chicken_594x334.jpg" alt="Sub 8">
         <h3>Buffalo Chicken</h3>
@@ -246,7 +210,7 @@
             <input type="hidden" name="name" value="Buffalo Chicken">
             <input type="hidden" name="price" value="14.49">
             <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn">Add to Cart</button>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
     </div>
 </section>

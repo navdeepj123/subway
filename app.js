@@ -112,21 +112,37 @@ app.get('/menu', (req, res) => {
 });
 
 // Route to render subs page
+
+app.get('/Subs', function (req, res) {
+    res.render("Subs", { session: req.session });
+
 app.get('/subs', function (req, res) {
     res.render("subs", { title: 'Subs', session: req.session });
 });
 
 // Route to render wraps page
 app.get('/wraps', function (req, res) {
+
+    res.render("wraps", {  session: req.session});
+});
+
+// Route to render drinks page
+app.get('/drinks', function(req, res) {
+    res.render("drinks", { session: req.session });
     res.render("wraps", { title: 'Wraps', session: req.session });
 });
 
 // Route to render drinks page
 app.get('/drinks', function (req, res) {
     res.render("drinks", { title: 'Drinks', session: req.session });
+
 });
 
-// Route to render dessert page
+
+// Route to render dessert 
+app.get('/Dessert', function (req, res) {
+    res.render("Dessert", {  session: req.session});
+
 app.get('/dessert', function (req, res) {
     res.render("dessert", { title: 'Dessert', session: req.session });
 });
