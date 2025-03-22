@@ -1,110 +1,183 @@
-<%- include ("partials/header2.ejs") %> <!-- Includes the header -->
+<%- include("partials/header2.ejs") %> <!-- Includes the header -->
+
+<!-- Cart Button at the top -->
+<div style="text-align: right; padding: 10px;">
+    <button class="btn btn-primary" onclick="window.location.href='/cart'">
+        🛒 View Cart
+    </button>
+</div>
 
 <style>
-    /* CSS styles for the table */
+    /* General body and layout styling */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Wrapper for the menu items */
     .menu {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        padding: 20px;
+    }
 
-.menu-item {
-    width: 250px;
-    height: 350px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    padding: 20px;
-    text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
-    border-radius: 10px;
-    overflow: hidden;
-}
+    /* Styling for each menu item */
+    .menu-item {
+        width: 250px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+        margin-bottom: 20px;
+    }
 
-.menu-item:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
+    .menu-item:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
 
-.menu-item img {
-    max-width: 100%;
-    max-height: 100%;
-    border-radius: 10px;
-}
+    /* Image styling inside menu item */
+    .menu-item img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
 
-.menu-item h3 {
-    font-size: 20px;
-    margin: 10px 0;
-}
+    /* Styling for the menu item title */
+    .menu-item h3 {
+        font-size: 18px;
+        color: #333;
+        margin: 10px 0;
+    }
 
-.menu-item p {
-    font-size: 16px;
-} 
+    /* Styling for the description and price */
+    .menu-item p {
+        font-size: 14px;
+        color: #555;
+        margin: 5px 0;
+    }
+
+    /* Form styles for adding to cart */
+    .menu-item form {
+        margin-top: 10px;
+    }
+
+    .menu-item input[type="number"] {
+        width: 50px;
+        padding: 5px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+
+    .menu-item button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        font-size: 14px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .menu-item button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Cart Button styling */
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    /* Responsive Design for smaller screens */
+    @media (max-width: 768px) {
+        .menu-item {
+            width: 45%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .menu-item {
+            width: 100%;
+            max-width: 350px;
+        }
+    }
 </style>
 
-<section id="Subs" class="menu">
-    <!-- Subs menu content -->
-    <h2 align="center">Subs List</h2>
-    <section id="menu" class="menu">
-        <h2></h2>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_with_Avo_Wrap_594x334.jpg" alt="wrap 1">
-            <h3>Vegiie Delight</h3>
-            <p>Tomato, mozzarella, basil, plain wrap/Gluten free wrap.</p>
-            <p>Price: $6.90</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_Wrap_LTO_ANZ_Website_234x140.jpg" alt="wrap 2">
-            <h3>Chipotle Meatball & Pepperoni</h3>
-            <p>Pepperoni, meatball with plain wrap/Gluten free wrap.</p>
-            <p>Price: $10.00</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_Wrap_LTO_ANZ_Website_594x334.jpg" alt="wrap 3">
-            <h3>Spicy Chicken</h3>
-            <p>Chicken, toped with spicy mayo, english-style Cheese, plain wrap/Gluten free wrap.</p>
-            <p>Price: $7.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Carved_Ham_Wrap_594x334.jpg" alt="wrap 4">
-            <h3>Leg Ham</h3>
-            <p>smoked leg ham, try with honey mustard dressing, plain wrap/Gluten free wrap.</p>
-            <p>Price: $9.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Italian_BMT_Wrap_594x334.jpg" alt="wrap 5">
-            <h3>Italian B.M.T</h3>
-            <p>salami, layered pepperoni,leg ham, plain wrap/Gluten free wrap.</p>
-            <p>Price: $8.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/NZ_Wrap_RoastBeef_594x334.png" alt="wrap 6">
-            <h3>Roast Beef</h3>
-            <p>Carved roast beef, sweet chilli sause, plain wrap/Gluten free wrap.</p>
-            <p>Price: $7.49</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Patty_Wrap_594x334.jpg" alt="wrap 7">
-            <h3>Veggie Patty</h3>
-            <p>Mozzarella, veggie patty, vegetables, plain wrap/Gluten free wrap.</p>
-            <p>Price: $9.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Buffalo_Chicken_wrap_594x334.jpg" alt="wrap 8">
-            <h3>Buffalo Chicken</h3>
-            <p>Chicken breast strips, spicy buffalo sause, plain wrap/Gluten free wrap.</p>
-            <p>Price: $7.49</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-    </section>
-</section>  
- 
+<section id="Wraps" class="menu">
+    <h2 align="center">Wraps List</h2>
 
-<%- include ("partials/footer.ejs") %> <!-- Includes the footer -->
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_with_Avo_Wrap_594x334.jpg" alt="Wrap 1">
+        <h3>Veggie Delight</h3>
+        <p>Tomato, mozzarella, basil, plain wrap/Gluten free wrap.</p>
+        <p>Price: $6.90</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Veggie Delight Wrap">
+            <input type="hidden" name="price" value="6.90">
+            <input type="number" name="quantity" value="1" min="1" required>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_Wrap_LTO_ANZ_Website_234x140.jpg" alt="Wrap 2">
+        <h3>Chipotle Meatball & Pepperoni</h3>
+        <p>Pepperoni, meatball with plain wrap/Gluten free wrap.</p>
+        <p>Price: $10.00</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Chipotle Meatball & Pepperoni Wrap">
+            <input type="hidden" name="price" value="10.00">
+            <input type="number" name="quantity" value="1" min="1" required>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_Wrap_LTO_ANZ_Website_594x334.jpg" alt="Wrap 3">
+        <h3>Spicy Chicken</h3>
+        <p>Chicken, topped with spicy mayo, English-style Cheese, plain wrap/Gluten free wrap.</p>
+        <p>Price: $7.99</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Spicy Chicken Wrap">
+            <input type="hidden" name="price" value="7.99">
+            <input type="number" name="quantity" value="1" min="1" required>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+
+    <div class="menu-item">
+        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Carved_Ham_Wrap_594x334.jpg" alt="Wrap 4">
+        <h3>Leg Ham</h3>
+        <p>Smoked leg ham, try with honey mustard dressing, plain wrap/Gluten free wrap.</p>
+        <p>Price: $9.99</p>
+        <form action="/add-to-cart" method="POST">
+            <input type="hidden" name="name" value="Leg Ham Wrap">
+            <input type="hidden" name="price" value="9.99">
+            <input type="number" name="quantity" value="1" min="1" required>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    </div>
+</section>
+
+<%- include("partials/footer.ejs") %> <!-- Includes the footer -->
