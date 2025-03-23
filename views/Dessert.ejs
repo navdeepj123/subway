@@ -7,6 +7,21 @@
     </button>
 </div>
 
+<!-- Filter and Search Section -->
+<div class="filter-section" style="text-align: center; margin-bottom: 20px;">
+    <label for="price-filter">Filter by Price:</label>
+    <select id="price-filter" onchange="filterDesserts()">
+        <option value="all">All</option>
+        <option value="low">Below $7</option>
+        <option value="mid">Between $7 - $9</option>
+        <option value="high">Above $9</option>
+    </select>
+
+    <!-- User Story 2: Search Dessert -->
+    <label for="dessert-search" style="margin-left: 20px;">Search Dessert:</label>
+    <input type="text" id="dessert-search" onkeyup="searchDesserts()" placeholder="Type to search...">
+</div>
+
 <style>
     /* CSS styles for the menu */
     .menu {
@@ -18,7 +33,7 @@
 
     .menu-item {
         width: 250px;
-        height: 400px; /* Increased height */
+        height: 450px; /* Increased height */
         background-color: #fff;
         border: 1px solid #ddd;
         padding: 20px;
@@ -27,7 +42,8 @@
         border-radius: 10px;
         overflow: hidden;
         display: flex;
-        flex-direction: column; /* Ensures content stacks properly */
+        flex-direction: column;
+        position: relative;
     }
 
     .menu-item:hover {
@@ -49,22 +65,29 @@
 
     .menu-item p {
         font-size: 14px;
-        flex-grow: 1; /* Pushes the button to the bottom */
+        flex-grow: 1;
     }
 
     .menu-item form {
-        margin-top: auto; /* Ensures button stays at the bottom */
+        margin-top: auto;
     }
 
     .menu-item button {
-        width: 100%; /* Full-width button for better visibility */
+        width: 100%;
+    }
+
+    /* Review Section Styling */
+    .review-section {
+        margin-top: 10px;
+        font-size: 12px;
+        color: gray;
     }
 </style>
 
 <section id="desserts" class="menu">
     <h2 align="center">Desserts Menu</h2>
 
-    <div class="menu-item">
+    <div class="menu-item" data-price="6.99" data-name="Chocolate Cake">
         <img src="https://imagesvc.meredithcorp.io/v3/mm/image?q=85&c=sc&poi=face&w=768&h=384&url=https:%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F19%2F2011%2F09%2F10%2Fcrisco-double-decadence-chocolate-cake-with-glossy-frosting-768x768-1.jpg" alt="Chocolate Cake">
         <h3>Chocolate Cake</h3>
         <p>Decadent chocolate cake with a rich and creamy chocolate frosting.</p>
@@ -75,9 +98,12 @@
             <input type="number" name="quantity" value="1" min="1" required>
             <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
+        <div class="review-section">
+            ⭐⭐⭐⭐☆ (4.5/5) - 12 reviews
+        </div>
     </div>
 
-    <div class="menu-item">
+    <div class="menu-item" data-price="8.99" data-name="Tiramisu">
         <img src="https://th.bing.com/th/id/OIP.4_DSx6nDF3FRroiucbLy8wHaE7?pid=ImgDet&rs=1" alt="Tiramisu">
         <h3>Tiramisu</h3>
         <p>Classic Italian tiramisu with layers of coffee-soaked ladyfingers and mascarpone cheese.</p>
@@ -88,9 +114,12 @@
             <input type="number" name="quantity" value="1" min="1" required>
             <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
+        <div class="review-section">
+            ⭐⭐⭐⭐⭐ (5.0/5) - 20 reviews
+        </div>
     </div>
 
-    <div class="menu-item">
+    <div class="menu-item" data-price="6.99" data-name="Molten Lava Cake">
         <img src="https://th.bing.com/th/id/OIP.HsDaT57fP7_mWRc4noHjlQHaFX?pid=ImgDet&rs=1" alt="Molten Lava Cake">
         <h3>Molten Lava Cake</h3>
         <p>Warm chocolate cake with a gooey, molten chocolate center, served with vanilla ice cream.</p>
@@ -101,33 +130,41 @@
             <input type="number" name="quantity" value="1" min="1" required>
             <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
+        <div class="review-section">
+            ⭐⭐⭐⭐☆ (4.3/5) - 15 reviews
+        </div>
     </div>
 
-    <div class="menu-item">
-        <img src="https://th.bing.com/th/id/OIP.rFCNyHGdjH8jSgRoYOl_iAHaGV?pid=ImgDet&rs=1" alt="Fudge Brownie Sundae">
-        <h3>Fudge Brownie Sundae</h3>
-        <p>Fudge brownie chunks with vanilla ice cream, hot fudge.</p>
-        <p>Price: $8.99</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Fudge Brownie Sundae">
-            <input type="hidden" name="price" value="8.99">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-    </div>
-
-    <div class="menu-item">
-        <img src="https://th.bing.com/th/id/OIP.yr_M_kxeFOXWZMk0F1SHSQHaE8?pid=ImgDet&rs=1" alt="Chocolate Mousse">
-        <h3>Chocolate Mousse</h3>
-        <p>Silky and creamy chocolate mousse topped with whipped cream and chocolate chips.</p>
-        <p>Price: $5.99</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Chocolate Mousse">
-            <input type="hidden" name="price" value="5.99">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-    </div>
 </section>
+
+<script>
+    function filterDesserts() {
+        let filter = document.getElementById("price-filter").value;
+        let menuItems = document.querySelectorAll(".menu-item");
+
+        menuItems.forEach(item => {
+            let price = parseFloat(item.getAttribute("data-price"));
+
+            if (filter === "all" || 
+                (filter === "low" && price < 7) ||
+                (filter === "mid" && price >= 7 && price <= 9) ||
+                (filter === "high" && price > 9)) {
+                item.style.display = "flex";
+            } else {
+                item.style.display = "none";
+            }
+        });
+    }
+
+    function searchDesserts() {
+        let search = document.getElementById("dessert-search").value.toLowerCase();
+        let menuItems = document.querySelectorAll(".menu-item");
+
+        menuItems.forEach(item => {
+            let name = item.getAttribute("data-name").toLowerCase();
+            item.style.display = name.includes(search) ? "flex" : "none";
+        });
+    }
+</script>
 
 <%- include("partials/footer.ejs") %> <!-- Includes the footer -->
