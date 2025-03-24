@@ -1,6 +1,4 @@
-<!-- views/subs.ejs -->
-
-<%- include("partials/header2.ejs") %> <!-- Includes the header -->
+<%- include("partials/header2.ejs") %>
 
 <!-- Cart Button -->
 <a href="/cart" class="cart-btn">
@@ -9,210 +7,359 @@
 </a>
 
 <style>
-    /* General Layout for the menu */
-    .menu {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: center;
-        padding: 20px;
+    body {
+        background: #f0f4f8;
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
     }
 
-    /* Menu Item Styling */
+    .menu-heading {
+        font-size: 36px;
+        color: #222;
+        text-align: center;
+        margin: 40px 0 20px;
+    }
+
+    .menu {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 30px;
+        padding: 20px 40px 60px;
+        max-width: 1400px;
+        margin: auto;
+    }
+
     .menu-item {
-        width: 250px;
-        height: auto;
-        background-color: #fff;
-        border: 1px solid #ddd;
+        background: #fff;
+        border-radius: 16px;
         padding: 20px;
         text-align: center;
-        transition: transform 0.3s, box-shadow 0.3s;
-        border-radius: 10px;
-        overflow: hidden;
-        box-sizing: border-box;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
     }
 
-    /* Hover Effect for Menu Items */
     .menu-item:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        transform: translateY(-6px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
     }
 
-    /* Image Styling */
     .menu-item img {
         width: 100%;
-        height: auto;
+        height: 180px;
+        object-fit: cover;
         border-radius: 10px;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
 
-    /* Title Styling */
     .menu-item h3 {
-        font-size: 18px;
-        margin: 10px 0;
-        font-weight: bold;
+        font-size: 20px;
+        color: #333;
+        margin: 10px 0 5px;
     }
 
-    /* Description Styling */
     .menu-item p {
         font-size: 14px;
-        color: #555;
-        margin: 5px 0;
+        color: #666;
+        margin: 4px 0;
     }
 
-    /* Button Styling */
+    .menu-item input[type="number"] {
+        width: 60px;
+        padding: 6px;
+        margin-top: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+    }
+
     .menu-item button {
+        margin-top: 10px;
         background-color: #007bff;
         color: white;
-        padding: 10px;
-        border-radius: 5px;
+        padding: 10px 18px;
+        border-radius: 8px;
         border: none;
+        font-weight: 600;
         cursor: pointer;
-        font-size: 14px;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
-    /* Button Hover Effect */
     .menu-item button:hover {
         background-color: #0056b3;
+        transform: scale(1.05);
     }
 
-    /* Cart Button Styling */
+    .info-btn {
+        background-color: #6c757d;
+        margin-left: 10px;
+        padding: 7px 14px;
+        font-size: 13px;
+    }
+
+    .info-btn:hover {
+        background-color: #495057;
+    }
+
     .cart-btn {
         position: fixed;
         top: 20px;
         right: 20px;
-        background-color: #007bff;
+        background: linear-gradient(to right, #007bff, #00b4d8);
         color: white;
-        padding: 10px;
-        border-radius: 50%;
+        padding: 10px 20px;
+        border-radius: 50px;
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-size: 16px;
         text-decoration: none;
+        font-weight: bold;
+        z-index: 999;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
 
-    /* Cart Button Image Styling */
     .cart-btn img {
-        margin-right: 5px;
+        margin-right: 10px;
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Info popup styles */
+    .overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 999;
+}
+
+.info-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: none;
+    text-align: left;
+}
+
+
+    .info-popup h4 {
+        margin-bottom: 10px;
+        color: #007bff;
+    }
+
+    .info-popup p {
+        margin: 6px 0;
+        font-size: 14px;
+        color: #444;
+    }
+
+    .close-btn {
+        background-color: #dc3545;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        float: right;
+        cursor: pointer;
     }
 </style>
 
-<section id="Subs" class="menu">
-    <h2 align="center">Subs List</h2>
 
-    <!-- Menu Item 1 -->
-    <div class="menu-item">
-        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_594x334.jpg" alt="Sub 1">
-        <h3>Veggie Delight</h3>
-        <p>Tomato, mozzarella, basil.</p>
-        <p>Price: $9.90</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Veggie Delight">
-            <input type="hidden" name="price" value="9.90">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-    </div>
+<section id="Subs">
+    <h2 class="menu-heading">Subs List</h2>
+    <div class="menu">
+        <!-- Menu Item 1 -->
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_594x334.jpg" alt="Veggie Delight">
+            <h3>Veggie Delight</h3>
+            <p>Price: $9.90</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Veggie Delight">
+                <input type="hidden" name="price" value="9.90">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+    onclick="openPopup('Veggie Delight', '220 kcal', '8g', '38g', '2.5g', '280mg', 'Lettuce, Tomato, Cucumber, Olive Oil, Oregano')">
+    ℹ️ Info
+</button>
 
-    <!-- Menu Item 2 -->
-    <div class="menu-item">
-        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Sub 2">
-        <h3>Chipotle Meatball & Pepperoni</h3>
-        <p>Tomato, mozzarella, pepperoni, meatball.</p>
-        <p>Price: $11.00</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Chipotle Meatball & Pepperoni">
-            <input type="hidden" name="price" value="11.00">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-    </div>
 
-    <!-- Menu Item 3 -->
-    <div class="menu-item">
-        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Sub 3">
-        <h3>Spicy Chicken</h3>
-        <p>Chicken, topped with spicy mayo, English-style cheese.</p>
-        <p>Price: $11.99</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Spicy Chicken">
-            <input type="hidden" name="price" value="11.99">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-    </div>
+            </form>
+        </div>
 
-    <!-- Menu Item 4 -->
-    <div class="menu-item">
-        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Leg_Ham_594x334.jpg" alt="Sub 4">
-        <h3>Leg Ham</h3>
-        <p>Smoked leg ham, try with honey mustard dressing.</p>
-        <p>Price: $9.99</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Leg Ham">
-            <input type="hidden" name="price" value="9.99">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-    </div>
+        <div class="overlay" id="overlay"></div>
 
-    <!-- Menu Item 5 -->
-    <div class="menu-item">
-        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Italian_BMT_594x334.jpg" alt="Sub 5">
-        <h3>Italian B.M.T</h3>
-        <p>Salami, layered pepperoni, leg ham.</p>
-        <p>Price: $14.99</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Italian B.M.T">
-            <input type="hidden" name="price" value="14.99">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-    </div>
+        <div class="info-popup" id="infoPopup">
+            <button class="close-btn" onclick="closePopup()">X</button>
+            <h4 id="popupTitle">Sub Name</h4>
+            <p><strong>Calories:</strong> <span id="popupCalories"></span></p>
+            <p><strong>Protein:</strong> <span id="popupProtein"></span></p>
+            <p><strong>Carbs:</strong> <span id="popupCarbs"></span></p>
+            <p><strong>Fat:</strong> <span id="popupFat"></span></p>
+            <p><strong>Sodium:</strong> <span id="popupSodium"></span></p>
+            <p><strong>Extras:</strong> <span id="popupExtras"></span></p>
+        </div>
+        
 
-    <!-- Menu Item 6 -->
-    <div class="menu-item">
-        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/NZ_FootlongSub_RoastBeef_594x334.png" alt="Sub 6">
-        <h3>Roast Beef</h3>
-        <p>Carved roast beef, sweet chili sauce.</p>
-        <p>Price: $14.49</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Roast Beef">
-            <input type="hidden" name="price" value="14.49">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-    </div>
+<script>
+    function openPopup(name, calories, protein, carbs, fat, sodium, extras) {
+        document.getElementById('popupTitle').innerText = name;
+        document.getElementById('popupCalories').innerText = calories;
+        document.getElementById('popupProtein').innerText = protein;
+        document.getElementById('popupCarbs').innerText = carbs;
+        document.getElementById('popupFat').innerText = fat;
+        document.getElementById('popupSodium').innerText = sodium;
+        document.getElementById('popupExtras').innerText = extras;
+        document.getElementById('infoPopup').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+    }
 
-    <!-- Menu Item 7 -->
-    <div class="menu-item">
-        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Patty_594x334.jpg" alt="Sub 7">
-        <h3>Pizza Four Cheese</h3>
-        <p>Mozzarella, veggie patty, vegetables.</p>
-        <p>Price: $13.99</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Pizza Four Cheese">
-            <input type="hidden" name="price" value="13.99">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-    </div>
+    function closePopup() {
+        document.getElementById('infoPopup').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+    }
+</script>
 
-    <!-- Menu Item 8 -->
-    <div class="menu-item">
-        <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Buffalo_Chicken_594x334.jpg" alt="Sub 8">
-        <h3>Buffalo Chicken</h3>
-        <p>Chicken breast strips, spicy buffalo sauce.</p>
-        <p>Price: $14.49</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Buffalo Chicken">
-            <input type="hidden" name="price" value="14.49">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
+
+        <!-- Menu Item 2 -->
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Chipotle Meatball & Pepperoni">
+            <h3>Chipotle Meatball & Pepperoni</h3>
+            
+            <p>Price: $11.00</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Chipotle Meatball & Pepperoni">
+                <input type="hidden" name="price" value="11.00">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+    onclick="openPopup('Chipotle Meatball & Pepperoni', '560 kcal', '22g', '49g', '29g', '890mg', 'Chipotle Sauce, Meatballs, Pepperoni, Tomato, Mozzarella')">
+    ℹ️ Info
+</button>
+
+            </form>
+        </div>
+
+        <!-- Menu Item 3 -->
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Spicy Chicken">
+            <h3>Spicy Chicken</h3>
+            
+            <p>Price: $11.99</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Spicy Chicken">
+                <input type="hidden" name="price" value="11.99">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+    onclick="openPopup('Spicy Chicken', '480 kcal', '26g', '42g', '18g', '770mg', 'Spicy Mayo, Grilled Chicken, Lettuce, Cheese, Jalapeños')">
+    ℹ️ Info
+</button>
+
+            </form>
+        </div>
+
+        <!-- Menu Item 4 -->
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Leg_Ham_594x334.jpg" alt="Leg Ham">
+            <h3>Leg Ham</h3>
+           
+            <p>Price: $9.99</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Leg Ham">
+                <input type="hidden" name="price" value="9.99">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+    onclick="openPopup('Leg Ham', '290 kcal', '18g', '36g', '8g', '820mg', 'Smoked Ham, Honey Mustard, Tomato, Lettuce, Red Onion')">
+    ℹ️ Info
+</button>
+
+            </form>
+        </div>
+
+        <!-- Menu Item 5 -->
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Italian_BMT_594x334.jpg" alt="Italian B.M.T">
+            <h3>Italian B.M.T</h3>
+            
+            <p>Price: $14.99</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Italian B.M.T">
+                <input type="hidden" name="price" value="14.99">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+    onclick="openPopup('Italian B.M.T', '450 kcal', '24g', '40g', '20g', '950mg', 'Salami, Pepperoni, Ham, Pickles, Onions, Ranch Sauce')">
+    ℹ️ Info
+</button>
+
+            </form>
+        </div>
+
+        <!-- Menu Item 6 -->
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/NZ_FootlongSub_RoastBeef_594x334.png" alt="Roast Beef">
+            <h3>Roast Beef</h3>
+            
+            <p>Price: $14.49</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Roast Beef">
+                <input type="hidden" name="price" value="14.49">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+    onclick="openPopup('Roast Beef', '400 kcal', '29g', '34g', '10g', '640mg', 'Carved Beef, Sweet Chili Sauce, Lettuce, Green Peppers')">
+    ℹ️ Info
+</button>
+
+            </form>
+        </div>
+
+        <!-- Menu Item 7 -->
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Patty_594x334.jpg" alt="Pizza Four Cheese">
+            <h3>Pizza Four Cheese</h3>
+            
+            <p>Price: $13.99</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Pizza Four Cheese">
+                <input type="hidden" name="price" value="13.99">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+    onclick="openPopup('Pizza Four Cheese', '510 kcal', '20g', '46g', '24g', '700mg', 'Mozzarella, Cheddar, Veggie Patty, Marinara Sauce, Garlic Herb')">
+    ℹ️ Info
+</button>
+
+            </form>
+        </div>
+
+        <!-- Menu Item 8 -->
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Buffalo_Chicken_594x334.jpg" alt="Buffalo Chicken">
+            <h3>Buffalo Chicken</h3>
+            
+            <p>Price: $14.49</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Buffalo Chicken">
+                <input type="hidden" name="price" value="14.49">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+    onclick="openPopup('Buffalo Chicken', '470 kcal', '28g', '37g', '17g', '880mg', 'Buffalo Sauce, Chicken Strips, Blue Cheese, Spinach, Red Onion')">
+    ℹ️ Info
+</button>
+
+            </form>
+        </div>
     </div>
 </section>
 
-<%- include("partials/footer.ejs") %> <!-- Includes the footer -->
+<%- include("partials/footer.ejs") %>
