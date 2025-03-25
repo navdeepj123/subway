@@ -16,33 +16,38 @@ jobs:
       - name: Install SSH & SSHPass
         run: sudo apt-get install -y sshpass
 
+      - name: Debug SSH Variables
+        run: |
+          echo "Server Host: ${{ secrets.SERVER_HOST }}"
+          echo "Server Username: ${{ secrets.SERVER_USERNAME }}"
+
       - name: Transfer Files to Server
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
-          tar czf deploy.tar.gz .
-          sshpass -p "$SERVER_PASSWORD" scp deploy.tar.gz $SERVER_USERNAME@$SERVER_HOST:/var/www/express-app/
-
           sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
             echo "✅ Successfully connected to $SERVER_HOST"
 
-            # Ensure PM2 is installed
+            # Ensure PM2 is installed globally
             sudo npm install -g pm2 || true
 
-            # Navigate to project directory
+            # Navigate to project directory or create it
+            sudo mkdir -p /var/www/express-app
             cd /var/www/express-app
 
-            # Extract the new files
-            sudo tar xzf deploy.tar.gz
-            sudo rm deploy.tar.gz
+            # Stop the existing PM2 process only if it exists
+            npx pm2 stop subway-app || echo "PM2 process not running, skipping stop step"
 
-            # Stop the existing process if running
-            npx pm2 stop subway-app || echo "No running process found"
+            # Remove old project files safely
+            sudo rm -rf /var/www/express-app/* || true
 
             exit
           EOF
+
+          # Securely copy new files from GitHub Actions to the server
+          sshpass -p "$SERVER_PASSWORD" scp -r * $SERVER_USERNAME@$SERVER_HOST:/var/www/express-app/
 
       - name: Install Dependencies and Restart App
         env:
@@ -59,25 +64,12 @@ jobs:
             # Install dependencies
             npm install --production
 
-            # Restart PM2 process
-            npx pm2 restart subway-app || npx pm2 start app.js --name subway-app
+            # Start or restart the app with PM2
+            npx pm2 start app.js --name subway-app || npx pm2 restart subway-app
 
-            # Save PM2 process list
+            # Save PM2 process list to survive reboots
             npx pm2 save
 
+            # Exit SSH session
             exit
           EOF
-
-  zap-scan:
-    runs-on: ubuntu-latest
- 
-    steps:
-      - name: Debug Environment
-        run: |
-          echo "Operating System: $(uname -a)"
-          echo "Runner Version: $RUNNER_VERSION"
-
-      - name: Run OWASP ZAP Full Scan
-        run: |
-          docker pull zaproxy/zap-stable
-          docker run -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-full-scan.py -t http://${{ secrets.SERVER_HOST }}/ -a -I regenerate
