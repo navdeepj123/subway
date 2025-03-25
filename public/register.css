@@ -21,38 +21,7 @@ p {
     margin-bottom: 20px;
 }
 
-/* Navbar styles */
-.navbar {
-    background-color: #000033; /* Dark navy */
-    padding: 10px 0;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-}
 
-.navbar-nav {
-    display: flex;
-    justify-content: center;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-.nav-item {
-    margin: 0 15px; /* Adjust spacing between menu items */
-}
-
-.nav-link {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s ease-in-out;
-}
-
-.nav-link:hover {
-    color: #ffcc00; /* Yellow hover effect */
-}
 
 /* Styles for additional information */
 .additional-info {
