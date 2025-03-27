@@ -19,7 +19,32 @@ app.use(session({
     saveUninitialized: true
 }));
 
+
+// Route to render learn more page
+app.get('/learnmore', function (req, res) {
+    res.render('learnmore', { title: 'LearnMore' });
+});
+
+// Route to render login page
+app.get('/login', function (req, res) {
+    res.render('login', { errorMessage: null, csrfToken: 'your_csrf_token' });
+});
+app.get("/login", (req, res) => {
+    res.render("login", { errorMessage: req.flash("error") || "" });
+});
+// Route to authenticate user login
+app.post('/auth', function (req, res) {
+    let name = req.body.username;
+    let password = req.body.password;
+    if (!name || !password) {
+        return res.render('login', { errorMessage: 'Please enter both Username and Password!', csrfToken: 'your_csrf_token' })
+    }
+});
+
+// Initialize cart in session if not exists
+
 // Init cart session
+
 app.use((req, res, next) => {
     if (!req.session.cart) req.session.cart = [];
     next();
