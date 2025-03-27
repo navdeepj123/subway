@@ -1,38 +1,56 @@
-name: Deploy Docker Container
+name: Deploy to Apache Server
 
 on:
   push:
     branches:
-      - main  # Change to your deployment branch
+      - main  # Adjust this to your main branch
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+    # Checkout the repository
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+    
+    # Set up Node.js
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'  # Adjust based on your project requirements
+    
+    # Install dependencies
+    - name: Install dependencies
+      run: npm install
+    
+    # Build the project
+    - name: Build project
+      run: npm run build  # Assumes React or similar frontend framework
+    
+    # Set environment variables
+    - name: Set environment variables
+      run: |
+        echo "Setting environment variables"
+      env:
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build Docker Image
-        run: docker build -t your-dockerhub-username/your-app-name .
-
-      - name: Push Docker Image to Docker Hub
-        run: docker push your-dockerhub-username/your-app-name
-
-      - name: Deploy on Server
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}  # Use SSH key for security instead
-          script: |
-            docker pull your-dockerhub-username/your-app-name
-            docker stop my_container || true
-            docker rm my_container || true
-            docker run -d --name my_container -p 80:3000 your-dockerhub-username/your-app-name
+    # Copy build files to the Apache server
+    - name: Deploy build files to Apache server
+      env:
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+      run: |
+        sudo apt-get install -y sshpass
+        sshpass -p "${{ secrets.SERVER_PASSWORD }}" scp -o StrictHostKeyChecking=no -r ./build/* $SERVER_USER@$SERVER_IP:/var/www/html/
+    
+    # SSH into the server and restart Apache
+    - name: Restart Apache on server
+      env:
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+      run: |
+        sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP << 'EOF'
+          sudo systemctl restart apache2
+        EOF
