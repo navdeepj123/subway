@@ -37,7 +37,9 @@ app.post('/auth', function (req, res) {
     let name = req.body.username;
     let password = req.body.password;
     if (!name || !password) {
-        return res.render('login', { errorMessage: 'Please enter both Username and Password!', csrfToken: 'your_csrf_token' });
+        return res.render('login', { errorMessage: 'Please enter both Username and Password!', csrfToken: 'your_csrf_token' })
+    }
+});
 
 // Initialize cart in session if not exists
 app.use((req, res, next) => {
