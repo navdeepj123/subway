@@ -73,9 +73,9 @@ jobs:
   # 🔎 RUN OWASP ZAP SCAN
   # -----------------------
   zap-scan:
-   runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-   steps:
+    steps:
     # ✅ Debug Environment
     - name: Debug Environment
       run: |
@@ -97,11 +97,4 @@ jobs:
     # ✅ Run OWASP ZAP Full Scan with Limited Duration
     - name: Run OWASP ZAP Full Scan
       run: |
-        docker run -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-full-scan.py -t http://${{ secrets.SERVER_HOST }}/ -J zap-report.json -m 10
-
-    # ✅ Upload ZAP Report as Artifact
-    - name: Upload ZAP Report
-      uses: actions/upload-artifact@v3.1.3
-      with:
-        name: zap-report
-        path: zap-report.json
+        docker run -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-full-scan.py -t http://${{ secrets.SERVER_HOST }}/ -m 10
