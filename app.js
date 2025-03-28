@@ -161,19 +161,39 @@ app.get('/cart', (req, res) => {
 
 app.post('/add-to-cart', (req, res) => {
     const { name, price, quantity } = req.body;
-    if (!req.session.cart) req.session.cart = [];
-    const existing = req.session.cart.find(i => i.name === name);
-    if (existing) existing.quantity += parseInt(quantity);
-    else req.session.cart.push({ name, price: parseFloat(price), quantity: parseInt(quantity) });
-    res.redirect('/subs');
+
+
+    if (!req.session.cart) {
+        req.session.cart = [];
+    }
+
+    const existingItem = req.session.cart.find(item => item.name === name);
+
+    if (existingItem) {
+        existingItem.quantity += parseInt(quantity);
+    } else {
+        req.session.cart.push({
+            name,
+            price: parseFloat(price),
+            quantity: parseInt(quantity)
+        });
+    }
+
+    // Redirect back to the page the request came from
+    const redirectTo = req.get('Referer') || '/';
+    res.redirect(redirectTo);
 });
 
+
+// Route to remove an item from the cart
 app.post('/remove-from-cart', (req, res) => {
-    req.session.cart = req.session.cart.filter(i => i.name !== req.body.name);
+    const { index } = req.body;
+    req.session.cart.splice(index, 1);
     res.redirect('/cart');
 });
 
-// Checkout
+
+
 app.post('/checkout', (req, res) => {
     if (!req.session.loggedin) return res.redirect('/login');
     const cart = req.session.cart || [];
