@@ -21,6 +21,31 @@
         <div>
             <!-- List of navigation links -->
             <ul class="navbar-nav">
+
+                <!-- Navigation link to Subs page -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/Subs">Subs</a>
+                </li>
+                <!-- Navigation link to Wraps page -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/Wraps">Wraps</a>
+                </li>
+                <!-- Navigation link to Drinks page -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/Drinks">Drinks</a>
+                </li>
+                <!-- Navigation link to Dessert page -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/Dessert">Dessert</a>
+                </li>
+                <!-- Navigation link to Logout page -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/payment">payment</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>
+
                 <% if (!session.loggedin) { %>
                     <!-- Show before login -->
                     <li class="nav-item">
@@ -56,6 +81,7 @@
                         <a class="nav-link" href="/logout">Logout</a>
                     </li>
                 <% } %>
+
             </ul>
         </div>
     </nav>

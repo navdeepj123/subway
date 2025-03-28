@@ -83,12 +83,42 @@ app.post('/auth', (req, res) => {
     });
 });
 
+
+// Render Payment Page
+app.get('/payment', (req, res) => {
+    res.render('payment');
+});
+app.post('/process-payment', (req, res) => {
+    const { name, card_number, expiry, cvv, amount } = req.body;
+
+    // Insert into database
+    const sql = 'INSERT INTO payments (name, card_number, expiry, cvv, amount) VALUES (?, ?, ?, ?, ?)';
+    db.query(sql, [name, card_number, expiry, cvv, amount], (err, result) => {
+        if (err) {
+            console.error('Error processing payment:', err);
+            return res.send('Payment failed. Please try again.');
+        }
+        res.send('<h2>Payment Successful!</h2><a href="/payment">Make another payment</a>');
+    });
+});
+
+// Route to handle user registration
+app.post('/register', function (req, res) {
+    let name = req.body.username;
+    let password = req.body.password;
+    if (name && password) {
+        var sql = `INSERT INTO users(name,password) VALUES (?, ?)`;
+        conn.query(sql, [name, password], function (error, results) {
+            if (error) {
+                console.error('Error inserting record:', error);
+
 app.post('/register', (req, res) => {
     const { username, password } = req.body;
     if (username && password) {
         db.query('INSERT INTO users(name, password) VALUES (?, ?)', [username, password], (err) => {
             if (err) {
                 console.error('Error inserting record:', err);
+
                 return res.render('register', { title: 'Register', errorMessage: 'Error registering user. Try again later.' });
             }
             res.render('login', { errorMessage: 'Registration successful. Please log in.', csrfToken: 'your_csrf_token' });
