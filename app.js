@@ -113,6 +113,24 @@ app.get('/Dessert', function (req, res) {
     res.render("Dessert", { title: 'Dessert' });
 });
 
+// Render Payment Page
+app.get('/payment', (req, res) => {
+    res.render('payment');
+});
+app.post('/process-payment', (req, res) => {
+    const { name, card_number, expiry, cvv, amount } = req.body;
+
+    // Insert into database
+    const sql = 'INSERT INTO payments (name, card_number, expiry, cvv, amount) VALUES (?, ?, ?, ?, ?)';
+    db.query(sql, [name, card_number, expiry, cvv, amount], (err, result) => {
+        if (err) {
+            console.error('Error processing payment:', err);
+            return res.send('Payment failed. Please try again.');
+        }
+        res.send('<h2>Payment Successful!</h2><a href="/payment">Make another payment</a>');
+    });
+});
+
 // Route to handle user registration
 app.post('/register', function (req, res) {
     let name = req.body.username;
