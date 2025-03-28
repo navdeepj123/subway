@@ -252,17 +252,19 @@ app.post('/add-to-cart', (req, res) => {
         });
     }
 
-    res.redirect('/subs'); // Redirect to menu after adding
+    // Redirect back to the page the request came from
+    const redirectTo = req.get('Referer') || '/';
+    res.redirect(redirectTo);
 });
+
 
 // Route to remove an item from the cart
 app.post('/remove-from-cart', (req, res) => {
-    const { name } = req.body;
-
-    req.session.cart = req.session.cart.filter(item => item.name !== name);
-
-    res.redirect('/cart'); // Redirect back to cart
+    const { index } = req.body;
+    req.session.cart.splice(index, 1);
+    res.redirect('/cart');
 });
+
 
 app.post('/checkout', (req, res) => {
     if (!req.session.loggedin) {
