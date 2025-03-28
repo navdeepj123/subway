@@ -74,25 +74,19 @@ jobs:
   # -----------------------
   zap-scan:
    runs-on: ubuntu-latest
-   needs: deploy  # Wait for the deployment to complete
 
    steps:
-    # ✅ Debug Environment Variables
+    # ✅ Debug Environment
     - name: Debug Environment
       run: |
         echo "Operating System: $(uname -a)"
         echo "Runner Version: $RUNNER_VERSION"
 
-    # ✅ Checkout Code (Required for context)
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-
-    # ✅ Install Docker to avoid dependency issues
+    # ✅ Install Docker
     - name: Install Docker
       run: |
         curl -fsSL https://get.docker.com -o get-docker.sh
         sudo sh get-docker.sh
-        sudo usermod -aG docker $USER
         docker --version
 
     # ✅ Pull OWASP ZAP Stable Docker Image
@@ -100,18 +94,14 @@ jobs:
       run: |
         docker pull zaproxy/zap-stable
 
-    # ✅ Run OWASP ZAP Full Scan and Generate Report
+    # ✅ Run OWASP ZAP Full Scan with Limited Duration
     - name: Run OWASP ZAP Full Scan
       run: |
-        mkdir -p zap-reports
-        sudo docker run --user root \
-          -v $(pwd)/zap-reports:/zap/wrk/:rw \
-          -t zaproxy/zap-stable \
-          zap-full-scan.py -t http://${{ secrets.SERVER_HOST }}/ -J zap-report.json
+        docker run -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-full-scan.py -t http://${{ secrets.SERVER_HOST }}/ -J zap-report.json -m 10
 
     # ✅ Upload ZAP Report as Artifact
     - name: Upload ZAP Report
-      uses: actions/upload-artifact@v3.1.3  # Explicit version to avoid errors
+      uses: actions/upload-artifact@v3.1.3
       with:
         name: zap-report
-        path: zap-reports/zap-report.json
+        path: zap-report.json
