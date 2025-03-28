@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .cart-items {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item .name {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .cart-item .price {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .cart-item .quantity {
+            font-size: 16px;
+            color: #555;
+        }
+
+        form {
+            display: inline;
+        }
+
+        button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #d32f2f;
+        }
+
+        .total {
+            display: flex;
+            justify-content: flex-end;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .cart-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .cart-footer a {
+            text-decoration: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .cart-footer a:hover {
+            background-color: #45a049;
+        }
+
+        .cart-footer a:nth-child(2) {
+            background-color: #008CBA;
+        }
+
+        .cart-footer a:nth-child(2):hover {
+            background-color: #007bb5;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .cart-item .name,
+            .cart-item .price,
+            .cart-item .quantity {
+                margin-bottom: 10px;
+            }
+
+            .total {
+                font-size: 16px;
+            }
+
+            .cart-footer {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cart-footer a {
+                margin-bottom: 10px;
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Cart</h1>
+
+        <ul class="cart-items">
+            <% if (cart.length > 0) { %>
+                <% cart.forEach((item, index) => { %>
+                    <li class="cart-item">
+                        <span class="name"><%= item.name %></span>
+                        <span class="quantity">Quantity: <%= item.quantity %></span>
+                        <span class="price">$<%= (item.price * item.quantity).toFixed(2) %></span>
+                        <form action="/remove-from-cart" method="POST" style="display:inline;">
+                            <input type="hidden" name="index" value="<%= index %>">
+                            <button type="submit">Remove</button>
+                        </form>
+                    </li>
+                <% }); %>
+            <% } else { %>
+                <li class="cart-item">Your cart is empty.</li>
+            <% } %>
+        </ul>
+
+        <div class="total">
+            <span>Total:</span>
+            <span>$<%= total.toFixed(2) %></span>
+        </div>
+
+        <div class="cart-footer">
+            <a href="/subs">Continue Shopping</a>
+            <a href="/checkout">Proceed to Checkout</a>
+        </div>
+    </div>
+    <form action="/checkout" method="POST">
+        <button type="submit">Proceed to Checkout</button>
+    </form>
+    
+</body>
+</html>

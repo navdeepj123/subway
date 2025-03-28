@@ -1,55 +1,24 @@
-// Required modules
-var express = require('express');
-var app = express();
-var session = require('express-session');
-var mysql = require('mysql');
-var conn = require('./dbConfig'); // Custom database configuration file
+// ✅ FULLY MERGED & UPDATED app.js (Your 312-line version + all fixes)
+const express = require('express');
+const app = express();
+const session = require('express-session');
+const mysql = require('mysql');
+const db = require('./dbConfig'); // ✅ Use correct DB connection
 
-// Set view engine to EJS
+// Setup view engine
 app.set('view engine', 'ejs');
 
-// Middleware for session management
+// Middleware
+app.use('/public', express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use(session({
-    secret: 'yoursecret', // Secret key for session encryption
+    secret: 'yoursecret',
     resave: true,
     saveUninitialized: true
 }));
 
-// Middleware to serve static files
-app.use('/public', express.static('public'));
-
-// Middleware to parse JSON bodies
-app.use(express.json());
-
-// Middleware to parse URL-encoded bodies
-app.use(express.urlencoded({ extended: true }));
-
-// Route to render home page
-app.get('/', function (req, res) {
-    res.render('home');
-});
-
-// Route to render contact us page
-app.get('/contactUs', function (req, res) {
-    res.render('contactUs', { title: 'Contact Us' });
-});
-
-// Route to handle contact form submissions
-app.post("/send-message", (req, res) => {
-    const { name, email, message } = req.body;
-    console.log(`New message from ${name} (${email}): ${message}`);
-    res.send("Message received! We will get back to you soon.");
-});
-
-// Route to render Menu page
-app.get('/Menu', function (req, res) {
-    res.render('Menu', { title: 'Menu' });
-});
-
-// Route to render privacy policy page
-app.get('/privacyPolicy', function (req, res) {
-    res.render('privacyPolicy', { title: 'Privacy Policy' });
-});
 
 // Route to render learn more page
 app.get('/learnmore', function (req, res) {
@@ -68,50 +37,52 @@ app.post('/auth', function (req, res) {
     let name = req.body.username;
     let password = req.body.password;
     if (!name || !password) {
+        return res.render('login', { errorMessage: 'Please enter both Username and Password!', csrfToken: 'your_csrf_token' })
+    }
+});
+
+// Initialize cart in session if not exists
+
+// Init cart session
+
+app.use((req, res, next) => {
+    if (!req.session.cart) req.session.cart = [];
+    next();
+});
+
+// Restrict access
+app.use(['/logout', '/reviews'], (req, res, next) => {
+    if (!req.session.loggedin) return res.redirect('/login');
+    next();
+});
+
+// Pages
+app.get('/', (req, res) => res.render('home', { title: 'Home', session: req.session }));
+app.get('/contactUs', (req, res) => res.render('contactUs', { title: 'Contact Us', session: req.session }));
+app.get('/privacyPolicy', (req, res) => res.render('privacyPolicy', { title: 'Privacy Policy', session: req.session }));
+app.get('/learnmore', (req, res) => res.render('learnmore', { title: 'Learn More', session: req.session }));
+app.get('/openingHours', (req, res) => res.render('openingHours', { title: 'Opening Hours', session: req.session }));
+app.get('/login', (req, res) => res.render('login', { title: 'Login', session: req.session, errorMessage: null, csrfToken: 'your_csrf_token' }));
+app.get('/register', (req, res) => res.render('register', { title: 'Register', session: req.session }));
+
+// Auth
+app.post('/auth', (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
         return res.render('login', { errorMessage: 'Please enter both Username and Password!', csrfToken: 'your_csrf_token' });
     }
-
-    conn.query('SELECT * FROM users WHERE name = ? AND password=?', [name, password],
-        function (error, results) {
-            if (error) {
-                console.error('Database error:', error);
-                return res.render('login', { errorMessage: 'Internal Server Error. Try again later.', csrfToken: 'your_csrf_token' });
-            }
-
-            if (results.length > 0) {
-                req.session.loggedin = true;
-                req.session.username = name;
-                return res.redirect('/membersOnly');
-            } else {
-                return res.render('login', { errorMessage: 'Incorrect Username or Password!', csrfToken: 'your_csrf_token' });
-            }
-        });
+    db.query('SELECT * FROM users WHERE name = ? AND password = ?', [username, password], (err, results) => {
+        if (err) return res.status(500).send('Internal Server Error');
+        if (results.length > 0) {
+            req.session.loggedin = true;
+            req.session.username = username;
+            res.redirect('/subs');
+        } else {
+            res.render('login', { errorMessage: 'Incorrect Username and/or Password!', csrfToken: 'your_csrf_token' });
+        }
+    });
 });
 
-// Route to render registration page
-app.get('/register', function (req, res) {
-    res.render("register", { title: 'Register' });
-});
-
-// Route to render subs page
-app.get('/Subs', function (req, res) {
-    res.render("Subs", { title: 'subs' });
-});
-
-// Route to render wraps page
-app.get('/wraps', function (req, res) {
-    res.render("wraps", { title: 'wraps' });
-});
-
-// Route to render drinks page
-app.get('/drinks', function (req, res) {
-    res.render("drinks", { title: 'drinks' });
-});
-
-// Route to render dessert page
-app.get('/Dessert', function (req, res) {
-    res.render("Dessert", { title: 'Dessert' });
-});
 
 // Render Payment Page
 app.get('/payment', (req, res) => {
@@ -140,9 +111,16 @@ app.post('/register', function (req, res) {
         conn.query(sql, [name, password], function (error, results) {
             if (error) {
                 console.error('Error inserting record:', error);
+
+app.post('/register', (req, res) => {
+    const { username, password } = req.body;
+    if (username && password) {
+        db.query('INSERT INTO users(name, password) VALUES (?, ?)', [username, password], (err) => {
+            if (err) {
+                console.error('Error inserting record:', err);
+
                 return res.render('register', { title: 'Register', errorMessage: 'Error registering user. Try again later.' });
             }
-            console.log('Record inserted');
             res.render('login', { errorMessage: 'Registration successful. Please log in.', csrfToken: 'your_csrf_token' });
         });
     } else {
@@ -150,14 +128,51 @@ app.post('/register', function (req, res) {
     }
 });
 
-// Route to render members-only page (accessible only if logged in)
-app.get('/membersOnly', function (req, res, next) {
-    if (req.session.loggedin) {
-        res.render('membersOnly.ejs');
-    }
-    else {
-        res.send('Please login to view this page!');
-    }
+// Render food pages
+app.get('/menu', (req, res) => {
+    if (!req.session.loggedin) return res.redirect('/login');
+    req.session.accessMenu = true;
+    res.render('menu', { title: 'Menu', session: req.session });
+});
+app.get('/Subs', (req, res) => res.render('Subs', { session: req.session }));
+app.get('/subs', (req, res) => res.render('subs', { title: 'Subs', session: req.session }));
+app.get('/wraps', (req, res) => res.render('wraps', { session: req.session }));
+app.get('/drinks', (req, res) => res.render('drinks', { session: req.session }));
+app.get('/Dessert', (req, res) => res.render('Dessert', { session: req.session }));
+app.get('/dessert', (req, res) => res.render('dessert', { title: 'Dessert', session: req.session }));
+
+// Members only
+app.get('/membersOnly', (req, res) => {
+    if (req.session.loggedin) res.render('membersOnly', { title: 'Members Only', session: req.session });
+    else res.send('Please login to view this page!');
+});
+
+// Logout
+app.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+});
+
+// Reviews
+app.get('/reviews', (req, res) => {
+    db.query('SELECT * FROM submit_review ORDER BY CreatedAt DESC', (error, reviews) => {
+        if (error) return res.status(500).send('Internal Server Error');
+        db.query('SELECT Rating, COUNT(*) as count FROM submit_review GROUP BY Rating', (err, results) => {
+            if (err) return res.status(500).send('Internal Server Error');
+            let ratingCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+            results.forEach(r => ratingCounts[r.Rating] = r.count);
+            res.render('reviews', { reviews, session: req.session, ratingCounts, totalReviews: reviews.length });
+        });
+    });
+});
+
+app.post('/submit-review', (req, res) => {
+    if (!req.session.loggedin) return res.redirect('/login');
+    const { name, rating, comment } = req.body;
+    db.query('INSERT INTO submit_review (Name, Rating, Comment) VALUES (?, ?, ?)', [name, rating, comment], err => {
+        if (err) return res.status(500).send('Internal Server Error');
+        res.redirect('/reviews');
+    });
 });
 
 // Route to handle user logout
@@ -166,40 +181,73 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-// Route to handle GET requests to the reviews page
-app.get('/reviews', (req, res) => {
-    // Fetch existing reviews from the database
-    conn.query('SELECT * FROM `submit-review`', (error, results) => {
-        if (error) {
-            console.error('Error executing database query:', error);
-            res.status(500).send('Internal Server Error');
-            return;
-        }
+// Cart
+app.get('/cart', (req, res) => {
+    if (!req.session.loggedin) return res.redirect('/login');
+    const cart = req.session.cart || [];
+    const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    res.render('cart', { cart, total });
+});
 
-        // Render the 'reviews.ejs' template with the retrieved reviews
-        res.render('reviews', { reviews: results });
+app.post('/add-to-cart', (req, res) => {
+    const { name, price, quantity } = req.body;
+
+
+    if (!req.session.cart) {
+        req.session.cart = [];
+    }
+
+    const existingItem = req.session.cart.find(item => item.name === name);
+
+    if (existingItem) {
+        existingItem.quantity += parseInt(quantity);
+    } else {
+        req.session.cart.push({
+            name,
+            price: parseFloat(price),
+            quantity: parseInt(quantity)
+        });
+    }
+
+    // Redirect back to the page the request came from
+    const redirectTo = req.get('Referer') || '/';
+    res.redirect(redirectTo);
+});
+
+
+// Route to remove an item from the cart
+app.post('/remove-from-cart', (req, res) => {
+    const { index } = req.body;
+    req.session.cart.splice(index, 1);
+    res.redirect('/cart');
+});
+
+
+
+app.post('/checkout', (req, res) => {
+    if (!req.session.loggedin) return res.redirect('/login');
+    const cart = req.session.cart || [];
+    if (cart.length === 0) return res.redirect('/cart');
+    const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    const itemsJSON = JSON.stringify(cart);
+    db.query('INSERT INTO orders (username, items, total_price) VALUES (?, ?, ?)', [req.session.username, itemsJSON, total], (err) => {
+        if (err) return res.status(500).send('Error processing order');
+        req.session.cart = [];
+        res.redirect('/order-confirmation');
     });
 });
 
-// Route to handle POST requests to submit reviews
-app.post('/submit-review', (req, res) => {
-    const { name, rating, comment } = req.body;
-
-    // Insert the submitted review into the database
-    conn.query('INSERT INTO `submit-review` (`Name`, `Rating`, `Comment`) VALUES (?, ?, ?)',
-        [name, rating, comment],
-        (error, results) => {
-            if (error) {
-                console.error('Error executing database query:', error);
-                res.status(500).send('Internal Server Error');
-                return;
-            }
-
-            // Redirect back to the reviews page after submission
-            res.redirect('/reviews');
-        });
+app.get('/checkout', (req, res) => {
+    res.render('checkout', { cart: req.session.cart || [], total: req.session.total || 0 });
 });
 
-// Start the server and listen on port 3000
-app.listen(3000);
-console.log('Node app is running on port 3000');
+app.get('/order-confirmation', (req, res) => {
+    res.render('orderConfirmation', {
+        title: 'Order Confirmation',
+        message: 'Your order has been placed successfully!',
+        username: req.session.username || 'Guest'
+    });
+});
+
+// ✅ Start Server
+app.listen(3000, () => console.log('Node app is running on port 3000'));

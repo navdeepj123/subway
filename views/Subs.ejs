@@ -1,110 +1,788 @@
-<%- include ("partials/header2.ejs") %> <!-- Includes the header -->
+<%- include("partials/header2.ejs") %>
+
+<!-- Cart Button -->
+<a href="/cart" class="cart-btn">
+    <img src="https://img.icons8.com/ios/452/shopping-cart.png" alt="cart" width="30" height="30">
+    Cart
+</a>
+
+
 
 <style>
-    /* CSS styles for the table */
+    body {
+        background: #f0f4f8;
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .menu-heading {
+        font-size: 36px;
+        color: #222;
+        text-align: center;
+        margin: 40px 0 20px;
+    }
+
     .menu {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 30px;
+        padding: 20px 40px 60px;
+        max-width: 1400px;
+        margin: auto;
+    }
+
+    .menu-item {
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+    }
+
+    .menu-item:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .menu-item img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+    .menu-item h3 {
+        font-size: 20px;
+        color: #333;
+        margin: 10px 0 5px;
+    }
+
+    .menu-item p {
+        font-size: 14px;
+        color: #666;
+        margin: 4px 0;
+    }
+
+    .menu-item input[type="number"] {
+        width: 60px;
+        padding: 6px;
+        margin-top: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+    }
+
+    .menu-item button {
+        margin-top: 10px;
+        background-color: #007bff;
+        color: white;
+        padding: 10px 18px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .menu-item button:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .info-btn {
+        background-color: #6c757d;
+        margin-left: 10px;
+        padding: 7px 14px;
+        font-size: 13px;
+    }
+
+    .info-btn:hover {
+        background-color: #495057;
+    }
+
+    .cart-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(to right, #007bff, #00b4d8);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        font-weight: bold;
+        z-index: 999;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .cart-btn img {
+        margin-right: 10px;
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Info popup styles */
+    .overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 999;
 }
 
-.menu-item {
-    width: 250px;
-    height: 350px;
-    background-color: #fff;
-    border: 1px solid #ddd;
+.info-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 12px;
     padding: 20px;
-    text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
-    border-radius: 10px;
-    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: none;
+    text-align: left;
 }
 
-.menu-item:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+    .info-popup h4 {
+        margin-bottom: 10px;
+        color: #007bff;
+    }
+
+    .info-popup p {
+        margin: 6px 0;
+        font-size: 14px;
+        color: #444;
+    }
+
+    .close-btn {
+        background-color: #dc3545;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        float: right;
+        cursor: pointer;
+    }
+
+    .topping-modal {
+    display: none;
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    z-index: 1001;
+    width: 300px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
-.menu-item img {
-    max-width: 100%;
-    max-height: 100%;
-    border-radius: 10px;
+.topping-content label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
 }
 
-.menu-item h3 {
-    font-size: 20px;
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.topping-badge {
+    display: inline-block;
+    background-color: #e0f0ff;
+    color: #007bff;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin: 3px 5px 0 0;
+}
+
+.customize-modal {
+  display: none;
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  z-index: 1001;
+  width: 300px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.customize-content label {
+  font-size: 14px;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+}
+
+.customize-badge {
+  display: inline-block;
+  background-color: #ffeeba;
+  color: #856404;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin: 3px 5px 0 0;
+}
+
+.nutrition-summary {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #333;
+}
+
+.nutri-bar {
     margin: 10px 0;
 }
 
-.menu-item p {
-    font-size: 16px;
-} 
+.nutri-bar label {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.nutri-bar .bar {
+    width: 100%;
+    background: #e9ecef;
+    height: 10px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 4px 0;
+}
+
+.nutri-bar .fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.4s ease;
+}
+
+
 </style>
 
-<section id="Subs" class="menu">
-    <!-- Subs menu content -->
-    <h2 align="center">Subs List</h2>
-    <section id="menu" class="menu">
-        <h2></h2>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_594x334.jpg" alt="Sub 1">
-            <h3>Vegiie Delight</h3>
-            <p>Tomato, mozzarella, basil.</p>
-            <p>Price: $9.90</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Sub 2">
-            <h3>Chipotle Meatball & Pepperoni</h3>
-            <p>Tomato, mozzarella, pepperoni, meatball.</p>
-            <p>Price: $11.00</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Sub 3">
-            <h3>Spicy Chicken</h3>
-            <p>Chicken, toped with spicy mayo, english-style Cheese.</p>
-            <p>Price: $11.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Leg_Ham_594x334.jpg" alt="Sub 4">
-            <h3>Leg Ham</h3>
-            <p>smoked leg ham, try with honey mustard dressing.</p>
-            <p>Price: $9.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Italian_BMT_594x334.jpg" alt="Sub 5">
-            <h3>Italian B.M.T</h3>
-            <p>salami, layered pepperoni,leg ham .</p>
-            <p>Price: $14.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/NZ_FootlongSub_RoastBeef_594x334.png" alt="Sub 6">
-            <h3>Roast Beef</h3>
-            <p>Carved roast beef, sweet chilli sause.</p>
-            <p>Price: $14.49</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Patty_594x334.jpg" alt="Sub 7">
-            <h3>Pizza Four Cheese</h3>
-            <p>Mozzarella, veggie patty, vegetables.</p>
-            <p>Price: $13.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Buffalo_Chicken_594x334.jpg" alt="Sub 8">
-            <h3>Buffalo Chicken</h3>
-            <p>Chicken breast strips, spicy buffalo sause.</p>
-            <p>Price: $14.49</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-    </section>
-</section>  
- 
 
-<%- include ("partials/footer.ejs") %> <!-- Includes the footer -->
+<section id="Subs">
+    <h2 class="menu-heading">Subs List</h2>
+    <div class="menu">
+
+        <div class="menu-item">
+    <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_594x334.jpg" alt="Veggie Delight">
+    <h3>Veggie Delight</h3>
+    <p>Base Price: $9.90</p>
+
+    <form action="/add-to-cart" method="POST">
+        <input type="hidden" name="name" value="Veggie Delight">
+        <input type="hidden" name="basePrice" value="9.90">
+        <input type="hidden" name="totalPrice" value="9.90">
+        <input type="hidden" name="selectedToppings" value="">
+
+        <!-- Quantity -->
+        <label>Quantity:
+            <input type="number" name="quantity" value="1" min="1" onchange="updateMainTotal()" required>
+        </label>
+
+        <!-- Topping Preview Badges -->
+        <div class="topping-preview" style="margin-top: 10px; min-height: 30px;"></div>
+
+        <!-- Add Toppings Button -->
+        <button type="button" onclick="openToppingModal()" class="info-btn" style="margin-top: 10px;">+ Add Extra Toppings</button>
+        <button type="button" class="info-btn" onclick="openCustomizeModal()">🛠️ Customize Sub</button>
+
+        <!-- Total -->
+        <p style="margin-top: 10px;"><strong>Total:</strong> $<span class="main-total">9.90</span></p>
+
+        <!-- Submit + Info -->
+        <button type="submit">Add to Cart</button>
+        <button type="button" class="info-btn"
+            onclick="openPopup('Veggie Delight', '220 kcal', '8g', '38g', '2.5g', '280mg', 'Lettuce, Tomato, Cucumber, Olive Oil, Oregano')">ℹ️ Info</button>
+            
+
+    </form>
+</div>
+
+<!-- Topping Modal -->
+<div id="toppingModal" class="topping-modal">
+    <div class="topping-content">
+        <h4>Choose up to 3 Toppings</h4>
+        <form id="toppingForm">
+            <label><input type="checkbox" value="🧀 Cheese" data-price="1.00"> 🧀 Cheese (+$1.00)</label><br>
+            <label><input type="checkbox" value="🌶️ Jalapeños" data-price="0.75"> 🌶️ Jalapeños (+$0.75)</label><br>
+            <label><input type="checkbox" value="🥫 Extra Sauce" data-price="0.50"> 🥫 Extra Sauce (+$0.50)</label><br>
+            <label><input type="checkbox" value="🥒 Pickles" data-price="0.60"> 🥒 Pickles (+$0.60)</label><br>
+            <label><input type="checkbox" value="🧅 Onions" data-price="0.40"> 🧅 Onions (+$0.40)</label><br>
+            <label><input type="checkbox" value="🍄 Mushrooms" data-price="0.90"> 🍄 Mushrooms (+$0.90)</label><br>
+        </form>
+        <p><strong>Subtotal:</strong> $<span id="toppingTotal">9.90</span></p>
+        <button onclick="applyToppings()">Apply</button>
+        <button onclick="closeToppingModal()" style="background-color: #dc3545; color: white;">Cancel</button>
+    </div>
+</div>
+
+<div class="overlay" id="toppingOverlay" onclick="closeToppingModal()"></div>
+
+       <!-- Menu Item -->
+<div class="menu-item">
+    <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Chipotle Meatball & Pepperoni">
+    <h3>Chipotle Meatball & Pepperoni</h3>
+    <p>Base Price: $11.00</p>
+    <form action="/add-to-cart" method="POST">
+        <input type="hidden" name="name" value="Chipotle Meatball & Pepperoni">
+        <input type="hidden" name="basePrice" value="11.00">
+        <input type="hidden" name="totalPrice" value="11.00">
+        <input type="hidden" name="selectedToppings" value="">
+        <label>Quantity:
+            <input type="number" name="quantity" value="1" min="1" onchange="updateMainTotal()" required>
+        </label>
+        <div class="topping-preview" style="margin-top: 10px; min-height: 30px;"></div>
+        <button type="button" onclick="openToppingModal(this)" class="info-btn" style="margin-top: -10px;">+ Add Extra Toppings</button>
+        <button type="button" class="info-btn" onclick="openCustomizeModal(this)">🛠️ Customize Sub</button>
+        <p><strong>Total:</strong> $<span class="main-total">11.00</span></p>
+        <button type="submit">Add to Cart</button>
+        <button type="button" class="info-btn"
+            onclick="openPopup('Chipotle Meatball & Pepperoni', '560 kcal', '22g', '49g', '29g', '890mg', 'Chipotle Sauce, Meatballs, Pepperoni, Tomato, Mozzarella')">ℹ️ Info</button>
+    </form>
+</div>
+
+
+<div class="menu-item">
+    <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_6_Inch_LTO_ANZ_Website_594x334.jpg" alt="Spicy Chicken">
+    <h3>Spicy Chicken</h3>
+    <p>Base Price: $11.99</p>
+    <form action="/add-to-cart" method="POST">
+        <input type="hidden" name="name" value="Spicy Chicken">
+        <input type="hidden" name="basePrice" value="11.99">
+        <input type="hidden" name="totalPrice" value="11.99">
+        <input type="hidden" name="selectedToppings" value="">
+        <label>Quantity:
+            <input type="number" name="quantity" value="1" min="1" onchange="updateMainTotal()" required>
+        </label>
+        <div class="topping-preview" style="margin-top: 10px;"></div>
+        <button type="button" onclick="openToppingModal(this)" class="info-btn" style="margin-top: 40px;">+ Add Extra Toppings</button>
+        <button type="button" class="info-btn" onclick="openCustomizeModal(this)">🛠️ Customize Sub</button>
+        <p><strong>Total:</strong> $<span class="main-total">11.99</span></p>
+        <button type="submit">Add to Cart</button>
+        <button type="button" class="info-btn"
+            onclick="openPopup('Spicy Chicken', '480 kcal', '26g', '42g', '18g', '770mg', 'Spicy Mayo, Grilled Chicken, Lettuce, Cheese, Jalapeños')">ℹ️ Info</button>
+    </form>
+</div>
+
+
+<div class="menu-item">
+    <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Leg_Ham_594x334.jpg" alt="Leg Ham">
+    <h3>Leg Ham</h3>
+    <p>Base Price: $9.99</p>
+    <form action="/add-to-cart" method="POST">
+        <input type="hidden" name="name" value="Leg Ham">
+        <input type="hidden" name="basePrice" value="9.99">
+        <input type="hidden" name="totalPrice" value="9.99">
+        <input type="hidden" name="selectedToppings" value="">
+        <label>Quantity:
+            <input type="number" name="quantity" value="1" min="1" onchange="updateMainTotal()" required>
+        </label>
+        <div class="topping-preview" style="margin-top: 10px;"></div>
+        <button type="button" onclick="openToppingModal(this)" class="info-btn" style="margin-top: 40px;">+ Add Extra Toppings</button>
+        <button type="button" class="info-btn" onclick="openCustomizeModal(this)">🛠️ Customize Sub</button>
+        <p><strong>Total:</strong> $<span class="main-total">9.99</span></p>
+        <button type="submit">Add to Cart</button>
+        <button type="button" class="info-btn"
+            onclick="openPopup('Leg Ham', '290 kcal', '18g', '36g', '8g', '820mg', 'Smoked Ham, Honey Mustard, Tomato, Lettuce, Red Onion')">ℹ️ Info</button>
+    </form>
+</div>
+
+
+<div class="menu-item">
+    <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Italian_BMT_594x334.jpg" alt="Italian B.M.T">
+    <h3>Italian B.M.T</h3>
+    <p>Base Price: $14.99</p>
+    <form action="/add-to-cart" method="POST">
+        <input type="hidden" name="name" value="Italian B.M.T">
+        <input type="hidden" name="basePrice" value="14.99">
+        <input type="hidden" name="totalPrice" value="14.99">
+        <input type="hidden" name="selectedToppings" value="">
+        <label>Quantity:
+            <input type="number" name="quantity" value="1" min="1" onchange="updateMainTotal()" required>
+        </label>
+        <div class="topping-preview" style="margin-top: 10px;"></div>
+        <button type="button" onclick="openToppingModal(this)" class="info-btn" style="margin-top: 10px;">+ Add Extra Toppings</button>
+        <button type="button" class="info-btn" onclick="openCustomizeModal(this)">🛠️ Customize Sub</button>
+        <p><strong>Total:</strong> $<span class="main-total">14.99</span></p>
+        <button type="submit">Add to Cart</button>
+        <button type="button" class="info-btn"
+            onclick="openPopup('Italian B.M.T', '450 kcal', '24g', '40g', '20g', '950mg', 'Salami, Pepperoni, Ham, Pickles, Onions, Ranch Sauce')">ℹ️ Info</button>
+    </form>
+</div>
+
+
+<div class="menu-item">
+    <img src="https://www.subway.com/ns/images/menu/NZD/ENG/NZ_FootlongSub_RoastBeef_594x334.png" alt="Roast Beef">
+    <h3>Roast Beef</h3>
+    <p>Base Price: $14.49</p>
+    <form action="/add-to-cart" method="POST">
+        <input type="hidden" name="name" value="Roast Beef">
+        <input type="hidden" name="basePrice" value="14.49">
+        <input type="hidden" name="totalPrice" value="14.49">
+        <input type="hidden" name="selectedToppings" value="">
+        <label>Quantity:
+            <input type="number" name="quantity" value="1" min="1" onchange="updateMainTotal()" required>
+        </label>
+        <div class="topping-preview" style="margin-top: 10px;"></div>
+        <button type="button" onclick="openToppingModal(this)" class="info-btn" style="margin-top: 10px;">+ Add Extra Toppings</button>
+        <button type="button" class="info-btn" onclick="openCustomizeModal(this)">🛠️ Customize Sub</button>
+        <p><strong>Total:</strong> $<span class="main-total">14.49</span></p>
+        <button type="submit">Add to Cart</button>
+        <button type="button" class="info-btn"
+            onclick="openPopup('Roast Beef', '400 kcal', '29g', '34g', '10g', '640mg', 'Carved Beef, Sweet Chili Sauce, Lettuce, Green Peppers')">ℹ️ Info</button>
+    </form>
+</div>
+
+
+<div class="menu-item">
+    <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Patty_594x334.jpg" alt="Pizza Four Cheese">
+    <h3>Pizza Four Cheese</h3>
+    <p>Base Price: $13.99</p>
+    <form action="/add-to-cart" method="POST">
+        <input type="hidden" name="name" value="Pizza Four Cheese">
+        <input type="hidden" name="basePrice" value="13.99">
+        <input type="hidden" name="totalPrice" value="13.99">
+        <input type="hidden" name="selectedToppings" value="">
+        <label>Quantity:
+            <input type="number" name="quantity" value="1" min="1" onchange="updateMainTotal()" required>
+        </label>
+        <div class="topping-preview" style="margin-top: 10px;"></div>
+        <button type="button" onclick="openToppingModal(this)" class="info-btn" style="margin-top: 10px;">+ Add Extra Toppings</button>
+        <button type="button" class="info-btn" onclick="openCustomizeModal(this)">🛠️ Customize Sub</button>
+        <p><strong>Total:</strong> $<span class="main-total">13.99</span></p>
+        <button type="submit">Add to Cart</button>
+        <button type="button" class="info-btn"
+            onclick="openPopup('Pizza Four Cheese', '510 kcal', '20g', '46g', '24g', '700mg', 'Mozzarella, Cheddar, Veggie Patty, Marinara Sauce, Garlic Herb')">ℹ️ Info</button>
+    </form>
+</div>
+
+
+<div class="menu-item">
+    <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Buffalo_Chicken_594x334.jpg" alt="Buffalo Chicken">
+    <h3>Buffalo Chicken</h3>
+    <p>Base Price: $14.49</p>
+    <form action="/add-to-cart" method="POST">
+        <input type="hidden" name="name" value="Buffalo Chicken">
+        <input type="hidden" name="basePrice" value="14.49">
+        <input type="hidden" name="totalPrice" value="14.49">
+        <input type="hidden" name="selectedToppings" value="">
+        <label>Quantity:
+            <input type="number" name="quantity" value="1" min="1" onchange="updateMainTotal()" required>
+        </label>
+        <div class="topping-preview" style="margin-top: 10px;"></div>
+        <button type="button" onclick="openToppingModal(this)" class="info-btn" style="margin-top: 10px;">+ Add Extra Toppings</button>
+        <button type="button" class="info-btn" onclick="openCustomizeModal(this)">🛠️ Customize Sub</button>
+        <p><strong>Total:</strong> $<span class="main-total">14.49</span></p>
+        <button type="submit">Add to Cart</button>
+        <button type="button" class="info-btn"
+            onclick="openPopup('Buffalo Chicken', '470 kcal', '28g', '37g', '17g', '880mg', 'Buffalo Sauce, Chicken Strips, Blue Cheese, Spinach, Red Onion')">ℹ️ Info</button>
+    </form>
+</div>
+
+
+        <div class="overlay" id="overlay"></div>
+
+        <div class="info-popup" id="infoPopup">
+            <button class="close-btn" onclick="closePopup()">X</button>
+            <h4 id="popupTitle">Sub Name</h4>
+        
+            <!-- Nutrition Bars -->
+            <div class="nutri-bar">
+                <label>Calories</label>
+                <div class="bar"><div class="fill" id="calBar"></div></div>
+                <small id="popupCalories">-- kcal</small>
+            </div>
+            <div class="nutri-bar">
+                <label>Protein</label>
+                <div class="bar"><div class="fill" id="proteinBar"></div></div>
+                <small id="popupProtein">-- g</small>
+            </div>
+            <div class="nutri-bar">
+                <label>Fat</label>
+                <div class="bar"><div class="fill" id="fatBar"></div></div>
+                <small id="popupFat">-- g</small>
+            </div>
+
+            <div class="nutri-bar">
+                <label>Sodium</label>
+                <div class="bar"><div class="fill" id="sodiumBar"></div></div>
+                <small id="popupSodium">-- mg</small>
+            </div>
+        
+            <p><strong>Extras:</strong> <span id="popupExtras"></span></p>
+        </div>
+        
+
+        <!-- Customize Modal -->
+<div id="customizeModal" class="customize-modal">
+    <div class="customize-content">
+      <h4>Customize Your Sub</h4>
+      <form id="customizeForm">
+        <label><strong>Bread:</strong></label><br>
+        <select id="bread">
+          <option value="White">White</option>
+          <option value="Multigrain">Multigrain</option>
+          <option value="Gluten-Free">Gluten-Free</option>
+        </select><br><br>
+  
+        <label><strong>Cheese:</strong></label><br>
+        <select id="cheese">
+          <option value="Mozzarella">Mozzarella</option>
+          <option value="Cheddar">Cheddar</option>
+          <option value="No Cheese">No Cheese</option>
+        </select><br><br>
+  
+        <label><strong>Sauce:</strong></label><br>
+        <select id="sauce">
+          <option value="Mayo">Mayo</option>
+          <option value="Southwest">Southwest</option>
+          <option value="Chipotle">Chipotle</option>
+        </select><br><br>
+  
+        <label><strong>Toasted:</strong></label><br>
+        <select id="toasted">
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select><br><br>
+  
+        <button type="button" onclick="applyCustomization()">Apply</button>
+        <button type="button" onclick="closeCustomizeModal()" style="background-color:#dc3545;color:white;">Cancel</button>
+      </form>
+    </div>
+  </div>
+  <div id="customizeOverlay" class="overlay" onclick="closeCustomizeModal()"></div>
+
+
+<script>
+    function openPopup(name, cal, protein, carbs, fat, sodium, extras) {
+    document.getElementById('popupTitle').innerText = name;
+    document.getElementById('popupCalories').innerText = cal;
+    document.getElementById('popupProtein').innerText = protein;
+    document.getElementById('popupFat').innerText = fat;
+    document.getElementById('popupSodium').innerText = sodium;
+    document.getElementById('popupExtras').innerText = extras;
+
+    // Convert strings to numeric values
+    const calVal = parseInt(cal);         // e.g. "480 kcal" → 480
+    const proteinVal = parseInt(protein); // e.g. "26g" → 26
+    const fatVal = parseFloat(fat);       // e.g. "10g" → 10
+    const sodiumVal = parseInt(sodium);   // e.g. "820mg" → 820
+
+    // Calculate percentage widths for bars
+    const calPercent = Math.min((calVal / 600) * 100, 100);
+    const proteinPercent = Math.min((proteinVal / 40) * 100, 100);
+    const fatPercent = Math.min((fatVal / 30) * 100, 100);
+    const sodiumPercent = Math.min((sodiumVal / 1000) * 100, 100); // 1000mg max
+
+    // Set bar widths + colors
+    document.getElementById('calBar').style.width = calPercent + "%";
+    document.getElementById('calBar').style.backgroundColor = "#ffc107";
+
+    document.getElementById('proteinBar').style.width = proteinPercent + "%";
+    document.getElementById('proteinBar').style.backgroundColor = "#28a745";
+
+    document.getElementById('fatBar').style.width = fatPercent + "%";
+    document.getElementById('fatBar').style.backgroundColor = "#dc3545";
+
+    document.getElementById('sodiumBar').style.width = sodiumPercent + "%";
+    document.getElementById('sodiumBar').style.backgroundColor = "#17a2b8";
+
+    // Show the popup
+    document.getElementById('infoPopup').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+}
+
+
+
+    function closePopup() {
+        document.getElementById('infoPopup').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+    }
+</script>
+
+<script>
+   function updateTotal(form) {
+    const basePrice = parseFloat(form.basePrice.value);
+    const quantity = parseInt(form.quantity.value) || 1;
+    let toppingsCost = 0;
+    let selectedToppings = [];
+
+    form.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+        toppingsCost += parseFloat(cb.dataset.price);
+        selectedToppings.push(cb.value);
+    });
+
+    const total = ((basePrice + toppingsCost) * quantity).toFixed(2);
+    const totalElem = form.querySelector(".total");
+
+    totalElem.textContent = total;
+    form.totalPrice.value = total;
+
+    // Highlight total briefly
+    totalElem.classList.add("highlight");
+    setTimeout(() => totalElem.classList.remove("highlight"), 300);
+
+    // Update topping preview
+    const previewDiv = form.querySelector(".topping-preview");
+    previewDiv.innerHTML = "";
+    selectedToppings.forEach(topping => {
+        const badge = document.createElement("span");
+        badge.className = "topping-badge";
+        badge.textContent = topping;
+        previewDiv.appendChild(badge);
+    });
+}
+
+function handleToppingChange(changedCheckbox) {
+    const form = changedCheckbox.closest("form");
+    const maxToppings = 3;
+    const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+    const checked = form.querySelectorAll('input[type="checkbox"]:checked');
+
+    if (checked.length > maxToppings) {
+        changedCheckbox.checked = false;
+        alert("You can select up to 3 toppings only.");
+    }
+
+    updateTotal(form);
+}
+
+</script>
+
+<script>
+    let currentForm = null;
+    let selectedToppings = [];
+    let basePrice = 9.90;
+    function openToppingModal(button) {
+    currentForm = button.closest("form");
+    basePrice = parseFloat(currentForm.querySelector('input[name="basePrice"]').value);
+
+    document.getElementById('toppingModal').style.display = 'block';
+    document.getElementById('toppingOverlay').style.display = 'block';
+    updateToppingTotal();
+}
+
+
+    function closeToppingModal() {
+        document.getElementById('toppingModal').style.display = 'none';
+        document.getElementById('toppingOverlay').style.display = 'none';
+    }
+
+    function updateToppingTotal() {
+        const checkboxes = document.querySelectorAll('#toppingForm input[type="checkbox"]:checked');
+        let total = basePrice;
+        checkboxes.forEach(cb => {
+            total += parseFloat(cb.getAttribute('data-price'));
+        });
+        document.getElementById('toppingTotal').innerText = total.toFixed(2);
+    }
+
+    document.querySelectorAll('#toppingForm input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', () => {
+            const checked = document.querySelectorAll('#toppingForm input[type="checkbox"]:checked');
+            if (checked.length > 3) {
+                cb.checked = false;
+                alert("Only 3 toppings allowed.");
+            }
+            updateToppingTotal();
+        });
+    });
+
+    function applyToppings() {
+    const checked = document.querySelectorAll('#toppingForm input[type="checkbox"]:checked');
+    const selectedToppings = Array.from(checked).map(cb => cb.value);
+    const toppingCost = Array.from(checked).reduce((sum, cb) => sum + parseFloat(cb.getAttribute('data-price')), 0);
+    const quantity = parseInt(currentForm.querySelector('input[name="quantity"]').value) || 1;
+    const total = ((basePrice + toppingCost) * quantity).toFixed(2);
+
+    // Update current form fields
+    currentForm.querySelector('input[name="totalPrice"]').value = total;
+    currentForm.querySelector('input[name="selectedToppings"]').value = selectedToppings.join(', ');
+    currentForm.querySelector('.main-total').innerText = total;
+
+    // Update badge preview
+    const badgeContainer = currentForm.querySelector('.topping-preview');
+    badgeContainer.innerHTML = "";
+    selectedToppings.forEach(topping => {
+        const badge = document.createElement('span');
+        badge.className = 'topping-badge';
+        badge.innerText = topping;
+        badgeContainer.appendChild(badge);
+    });
+
+    closeToppingModal();
+}
+
+
+   function updateMainTotal() {
+    if (currentForm) {
+        applyToppings(); // Live price update only for selected form
+    }
+}
+
+</script>
+
+<script>
+    function openCustomizeModal(button) {
+    currentForm = button.closest("form");
+
+    document.getElementById('customizeModal').style.display = 'block';
+    document.getElementById('customizeOverlay').style.display = 'block';
+}
+
+function applyCustomization() {
+    const bread = document.getElementById("bread").value;
+    const cheese = document.getElementById("cheese").value;
+    const sauce = document.getElementById("sauce").value;
+    const toasted = document.getElementById("toasted").value;
+
+    if (!currentForm.querySelector('input[name="customOptions"]')) {
+        const hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.name = "customOptions";
+        currentForm.appendChild(hidden);
+    }
+
+    currentForm.querySelector('input[name="customOptions"]').value =
+        `Bread: ${bread}, Cheese: ${cheese}, Sauce: ${sauce}, Toasted: ${toasted}`;
+
+    const badgeHTML = `
+        <span class="customize-badge">Bread: ${bread}</span>
+        <span class="customize-badge">Cheese: ${cheese}</span>
+        <span class="customize-badge">Sauce: ${sauce}</span>
+        <span class="customize-badge">Toasted: ${toasted}</span>
+    `;
+    const previewArea = currentForm.querySelector('.topping-preview');
+    previewArea.innerHTML += badgeHTML;
+
+    closeCustomizeModal();
+}
+
+    </script>
+    
+
+
+    </div>
+</section>
+
+<%- include("partials/footer.ejs") %>

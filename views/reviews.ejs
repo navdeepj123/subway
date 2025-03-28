@@ -1,36 +1,53 @@
-<%- include ("partials/header.ejs") %> <!-- Includes the header -->
+<%- include ("partials/header.ejs") %>
+
+<!-- Link to the CSS file in the public folder -->
+<link rel="stylesheet" type="text/css" href="/public/reviews.css">
 
 <div class="container">
-    <h2 style="color:#800020">Customer Reviews:</h2>  
+    <h2>Customer Reviews</h2>
 
-    <% reviews.forEach(review => { %> <!-- Looping through each review -->
-        <div class="review"> <!-- Container for each review -->
-            <div class="reviewer"><%= review['Name'] %></div> 
-            <div class="rating"><%= review.Rating %></div> 
-            <div class="comment">  
-                "<%= review.Comment %>"
-            </div>
+    <!-- Leave a Review Section -->
+    <% if (session.loggedin) { %>
+        <div class="user-review-form">
+            <h3>Leave a Review</h3>
+            <form action="/submit-review" method="POST">
+                <label>Your Name:</label><br>
+                <input type="text" name="name" value="<%= session.username %>" readonly><br>
+                <label>Rating:</label><br>
+                <select name="rating" required>
+                    <option value="5">⭐⭐⭐⭐⭐</option>
+                    <option value="4">⭐⭐⭐⭐</option>
+                    <option value="3">⭐⭐⭐</option>
+                    <option value="2">⭐⭐</option>
+                    <option value="1">⭐</option>
+                </select><br>
+                <label>Your Comment:</label><br>
+                <textarea name="comment" rows="4" required></textarea><br>
+                <button type="submit">Submit Review</button>
+            </form>
         </div>
-    <% }); %>
+    <% } else { %>
+        <p><a href="/login">Log in</a> to leave a review.</p>
+    <% } %>
 
-    <div class="user-review-form"> <!-- Form for users to leave their own review -->
-        <h3>Leave Your Review</h3>
-        <form action="/submit-review" method="POST">
-            <label for="name">Your Name:</label><br>
-            <input type="text" id="name" name="name" required><br>
-            <label for="rating">Rating:</label><br>
-            <select id="rating" name="rating" required>
-                <option value="⭐">⭐</option>
-                <option value="⭐⭐">⭐⭐</option>
-                <option value="⭐⭐⭐">⭐⭐⭐</option>
-                <option value="⭐⭐⭐⭐">⭐⭐⭐⭐</option>
-                <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐</option>
-            </select><br>
-            <label for="comment">Your Comment:</label><br>
-            <textarea id="comment" name="comment" rows="4" required></textarea><br>
-            <button type="submit">Submit</button>
-        </form>
+    <!-- Display Total Reviews -->
+    <h3>Total Reviews: <%= totalReviews %></h3>
+
+    <!-- Display All Reviews -->
+    <div class="reviews-container">
+        <% if (reviews.length === 0) { %>
+            <p>No reviews yet. Be the first to leave one!</p>
+        <% } else { %>
+            <% reviews.forEach(review => { %>
+                <div class="review">
+                    <strong><%= review.Name %></strong> - <%= review.Rating %> ⭐
+                    <p>"<%= review.Comment %>"</p>
+                    <small>Posted on: <%= new Date(review.CreatedAt).toLocaleString() %></small>
+                </div>
+                <hr>
+            <% }); %>
+        <% } %>
     </div>
 </div>
 
-<%- include ("partials/footer.ejs") %> <!-- Includes the footer -->
+<%- include ("partials/footer.ejs") %>
