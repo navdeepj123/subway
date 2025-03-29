@@ -1,6 +1,7 @@
 // Importing MySQL module
 var mysql = require('mysql');
 
+
 // Creating a connection pool to optimize database connections
 var conn = mysql.createPool({
     connectionLimit: 10, // Allows multiple connections to prevent overload

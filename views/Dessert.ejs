@@ -1,133 +1,328 @@
-<%- include("partials/header2.ejs") %> <!-- Includes the header -->
+<%- include("partials/header2.ejs") %>
 
-<!-- Cart Button at the top -->
-<div style="text-align: right; padding: 10px;">
-    <button class="btn btn-primary" onclick="window.location.href='/cart'">
-        🛒 View Cart
-    </button>
+<!-- Cart Button -->
+<a href="/cart" class="cart-btn">
+    <img src="https://img.icons8.com/ios/452/shopping-cart.png" alt="cart" width="30" height="30">
+    Cart
+</a>
+
+<!-- Price Filter -->
+<div class="filter-section" style="text-align: center; margin: 20px 0;">
+    <label for="price-filter">Filter by Price:</label>
+    <select id="price-filter" onchange="filterDesserts()">
+        <option value="all">All</option>
+        <option value="low">Below $7</option>
+        <option value="mid">Between $7 - $9</option>
+        <option value="high">Above $9</option>
+    </select>
 </div>
 
 <style>
-    /* CSS styles for the menu */
+    body {
+        background: #f0f4f8;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    h2 {
+        text-align: center;
+        margin-top: 20px;
+        color: #333;
+    }
+
     .menu {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: center;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 25px;
+        padding: 20px 40px 60px;
+        max-width: 1400px;
+        margin: auto;
     }
 
     .menu-item {
-        width: 250px;
-        height: 400px; /* Increased height */
-        background-color: #fff;
-        border: 1px solid #ddd;
+
+        background: #fff;
+        border-radius: 16px;
+
         padding: 20px;
         text-align: center;
-        transition: transform 0.3s, box-shadow 0.3s;
-        border-radius: 10px;
-        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
         display: flex;
-        flex-direction: column; /* Ensures content stacks properly */
+        flex-direction: column;
+        justify-content: space-between;
     }
 
     .menu-item:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        transform: translateY(-6px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
     }
 
     .menu-item img {
-        max-width: 100%;
-        max-height: 150px; /* Limits image size */
-        border-radius: 10px;
+        width: 100%;
+        height: 150px;
         object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 10px;
     }
 
     .menu-item h3 {
         font-size: 18px;
-        margin: 10px 0;
+        color: #333;
+        margin: 10px 0 5px;
     }
 
     .menu-item p {
         font-size: 14px;
-        flex-grow: 1; /* Pushes the button to the bottom */
+        color: #555;
+        margin: 4px 0;
     }
 
-    .menu-item form {
-        margin-top: auto; /* Ensures button stays at the bottom */
+
+    .menu-item input[type="number"] {
+        width: 60px;
+        padding: 6px;
+        margin-top: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+
     }
 
     .menu-item button {
-        width: 100%; /* Full-width button for better visibility */
+        margin-top: 10px;
+        background-color: #007bff;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .menu-item button:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .info-btn {
+        background-color: #6c757d;
+        margin-left: 10px;
+        padding: 7px 14px;
+        font-size: 13px;
+    }
+
+    .info-btn:hover {
+        background-color: #495057;
+    }
+
+    .cart-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(to right, #007bff, #00b4d8);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        font-weight: bold;
+        z-index: 999;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .cart-btn img {
+        margin-right: 10px;
+        width: 24px;
+        height: 24px;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 999;
+    }
+
+    .info-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 300px;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: none;
+        text-align: left;
+    }
+
+    .info-popup h4 {
+        margin-bottom: 10px;
+        color: #007bff;
+    }
+
+    .info-popup p {
+        margin: 6px 0;
+        font-size: 14px;
+        color: #444;
+    }
+
+    .close-btn {
+        background-color: #dc3545;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        float: right;
+        cursor: pointer;
     }
 </style>
 
-<section id="desserts" class="menu">
-    <h2 align="center">Desserts Menu</h2>
 
-    <div class="menu-item">
-        <img src="https://imagesvc.meredithcorp.io/v3/mm/image?q=85&c=sc&poi=face&w=768&h=384&url=https:%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F19%2F2011%2F09%2F10%2Fcrisco-double-decadence-chocolate-cake-with-glossy-frosting-768x768-1.jpg" alt="Chocolate Cake">
-        <h3>Chocolate Cake</h3>
-        <p>Decadent chocolate cake with a rich and creamy chocolate frosting.</p>
-        <p>Price: $6.99</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Chocolate Cake">
-            <input type="hidden" name="price" value="6.99">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-    </div>
+<section id="desserts">
+    <h2>Desserts Menu</h2>
+    <div class="menu">
 
-    <div class="menu-item">
-        <img src="https://th.bing.com/th/id/OIP.4_DSx6nDF3FRroiucbLy8wHaE7?pid=ImgDet&rs=1" alt="Tiramisu">
-        <h3>Tiramisu</h3>
-        <p>Classic Italian tiramisu with layers of coffee-soaked ladyfingers and mascarpone cheese.</p>
-        <p>Price: $8.99</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Tiramisu">
-            <input type="hidden" name="price" value="8.99">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-    </div>
+        <!-- Dessert 1 -->
+        <div class="menu-item" data-price="6.99">
+            <img src="https://imagesvc.meredithcorp.io/v3/mm/image?q=85&c=sc&poi=face&w=768&h=384&url=https:%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F19%2F2011%2F09%2F10%2Fcrisco-double-decadence-chocolate-cake-with-glossy-frosting-768x768-1.jpg" alt="Chocolate Cake">
+            <h3>Chocolate Cake</h3>
+            <p>Decadent chocolate cake with rich and creamy frosting.</p>
+            <p>Price: $6.99</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Chocolate Cake">
+                <input type="hidden" name="price" value="6.99">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+                    onclick="openPopup('Chocolate Cake', '420 kcal', '32g', '18g', '190mg', 'Dark chocolate, frosting, flour, butter')">ℹ️ Info</button>
+            </form>
+        </div>
 
-    <div class="menu-item">
-        <img src="https://th.bing.com/th/id/OIP.HsDaT57fP7_mWRc4noHjlQHaFX?pid=ImgDet&rs=1" alt="Molten Lava Cake">
-        <h3>Molten Lava Cake</h3>
-        <p>Warm chocolate cake with a gooey, molten chocolate center, served with vanilla ice cream.</p>
-        <p>Price: $6.99</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Molten Lava Cake">
-            <input type="hidden" name="price" value="6.99">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-    </div>
+        <!-- Dessert 2 -->
+        <div class="menu-item" data-price="8.99">
+            <img src="https://th.bing.com/th/id/OIP.4_DSx6nDF3FRroiucbLy8wHaE7?pid=ImgDet&rs=1" alt="Tiramisu">
+            <h3>Tiramisu</h3>
+            <p>Classic tiramisu with coffee-soaked ladyfingers and mascarpone.</p>
+            <p>Price: $8.99</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Tiramisu">
+                <input type="hidden" name="price" value="8.99">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+                    onclick="openPopup('Tiramisu', '480 kcal', '38g', '22g', '160mg', 'Coffee, mascarpone, cocoa powder, ladyfingers')">ℹ️ Info</button>
+            </form>
+        </div>
 
-    <div class="menu-item">
-        <img src="https://th.bing.com/th/id/OIP.rFCNyHGdjH8jSgRoYOl_iAHaGV?pid=ImgDet&rs=1" alt="Fudge Brownie Sundae">
-        <h3>Fudge Brownie Sundae</h3>
-        <p>Fudge brownie chunks with vanilla ice cream, hot fudge.</p>
-        <p>Price: $8.99</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Fudge Brownie Sundae">
-            <input type="hidden" name="price" value="8.99">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-    </div>
+        <!-- Dessert 3 -->
+        <div class="menu-item" data-price="6.99">
+            <img src="https://th.bing.com/th/id/OIP.HsDaT57fP7_mWRc4noHjlQHaFX?pid=ImgDet&rs=1" alt="Molten Lava Cake">
+            <h3>Molten Lava Cake</h3>
+            <p>Warm cake with gooey chocolate center and ice cream.</p>
+            <p>Price: $6.99</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Molten Lava Cake">
+                <input type="hidden" name="price" value="6.99">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+                    onclick="openPopup('Molten Lava Cake', '520 kcal', '44g', '25g', '250mg', 'Dark chocolate, vanilla ice cream, flour')">ℹ️ Info</button>
+            </form>
+        </div>
 
-    <div class="menu-item">
-        <img src="https://th.bing.com/th/id/OIP.yr_M_kxeFOXWZMk0F1SHSQHaE8?pid=ImgDet&rs=1" alt="Chocolate Mousse">
-        <h3>Chocolate Mousse</h3>
-        <p>Silky and creamy chocolate mousse topped with whipped cream and chocolate chips.</p>
-        <p>Price: $5.99</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Chocolate Mousse">
-            <input type="hidden" name="price" value="5.99">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
+        <!-- Dessert 4 -->
+        <div class="menu-item" data-price="8.99">
+            <img src="https://th.bing.com/th/id/OIP.rFCNyHGdjH8jSgRoYOl_iAHaGV?pid=ImgDet&rs=1" alt="Fudge Brownie Sundae">
+            <h3>Fudge Brownie Sundae</h3>
+            <p>Brownie chunks with vanilla ice cream and hot fudge.</p>
+            <p>Price: $8.99</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Fudge Brownie Sundae">
+                <input type="hidden" name="price" value="8.99">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+                    onclick="openPopup('Fudge Brownie Sundae', '610 kcal', '48g', '32g', '320mg', 'Brownies, vanilla scoop, hot fudge')">ℹ️ Info</button>
+            </form>
+        </div>
+
+        <!-- Dessert 5 -->
+        <div class="menu-item" data-price="5.99">
+            <img src="https://th.bing.com/th/id/OIP.yr_M_kxeFOXWZMk0F1SHSQHaE8?pid=ImgDet&rs=1" alt="Chocolate Mousse">
+            <h3>Chocolate Mousse</h3>
+            <p>Silky mousse topped with whipped cream and chips.</p>
+            <p>Price: $5.99</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Chocolate Mousse">
+                <input type="hidden" name="price" value="5.99">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+                    onclick="openPopup('Chocolate Mousse', '390 kcal', '36g', '19g', '200mg', 'Milk chocolate, cream, cocoa chips')">ℹ️ Info</button>
+            </form>
+        </div>
+
+
     </div>
 </section>
 
-<%- include("partials/footer.ejs") %> <!-- Includes the footer -->
+<!-- Info popup -->
+<div class="overlay" id="overlay"></div>
+
+<div class="info-popup" id="infoPopup">
+    <button class="close-btn" onclick="closePopup()">X</button>
+    <h4 id="popupTitle">Dessert Name</h4>
+    <p><strong>Calories:</strong> <span id="popupCalories"></span></p>
+    <p><strong>Sugar:</strong> <span id="popupSugar"></span></p>
+    <p><strong>Fat:</strong> <span id="popupFat"></span></p>
+    <p><strong>Sodium:</strong> <span id="popupSodium"></span></p>
+    <p><strong>Extras:</strong> <span id="popupExtras"></span></p>
+</div>
+
+<script>
+    function openPopup(name, calories, sugar, fat, sodium, extras) {
+        document.getElementById('popupTitle').innerText = name;
+        document.getElementById('popupCalories').innerText = calories;
+        document.getElementById('popupSugar').innerText = sugar;
+        document.getElementById('popupFat').innerText = fat;
+        document.getElementById('popupSodium').innerText = sodium;
+        document.getElementById('popupExtras').innerText = extras;
+        document.getElementById('infoPopup').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+    }
+
+    function closePopup() {
+        document.getElementById('infoPopup').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+    }
+
+    function filterDesserts() {
+        const filter = document.getElementById("price-filter").value;
+        const items = document.querySelectorAll(".menu-item");
+
+        items.forEach(item => {
+            const price = parseFloat(item.getAttribute("data-price"));
+
+            if (filter === "all") {
+                item.style.display = "flex";
+            } else if (filter === "low" && price < 7) {
+                item.style.display = "flex";
+            } else if (filter === "mid" && price >= 7 && price <= 9) {
+                item.style.display = "flex";
+            } else if (filter === "high" && price > 9) {
+                item.style.display = "flex";
+            } else {
+                item.style.display = "none";
+            }
+        });
+    }
+</script>
+
+<%- include("partials/footer.ejs") %>

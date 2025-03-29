@@ -3,7 +3,7 @@ name: Deploy to Apache Server
 on:
   push:
     branches:
-      - main  # Adjust this to your desired branch, usually "main" or "master"
+      - main  # Adjust this to your main branch
 
 jobs:
   deploy:
@@ -14,36 +14,43 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
     
-    # Set up Node.js (or any environment your project requires)
+    # Set up Node.js
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16'  # Specify the Node.js version you are using
+        node-version: '16'  # Adjust based on your project requirements
     
-    # Install dependencies (npm install)
+    # Install dependencies
     - name: Install dependencies
-      run: |
-        npm install
+      run: npm install
     
-    # Build the project (for React or similar front-end frameworks)
+    # Build the project
     - name: Build project
-      run: |
-        npm run build  # This assumes you're using create-react-app or similar
+      run: npm run build  # Assumes React or similar frontend framework
     
-    # Set up SSH pass for password authentication
-    - name: Set up SSH pass
-      run: sudo apt-get install sshpass
-    
-    # Copy the build files to the Apache server (assuming build is in the 'build' folder)
-    - name: Deploy build files to server
+    # Set environment variables
+    - name: Set environment variables
       run: |
-        # Copy files to Apache server's root directory
-        sshpass -p "${{ secrets.SERVER_PASSWORD }}" scp -o StrictHostKeyChecking=no -r ./build/* ${SERVER_USER}@${SERVER_IP}:/var/www/html/
-    
-    # SSH into the server and perform post-deployment tasks if needed (e.g., restart Apache)
-    - name: SSH into the server and restart Apache
+        echo "Setting environment variables"
+      env:
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+
+    # Copy build files to the Apache server
+    - name: Deploy build files to Apache server
+      env:
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
       run: |
-        sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_IP} << 'EOF'
-          # Restart Apache to apply changes
+        sudo apt-get install -y sshpass
+        sshpass -p "${{ secrets.SERVER_PASSWORD }}" scp -o StrictHostKeyChecking=no -r ./build/* $SERVER_USER@$SERVER_IP:/var/www/html/
+    
+    # SSH into the server and restart Apache
+    - name: Restart Apache on server
+      env:
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+      run: |
+        sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP << 'EOF'
           sudo systemctl restart apache2
         EOF
