@@ -1,0 +1,56 @@
+name: Deploy to Apache Server
+
+on:
+  push:
+    branches:
+      - main  # Adjust this to your main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    
+    steps:
+    # Checkout the repository
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+    
+    # Set up Node.js
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'  # Adjust based on your project requirements
+    
+    # Install dependencies
+    - name: Install dependencies
+      run: npm install
+    
+    # Build the project
+    - name: Build project
+      run: npm run build  # Assumes React or similar frontend framework
+    
+    # Set environment variables
+    - name: Set environment variables
+      run: |
+        echo "Setting environment variables"
+      env:
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+
+    # Copy build files to the Apache server
+    - name: Deploy build files to Apache server
+      env:
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+      run: |
+        sudo apt-get install -y sshpass
+        sshpass -p "${{ secrets.SERVER_PASSWORD }}" scp -o StrictHostKeyChecking=no -r ./build/* $SERVER_USER@$SERVER_IP:/var/www/html/
+    
+    # SSH into the server and restart Apache
+    - name: Restart Apache on server
+      env:
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+      run: |
+        sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP << 'EOF'
+          sudo systemctl restart apache2
+        EOF

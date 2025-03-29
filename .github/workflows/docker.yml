@@ -1,0 +1,87 @@
+name: Deploy Express App with PM2 and Run ZAP Scan
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # -----------------------
+  # 🚀 DEPLOY EXPRESS APP
+  # -----------------------
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # ✅ Install SSH and SSHPass
+      - name: Install SSH & SSHPass
+        run: sudo apt-get install -y sshpass
+
+      # ✅ Debug SSH Variables (Optional)
+      - name: Debug SSH Variables
+        run: |
+          echo "Server Host: ${{ secrets.SERVER_HOST }}"
+          echo "Server Username: ${{ secrets.SERVER_USERNAME }}"
+
+      # ✅ Transfer Files to Server
+      - name: Transfer Files to Server
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        run: |
+          sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
+            echo "✅ Successfully connected to $SERVER_HOST"
+            sudo npm install -g pm2 || true
+            sudo mkdir -p /var/www/express-app
+            cd /var/www/express-app
+            npx pm2 stop subway-app || true
+            sudo rm -rf /var/www/express-app/* || true
+            exit
+          EOF
+          sshpass -p "$SERVER_PASSWORD" scp -r * $SERVER_USERNAME@$SERVER_HOST:/var/www/express-app/
+
+      # ✅ Install Dependencies and Restart App
+      - name: Install Dependencies and Restart App
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        run: |
+          sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
+            echo "🚀 Installing Dependencies and Restarting PM2..."
+            cd /var/www/express-app
+            npm install --production
+            npx pm2 start app.js --name subway-app || npx pm2 restart subway-app
+            npx pm2 save
+            exit
+          EOF
+
+  # -----------------------
+  # 🔎 RUN OWASP ZAP SCAN
+  # -----------------------
+  zap-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Debug Environment
+        run: |
+          echo "Operating System: $(uname -a)"
+          echo "Runner Version: $RUNNER_VERSION"
+
+      # ✅ Install Docker (official script)
+      - name: Install Docker
+        run: |
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo sh get-docker.sh
+          docker --version
+
+      # ✅ Run OWASP ZAP Full Scan with 10-minute limit
+      - name: Run OWASP ZAP Full Scan
+        run: |
+          docker pull zaproxy/zap-stable
+          docker run -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-full-scan.py -t http://${{ secrets.SERVER_HOST }}/ -m 10 -J zap-report.json
+

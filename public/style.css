@@ -1,47 +1,30 @@
 /* Background image for the body */
 body {
-    background-image: url(/public/Images/subway.jpg);
+    background-image: url(/public/Images/subway.webp);
     background-size: cover;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    /* Added: Set background color to a light shade of beige */
-    background-color: #eaf3e8;
+    background-color: #eaf3e8; /* Light beige */
 }
 
 /* Styling for h1 */
 h1 {
     text-align: center;
     text-decoration: underline;
-    /* Changed: Dark blue color to a wine-like color */
-    color: #800020;
-}
-
-* Container styles */
-.container {
-    width: 80%;
-    margin: 50px auto;
-    text-align: center;
-    /* Added: Set background color to a light shade of beige */
-    background-color: #f3f1e8;
-    /* Added: Add some padding */
-    padding: 20px;
-    /* Added: Add border-radius for a smoother look */
-    border-radius: 10px;
-    /* Added: Add box shadow for depth */
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    color: #800020; /* Wine color */
 }
 
 /* General paragraph styles */
 p {
-    /* Changed: Dark gray color to a slightly lighter shade */
     color: #444;
     margin-bottom: 20px;
 }
 
+/* Navbar styles */
 .navbar-nav {
     margin: 0;
-    padding: 0;
+    padding: 1px 0;
     position: relative;
     display: flex;
     list-style-type: none;
@@ -53,49 +36,15 @@ p {
 }
 
 .nav-link {
-    color: white; /* Change to desired text color */
+    color: white;
     text-decoration: none;
     padding: 10px;
+    font-weight: bold;
 }
 
 .nav-link:hover {
-    background-color: white; /* Change to desired hover background color */
-    color: red; /* Change to desired hover text color */
-}
-
-/* Styles for form groups */
-.form-group {
-    margin-bottom: 20px;
-}
-
-/* Styles for form labels */
-.label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-/* Styles for input fields */
-.input-field {
-    width: calc(100% - 20px);
-    padding: 10px;
-    border: 1px solid #ced4da; /* Light gray border */
-    border-radius: 5px;
-}
-
-/* Styles for submit button */
-.submit-btn {
-    padding: 10px 20px;
-    background-color: #800020; 
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.submit-btn:hover {
-    background-color: #580018; 
+    background-color: #800020; /* Wine color */
+    color: white;
 }
 
 /* Styles for additional information */
@@ -113,16 +62,6 @@ p {
     text-decoration: underline;
 }
 
-/* Styles for login and register forms */
-.form, .register-form {
-    background-color: #fff; /* White background */
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Drop shadow effect */
-    max-width: 400px;
-    margin: 0 auto;
-}
-
 /* Styles for headings */
 .heading {
     text-align: center;
@@ -130,20 +69,13 @@ p {
     color: #800020; /* Wine color */
 }
 
+/* Footer styles */
 .site-footer {
-    background-color: #f3f1e8; /* Light beige background */
-    padding: 20px;
+    background-color: #333;
+    color: white;
+    padding: 15px 0;
     text-align: center;
     width: 100%;
-    position: fixed; /* Set position to fixed */
+    position: relative; /* Remove fixed positioning */
     bottom: 0;
-    left: 0;
-    z-index: 1000;
 }
-
-/* Add padding to the bottom of the content area */
-.container {
-    padding-bottom: 60px; /* Adjust this value to match the height of your footer */
-}
-
-

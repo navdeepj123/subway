@@ -1,110 +1,274 @@
-<%- include ("partials/header2.ejs") %> <!-- Includes the header -->
+<%- include("partials/header2.ejs") %>
+
+<!-- Cart Button -->
+<a href="/cart" class="cart-btn">
+    <img src="https://img.icons8.com/ios/452/shopping-cart.png" alt="cart" width="30" height="30">
+    Cart
+</a>
 
 <style>
-    /* CSS styles for the table */
+    body {
+        background: #f0f4f8;
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .menu-heading {
+        font-size: 36px;
+        color: #222;
+        text-align: center;
+        margin: 40px 0 20px;
+    }
+
     .menu {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 30px;
+        padding: 20px 40px 60px;
+        max-width: 1400px;
+        margin: auto;
+    }
 
-.menu-item {
-    width: 250px;
-    height: 350px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    padding: 20px;
-    text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
-    border-radius: 10px;
-    overflow: hidden;
-}
+    .menu-item {
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+    }
 
-.menu-item:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
+    .menu-item:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+    }
 
-.menu-item img {
-    max-width: 100%;
-    max-height: 100%;
-    border-radius: 10px;
-}
+    .menu-item img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
 
-.menu-item h3 {
-    font-size: 20px;
-    margin: 10px 0;
-}
+    .menu-item h3 {
+        font-size: 20px;
+        color: #333;
+        margin: 10px 0 5px;
+    }
 
-.menu-item p {
-    font-size: 16px;
-} 
+    .menu-item p {
+        font-size: 14px;
+        color: #666;
+        margin: 4px 0;
+    }
+
+    .menu-item input[type="number"] {
+        width: 60px;
+        padding: 6px;
+        margin-top: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+    }
+
+    .menu-item button {
+        margin-top: 10px;
+        background-color: #007bff;
+        color: white;
+        padding: 10px 18px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .menu-item button:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .info-btn {
+        background-color: #6c757d;
+        margin-left: 10px;
+        padding: 7px 14px;
+        font-size: 13px;
+    }
+
+    .info-btn:hover {
+        background-color: #495057;
+    }
+
+    .cart-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(to right, #007bff, #00b4d8);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        font-weight: bold;
+        z-index: 999;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .cart-btn img {
+        margin-right: 10px;
+        width: 24px;
+        height: 24px;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 999;
+    }
+
+    .info-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 300px;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: none;
+        text-align: left;
+    }
+
+    .info-popup h4 {
+        margin-bottom: 10px;
+        color: #007bff;
+    }
+
+    .info-popup p {
+        margin: 6px 0;
+        font-size: 14px;
+        color: #444;
+    }
+
+    .close-btn {
+        background-color: #dc3545;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        float: right;
+        cursor: pointer;
+    }
 </style>
 
-<section id="Subs" class="menu">
-    <!-- Subs menu content -->
-    <h2 align="center">Subs List</h2>
-    <section id="menu" class="menu">
-        <h2></h2>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_with_Avo_Wrap_594x334.jpg" alt="wrap 1">
-            <h3>Vegiie Delight</h3>
-            <p>Tomato, mozzarella, basil, plain wrap/Gluten free wrap.</p>
-            <p>Price: $6.90</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_Wrap_LTO_ANZ_Website_234x140.jpg" alt="wrap 2">
-            <h3>Chipotle Meatball & Pepperoni</h3>
-            <p>Pepperoni, meatball with plain wrap/Gluten free wrap.</p>
-            <p>Price: $10.00</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_Wrap_LTO_ANZ_Website_594x334.jpg" alt="wrap 3">
-            <h3>Spicy Chicken</h3>
-            <p>Chicken, toped with spicy mayo, english-style Cheese, plain wrap/Gluten free wrap.</p>
-            <p>Price: $7.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Carved_Ham_Wrap_594x334.jpg" alt="wrap 4">
-            <h3>Leg Ham</h3>
-            <p>smoked leg ham, try with honey mustard dressing, plain wrap/Gluten free wrap.</p>
-            <p>Price: $9.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Italian_BMT_Wrap_594x334.jpg" alt="wrap 5">
-            <h3>Italian B.M.T</h3>
-            <p>salami, layered pepperoni,leg ham, plain wrap/Gluten free wrap.</p>
-            <p>Price: $8.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/NZ_Wrap_RoastBeef_594x334.png" alt="wrap 6">
-            <h3>Roast Beef</h3>
-            <p>Carved roast beef, sweet chilli sause, plain wrap/Gluten free wrap.</p>
-            <p>Price: $7.49</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Patty_Wrap_594x334.jpg" alt="wrap 7">
-            <h3>Veggie Patty</h3>
-            <p>Mozzarella, veggie patty, vegetables, plain wrap/Gluten free wrap.</p>
-            <p>Price: $9.99</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-        <div class="menu-item">
-            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Buffalo_Chicken_wrap_594x334.jpg" alt="wrap 8">
-            <h3>Buffalo Chicken</h3>
-            <p>Chicken breast strips, spicy buffalo sause, plain wrap/Gluten free wrap.</p>
-            <p>Price: $7.49</p>
-            <button type="add to cart" class="btn btn-primary">Add to Cart</button>
-        </div>
-    </section>
-</section>  
- 
+<section id="Wraps">
+    <h2 class="menu-heading">Wraps List</h2>
+    <div class="menu">
 
-<%- include ("partials/footer.ejs") %> <!-- Includes the footer -->
+        <!-- Wrap 1 -->
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Veggie_Delite_with_Avo_Wrap_594x334.jpg" alt="Wrap 1">
+            <h3>Veggie Delight</h3>
+            
+            <p>Price: $6.90</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Veggie Delight Wrap">
+                <input type="hidden" name="price" value="6.90">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+                    onclick="openPopup('Veggie Delight Wrap', '210 kcal', '7g', '35g', '4g', '270mg', 'Avocado, Spinach, Tomato, Cucumber, Olive Oil')">ℹ️ Info</button>
+            </form>
+        </div>
+
+        <!-- Wrap 2 -->
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Chipotle_Meatball_and_Pepperoni_Wrap_LTO_ANZ_Website_234x140.jpg" alt="Wrap 2">
+            <h3>Chipotle Meatball & Pepperoni</h3>
+            
+            <p>Price: $10.00</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Chipotle Meatball & Pepperoni Wrap">
+                <input type="hidden" name="price" value="10.00">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+                    onclick="openPopup('Chipotle Meatball & Pepperoni Wrap', '530 kcal', '20g', '48g', '24g', '870mg', 'Chipotle Sauce, Meatballs, Mozzarella, Pepperoni')">ℹ️ Info</button>
+            </form>
+        </div>
+
+        <!-- Wrap 3 -->
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/Spicy_Chicken_Classic_Wrap_LTO_ANZ_Website_594x334.jpg" alt="Wrap 3">
+            <h3>Spicy Chicken</h3>
+            
+            <p>Price: $7.99</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Spicy Chicken Wrap">
+                <input type="hidden" name="price" value="7.99">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+                    onclick="openPopup('Spicy Chicken Wrap', '460 kcal', '25g', '36g', '16g', '690mg', 'Spicy Mayo, Lettuce, Grilled Chicken, Cheese')">ℹ️ Info</button>
+            </form>
+        </div>
+
+        <!-- Wrap 4 -->
+        <div class="menu-item">
+            <img src="https://www.subway.com/ns/images/menu/NZD/ENG/RPLC_Carved_Ham_Wrap_594x334.jpg" alt="Wrap 4">
+            <h3>Leg Ham</h3>
+            
+            <p>Price: $9.99</p>
+            <form action="/add-to-cart" method="POST">
+                <input type="hidden" name="name" value="Leg Ham Wrap">
+                <input type="hidden" name="price" value="9.99">
+                <input type="number" name="quantity" value="1" min="1" required>
+                <button type="submit">Add to Cart</button>
+                <button type="button" class="info-btn"
+                    onclick="openPopup('Leg Ham Wrap', '300 kcal', '18g', '33g', '9g', '740mg', 'Ham, Honey Mustard, Onion, Lettuce')">ℹ️ Info</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Info popup + overlay -->
+<div class="overlay" id="overlay"></div>
+
+<div class="info-popup" id="infoPopup">
+    <button class="close-btn" onclick="closePopup()">X</button>
+    <h4 id="popupTitle">Wrap Name</h4>
+    <p><strong>Calories:</strong> <span id="popupCalories"></span></p>
+    <p><strong>Protein:</strong> <span id="popupProtein"></span></p>
+    <p><strong>Carbs:</strong> <span id="popupCarbs"></span></p>
+    <p><strong>Fat:</strong> <span id="popupFat"></span></p>
+    <p><strong>Sodium:</strong> <span id="popupSodium"></span></p>
+    <p><strong>Extras:</strong> <span id="popupExtras"></span></p>
+</div>
+
+<script>
+    function openPopup(name, calories, protein, carbs, fat, sodium, extras) {
+        document.getElementById('popupTitle').innerText = name;
+        document.getElementById('popupCalories').innerText = calories;
+        document.getElementById('popupProtein').innerText = protein;
+        document.getElementById('popupCarbs').innerText = carbs;
+        document.getElementById('popupFat').innerText = fat;
+        document.getElementById('popupSodium').innerText = sodium;
+        document.getElementById('popupExtras').innerText = extras;
+        document.getElementById('infoPopup').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+    }
+
+    function closePopup() {
+        document.getElementById('infoPopup').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+    }
+</script>
+
+<%- include("partials/footer.ejs") %>

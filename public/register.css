@@ -1,0 +1,106 @@
+/* Background image for the body */
+body {
+    background-image: url(/public/Images/subway.webp);
+    background-size: cover;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #eaf3e8; /* Light beige */
+}
+
+
+/* Navbar styles */
+.navbar {
+    background-color: #000033; /* Dark navy */
+    padding: 15px 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    height: 60px; /* Ensure navbar has a defined height */
+    display: flex;
+    align-items: center;
+}
+
+/* Adjust content spacing to avoid overlap with fixed navbar */
+.container {
+    padding-top: 80px; /* Adjusted to match navbar height */
+    padding-bottom: 60px; /* Prevent overlap with footer */
+}
+
+/* Center the navbar content */
+.navbar-nav {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Navbar links */
+.nav-item {
+    margin: 0 15px;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease-in-out;
+}
+
+.nav-link:hover {
+    color: #ffcc00; /* Yellow hover effect */
+}
+
+/* Styling for h1 */
+h1 {
+    text-align: center;
+    text-decoration: underline;
+    color: #153fa9; /* Wine color */
+}
+
+/* General paragraph styles */
+p {
+    color: #444;
+    margin-bottom: 20px;
+}
+
+
+
+
+/* Styling for h1 */
+h1 {
+    text-align: center;
+    text-decoration: underline;
+    color: #153fa9;
+    margin-top: 100px; /* Ensures h1 does not get overlapped */
+}
+
+/* General paragraph styles */
+p {
+    color: #444;
+    margin-bottom: 20px;
+}
+
+/* Footer styles */
+.site-footer {
+    background-color: #000033; /* Dark navy */
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.site-footer a {
+    color: #ffcc00;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.site-footer a:hover {
+    text-decoration: underline;
+}
