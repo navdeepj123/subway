@@ -8,6 +8,7 @@ body {
     background-color: #eaf3e8; /* Light beige */
 }
 
+
 /* Navbar styles */
 .navbar {
     background-color: #000033; /* Dark navy */
@@ -51,6 +52,22 @@ body {
 .nav-link:hover {
     color: #ffcc00; /* Yellow hover effect */
 }
+
+/* Styling for h1 */
+h1 {
+    text-align: center;
+    text-decoration: underline;
+    color: #153fa9; /* Wine color */
+}
+
+/* General paragraph styles */
+p {
+    color: #444;
+    margin-bottom: 20px;
+}
+
+
+
 
 /* Styling for h1 */
 h1 {
