@@ -1,0 +1,114 @@
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { Container, Row, Col, Button, Alert } from 'react-bootstrap';
+import { db } from '../firebase';
+import { collection, addDoc } from 'firebase/firestore';
+import { useUserAuth } from '../context/UserAuthContext';
+import '../css/Payment.css';
+
+const stripePromise = loadStripe('pk_test_mock_key'); 
+
+const PaymentForm = ({ totalPrice, title, startDate, endDate, image }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const { user } = useUserAuth();
+  const navigate = useNavigate();
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [processing, setProcessing] = useState(false);
+
+  const handlePayment = async (e) => {
+    e.preventDefault();
+    setProcessing(true);
+
+    setTimeout(async () => {
+      const isPaymentSuccessful = Math.random() > 0.2; // 80% success rate
+
+      if (isPaymentSuccessful) {
+        try {
+          if (user) {
+            const bookingsRef = collection(db, 'bookings');
+            await addDoc(bookingsRef, {
+              userId: user.uid,
+              title,
+              totalPrice,
+              startDate,
+              endDate,
+              image, // Include the image URL
+              paymentDate: new Date().toISOString(),
+            });
+          }
+
+          setSuccess(true);
+          alert(Payment Successful for ${title}!);
+          navigate('/'); // Redirect to Home page after successful payment
+        } catch (err) {
+          console.error('Error saving booking:', err);
+          setError('Failed to save your booking. Please try again.');
+        }
+      } else {
+        setError('Payment failed. Please try again.');
+      }
+
+      setProcessing(false);
+    }, 2000); // Simulate a 2-second delay
+  };
+
+  return (
+    <form onSubmit={handlePayment}>
+      <h3 className="payment-header">Payment Information</h3>
+
+      {error && <Alert variant="danger">{error}</Alert>}
+      {success && <Alert variant="success">Payment successful!</Alert>}
+
+      <div className="card-input">
+        <CardElement className="card-element" />
+      </div>
+      <Button type="submit" disabled={processing} className="btn-submit">
+        {processing ? 'Processing...' : Pay $${totalPrice}}
+      </Button>
+    </form>
+  );
+};
+
+const PaymentPage = () => {
+  const { state } = useLocation();
+  const { totalPrice, title, startDate, endDate, image } = state || {}; 
+
+  return (
+    <div className="payment-wrapper">
+      <Container className="payment-container">
+        <h1 className="text-center">Payment Details</h1>
+        <Row>
+          <Col xs={12} md={6} className="order-summary">
+            <div className="summary-card">
+              <h3>Order Summary</h3>
+              <p><strong>Item Name:</strong> {title}</p>
+              <p><strong>Start Date:</strong> {startDate}</p>
+              <p><strong>End Date:</strong> {endDate}</p>
+              <p><strong>Total Price:</strong> ${totalPrice}</p>
+              
+            </div>
+          </Col>
+          <Col xs={12} md={6} className="payment-info">
+            <div className="payment-card">
+              <Elements stripe={stripePromise}>
+                <PaymentForm
+                  image={image}
+                  title={title}
+                  startDate={startDate}
+                  endDate={endDate}
+                  totalPrice={totalPrice}
+                />
+              </Elements>
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    </div>
+  );
+};
+
+export default PaymentPage;
