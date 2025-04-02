@@ -10,9 +10,20 @@ app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(session({ secret: 'yoursecret', resave: true, saveUninitialized: true }));
 
 // Initialize cart in session if not exists
+
+
+app.use(session({
+    secret: 'yoursecret',
+    resave: true,
+    saveUninitialized: true
+}));
+
+// Init cart session
+
 app.use((req, res, next) => {
     if (!req.session.cart) req.session.cart = [];
     next();
@@ -44,14 +55,22 @@ app.post('/auth', (req, res) => {
         if (results.length > 0) {
             req.session.loggedin = true;
             req.session.username = username;
+
             res.redirect('/menu');
+
+            res.redirect('/menu'); // ✅ Redirect to menu after login
+
         } else {
             res.render('login', { errorMessage: 'Incorrect Username and/or Password!' });
         }
     });
 });
 
+
 // Registration
+
+// User Registration
+
 app.post('/register', (req, res) => {
     const { username, password } = req.body;
     if (username && password) {
@@ -67,6 +86,7 @@ app.post('/register', (req, res) => {
     }
 });
 
+
 // Render food pages
 app.get('/menu', (req, res) => res.render('menu', { title: 'Menu', session: req.session }));
 app.get('/subs', (req, res) => res.render('subs', { title: 'Subs', session: req.session }));
@@ -74,11 +94,23 @@ app.get('/wraps', (req, res) => res.render('wraps', { title: 'Wraps', session: r
 app.get('/drinks', (req, res) => res.render('drinks', { title: 'Drinks', session: req.session }));
 app.get('/dessert', (req, res) => res.render('dessert', { title: 'Dessert', session: req.session }));
 
+// Payment
+app.get('/payment', (req, res) => res.render('payment'));
+app.post('/process-payment', (req, res) => {
+    const { name, card_number, expiry, cvv, amount } = req.body;
+    db.query('INSERT INTO payments (name, card_number, expiry, cvv, amount) VALUES (?, ?, ?, ?, ?)', [name, card_number, expiry, cvv, amount], (err) => {
+        if (err) return res.send('Payment failed. Please try again.');
+        res.send('<h2>Payment Successful!</h2><a href="/payment">Make another payment</a>');
+    });
+});
+
+
 // Logout
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
 });
+
 
 // Reviews
 app.get('/reviews', (req, res) => {
@@ -98,6 +130,19 @@ app.post('/submit-review', (req, res) => {
 });
 
 // Cart & Checkout
+
+// Menu Pages
+app.get('/menu', (req, res) => {
+    if (!req.session.loggedin) return res.redirect('/login');
+    res.render('menu', { title: 'Menu', session: req.session });
+});
+app.get('/subs', (req, res) => res.render('subs', { title: 'Subs', session: req.session }));
+app.get('/wraps', (req, res) => res.render('wraps', { title: 'Wraps', session: req.session }));
+app.get('/drinks', (req, res) => res.render('drinks', { title: 'Drinks', session: req.session }));
+app.get('/dessert', (req, res) => res.render('dessert', { title: 'Dessert', session: req.session }));
+
+// Cart
+
 app.get('/cart', (req, res) => {
     const cart = req.session.cart || [];
     const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
@@ -121,6 +166,7 @@ app.post('/remove-from-cart', (req, res) => {
     res.redirect('/cart');
 });
 
+
 app.post('/checkout', (req, res) => {
     const cart = req.session.cart || [];
     if (cart.length === 0) return res.redirect('/cart');
@@ -131,6 +177,12 @@ app.post('/checkout', (req, res) => {
         res.redirect('/order-confirmation');
     });
 });
+
+
+// Checkout
+app.get('/checkout', (req, res) => res.render('checkout', { cart: req.session.cart || [], total: req.session.total || 0 }));
+
+// Order Confirmation
 
 app.get('/order-confirmation', (req, res) => {
     res.render('orderConfirmation', { title: 'Order Confirmation', message: 'Your order has been placed successfully!', username: req.session.username || 'Guest' });
