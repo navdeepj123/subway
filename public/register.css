@@ -1,106 +1,206 @@
-/* Background image for the body */
-body {
-    background-image: url(/public/Images/subway.webp);
-    background-size: cover;
-    font-family: Arial, sans-serif;
+/* ===== BASE STYLES ===== */
+.register-page {
+    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #eaf3e8; /* Light beige */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #f5f5f5;
 }
 
-
-/* Navbar styles */
-.navbar {
-    background-color: #000033; /* Dark navy */
-    padding: 15px 0;
+/* ===== HEADER POSITIONING ===== */
+.header {
     position: fixed;
     top: 0;
     width: 100%;
     z-index: 1000;
-    height: 60px; /* Ensure navbar has a defined height */
-    display: flex;
-    align-items: center;
+    background-color: #10ce19; /* Subway green */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* Adjust content spacing to avoid overlap with fixed navbar */
-.container {
-    padding-top: 80px; /* Adjusted to match navbar height */
-    padding-bottom: 60px; /* Prevent overlap with footer */
-}
-
-/* Center the navbar content */
-.navbar-nav {
+/* ===== MAIN CONTENT WRAPPER ===== */
+.register-wrapper {
+    flex: 1;
     display: flex;
     justify-content: center;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+    align-items: center;
+    padding: 80px 20px 60px; /* Accounts for header/footer */
+    width: 100%;
 }
 
-/* Navbar links */
-.nav-item {
-    margin: 0 15px;
+/* ===== REGISTER CONTAINER ===== */
+.register-container {
+    display: flex;
+    max-width: 900px;
+    width: 100%;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
-.nav-link {
+/* ===== IMAGE SECTION ===== */
+.image-section {
+    width: 50%;
+    background: url('/public/Images/LR.jpeg') center/cover no-repeat;
+    display: flex;
+    align-items: flex-end;
+    padding: 40px;
     color: white;
-    text-decoration: none;
+    position: relative;
+}
+
+.image-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 86, 63, 0.7); /* Subway green overlay */
+}
+
+.image-content {
+    position: relative;
+    z-index: 2;
+}
+
+.image-content h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #FFC72C; /* Subway yellow */
+}
+
+.image-content p {
+    font-size: 1rem;
+    color: white;
+    line-height: 1.5;
+}
+
+.subway-tagline {
+    margin-top: 20px;
+    font-style: italic;
+}
+
+.subway-tagline span {
+    background-color: #009B3A;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+/* ===== FORM SECTION ===== */
+.form-section {
+    width: 50%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-title {
+    font-size: 1.8rem;
     font-weight: bold;
-    transition: color 0.3s ease-in-out;
-}
-
-.nav-link:hover {
-    color: #ffcc00; /* Yellow hover effect */
-}
-
-/* Styling for h1 */
-h1 {
+    color: #00563F; /* Subway green */
     text-align: center;
-    text-decoration: underline;
-    color: #153fa9; /* Wine color */
+    margin-bottom: 30px;
 }
 
-/* General paragraph styles */
-p {
-    color: #444;
+/* ===== FORM ELEMENTS ===== */
+.form-group {
     margin-bottom: 20px;
 }
 
+.form-label {
+    font-size: 0.9rem;
+    color: #555;
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
 
+.form-input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    background: #f9f9f9;
+    outline: none;
+    transition: all 0.3s ease;
+}
 
+.form-input:focus {
+    border-color: #00563F;
+    box-shadow: 0 0 0 2px rgba(0, 86, 63, 0.1);
+}
 
-/* Styling for h1 */
-h1 {
+/* ===== REGISTER BUTTON ===== */
+.register-btn {
+    width: 100%;
+    padding: 12px;
+    background: #00563F; /* Subway green */
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 10px;
+}
+
+.register-btn:hover {
+    background: #004334;
+}
+
+/* ===== ADDITIONAL INFO ===== */
+.additional-info {
     text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+.link {
+    color: #00563F;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.link:hover {
     text-decoration: underline;
-    color: #153fa9;
-    margin-top: 100px; /* Ensures h1 does not get overlapped */
 }
 
-/* General paragraph styles */
-p {
-    color: #444;
-    margin-bottom: 20px;
-}
-
-/* Footer styles */
-.site-footer {
-    background-color: #000033; /* Dark navy */
+/* ===== FOOTER ===== */
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #00563F;
     color: white;
     padding: 15px 0;
     text-align: center;
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
+    z-index: 1000;
 }
 
-.site-footer a {
-    color: #ffcc00;
-    text-decoration: none;
-    font-weight: bold;
-}
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    .register-container {
+        flex-direction: column;
+        max-width: 95%;
+    }
 
-.site-footer a:hover {
-    text-decoration: underline;
+    .image-section,
+    .form-section {
+        width: 100%;
+    }
+
+    .image-section {
+        height: 200px;
+        padding: 20px;
+    }
+
+    .form-section {
+        padding: 30px;
+    }
 }

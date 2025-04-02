@@ -43,7 +43,7 @@
 /* ===== IMAGE SECTION ===== */
 .image-section {
     width: 50%;
-    background: url('/public/Images/pizza-background.webp') center/cover no-repeat;
+    background: url('/public/Images/LR.jpeg') center/cover no-repeat;
     display: flex;
     align-items: flex-end;
     padding: 40px;
@@ -55,7 +55,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0, 86, 63, 0.7); /* Subway green overlay */
+    background: rgba(0, 86, 14, 0.7); /* Subway green overlay */
 }
 
 .image-content {
