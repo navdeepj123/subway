@@ -1,48 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 50px;
-        }
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            display: inline-block;
-        }
-        h1 {
-            color: #4CAF50;
-        }
-        p {
-            font-size: 18px;
-        }
-        a {
-            text-decoration: none;
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-        a:hover {
-            background-color: #45a049;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Order Placed Successfully!</h1>
-        <p>Thank you for your purchase, <%= username %>!</p>
-        <p>Your order has been recorded. You can track your order <a href="/orders">here</a>.</p>
-        <a href="/subs">Continue Shopping</a>
+<%- include("partials/header.ejs") %>
+
+<div class="confirmation-container">
+    <div class="confirmation-card">
+        <h1>Payment Successful!</h1>
+        <div class="icon-success">✓</div>
+        <p>Thank you for your order, <%= session.username %>!</p>
+        <p>Your payment has been processed successfully.</p>
+        <p>Order confirmation has been sent to your email.</p>
+        <a href="/" class="home-button">Back to Home</a>
     </div>
-</body>
-</html>
+</div>
+
+<%- include("partials/footer.ejs") %>

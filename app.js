@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const session = require('express-session');
-const db = require('./dbConfig'); // ✅ Use correct DB connection
+const db = require('./dbConfig');
 
 // Setup view engine
 app.set('view engine', 'ejs');
@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 });
 
 // Restrict access
-app.use(['/logout', '/reviews', '/cart', '/checkout'], (req, res, next) => {
+app.use(['/logout', '/reviews', '/cart', '/checkout', '/payment'], (req, res, next) => {
     if (!req.session.loggedin) return res.redirect('/login');
     next();
 });
@@ -30,14 +30,14 @@ app.get('/contactUs', (req, res) => res.render('contactUs', { title: 'Contact Us
 app.get('/privacyPolicy', (req, res) => res.render('privacyPolicy', { title: 'Privacy Policy', session: req.session }));
 app.get('/learnmore', (req, res) => res.render('learnmore', { title: 'Learn More', session: req.session }));
 app.get('/openingHours', (req, res) => res.render('openingHours', { title: 'Opening Hours', session: req.session }));
-app.get('/login', (req, res) => res.render('login', { title: 'Login', session: req.session, errorMessage: null, csrfToken: 'your_csrf_token' }));
+app.get('/login', (req, res) => res.render('login', { title: 'Login', session: req.session, errorMessage: null }));
 app.get('/register', (req, res) => res.render('register', { title: 'Register', session: req.session }));
 
 // Auth
 app.post('/auth', (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
-        return res.render('login', { errorMessage: 'Please enter both Username and Password!', csrfToken: 'your_csrf_token' });
+        return res.render('login', { errorMessage: 'Please enter both Username and Password!' });
     }
     db.query('SELECT * FROM users WHERE name = ? AND password = ?', [username, password], (err, results) => {
         if (err) return res.status(500).send('Internal Server Error');
@@ -46,7 +46,7 @@ app.post('/auth', (req, res) => {
             req.session.username = username;
             res.redirect('/menu');
         } else {
-            res.render('login', { errorMessage: 'Incorrect Username and/or Password!', csrfToken: 'your_csrf_token' });
+            res.render('login', { errorMessage: 'Incorrect Username and/or Password!' });
         }
     });
 });
@@ -60,7 +60,7 @@ app.post('/register', (req, res) => {
                 console.error('Error inserting record:', err);
                 return res.render('register', { title: 'Register', errorMessage: 'Error registering user. Try again later.' });
             }
-            res.render('login', { errorMessage: 'Registration successful. Please log in.', csrfToken: 'your_csrf_token' });
+            res.render('login', { errorMessage: 'Registration successful. Please log in.' });
         });
     } else {
         res.render('register', { title: 'Register', errorMessage: 'Please fill in all fields.' });
