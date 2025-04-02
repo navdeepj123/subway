@@ -1,106 +1,159 @@
-/* Background image for the body */
+/* General styles */
 body {
-    background-image: url(/public/Images/subway.webp);
-    background-size: cover;
+    background-color: #f5f5f5; /* Light gray background */
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #eaf3e8; /* Light beige */
 }
-
 
 /* Navbar styles */
 .navbar {
-    background-color: #000033; /* Dark navy */
+    background-color: #00563F; /* Subway green */
     padding: 15px 0;
     position: fixed;
     top: 0;
     width: 100%;
     z-index: 1000;
-    height: 60px; /* Ensure navbar has a defined height */
+    height: 60px;
     display: flex;
     align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* Adjust content spacing to avoid overlap with fixed navbar */
-.container {
-    padding-top: 80px; /* Adjusted to match navbar height */
-    padding-bottom: 60px; /* Prevent overlap with footer */
-}
-
-/* Center the navbar content */
 .navbar-nav {
     display: flex;
     justify-content: center;
     list-style-type: none;
     padding: 0;
     margin: 0;
+    width: 100%;
 }
 
-/* Navbar links */
 .nav-item {
-    margin: 0 15px;
+    margin: 0 20px;
 }
 
 .nav-link {
     color: white;
     text-decoration: none;
     font-weight: bold;
-    transition: color 0.3s ease-in-out;
+    font-size: 16px;
+    transition: color 0.2s;
 }
 
 .nav-link:hover {
-    color: #ffcc00; /* Yellow hover effect */
+    color: #FFC72C; /* Subway yellow */
 }
 
-/* Styling for h1 */
+/* Main content container */
+.container {
+    padding-top: 100px;
+    padding-bottom: 60px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Form styles */
+.form-container {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
 h1 {
+    color: #00563F; /* Subway green */
+    margin-bottom: 25px;
+    font-size: 24px;
     text-align: center;
-    text-decoration: underline;
-    color: #153fa9; /* Wine color */
 }
 
-/* General paragraph styles */
-p {
-    color: #444;
-    margin-bottom: 20px;
+/* Compact input fields */
+.form-group {
+    margin-bottom: 15px;
 }
 
-
-
-
-/* Styling for h1 */
-h1 {
-    text-align: center;
-    text-decoration: underline;
-    color: #153fa9;
-    margin-top: 100px; /* Ensures h1 does not get overlapped */
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #333;
+    text-align: left;
 }
 
-/* General paragraph styles */
-p {
-    color: #444;
-    margin-bottom: 20px;
-}
-
-/* Footer styles */
-.site-footer {
-    background-color: #000033; /* Dark navy */
-    color: white;
-    padding: 15px 0;
-    text-align: center;
+.form-control {
     width: 100%;
-    position: absolute;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+    height: 36px;
+}
+
+.form-control:focus {
+    border-color: #00563F;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0,86,63,0.1);
+}
+
+.help-text {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+    text-align: left;
+}
+
+/* Submit button */
+.btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #00563F;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 10px;
+}
+
+.btn:hover {
+    background-color: #004334;
+}
+
+/* Footer */
+.site-footer {
+    background-color: #00563F;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    position: fixed;
     bottom: 0;
-    left: 0;
+    width: 100%;
 }
 
 .site-footer a {
-    color: #ffcc00;
+    color: #FFC72C;
     text-decoration: none;
-    font-weight: bold;
 }
 
 .site-footer a:hover {
     text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .container {
+        padding: 80px 15px;
+    }
+    
+    .form-container {
+        padding: 20px;
+    }
+    
+    .nav-item {
+        margin: 0 10px;
+    }
 }
