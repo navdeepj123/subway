@@ -73,28 +73,21 @@ jobs:
   # 🔎 RUN OWASP ZAP SCAN
   # -----------------------
   zap-scan:
-    runs-on: ubuntu-latest
+   runs-on: ubuntu-latest
 
-    steps:
-    # ✅ Debug Environment
+   steps:
     - name: Debug Environment
       run: |
         echo "Operating System: $(uname -a)"
         echo "Runner Version: $RUNNER_VERSION"
-
-    # ✅ Install Docker
+    # Install Docker using the official script to avoid dependency issues
     - name: Install Docker
       run: |
         curl -fsSL https://get.docker.com -o get-docker.sh
         sudo sh get-docker.sh
         docker --version
-
-    # ✅ Pull OWASP ZAP Stable Docker Image
-    - name: Pull OWASP ZAP Image
-      run: |
-        docker pull zaproxy/zap-stable
-
-    # ✅ Run OWASP ZAP Full Scan with Limited Duration
+    # Run OWASP ZAP Full Scan using the correct image
     - name: Run OWASP ZAP Full Scan
       run: |
-        docker run -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-full-scan.py -t http://${{ secrets.SERVER_HOST }}/ -m 10
+        docker pull zaproxy/zap-stable
+        docker run -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-full-scan.py -t http://${{ secrets.SERVER_HOST }}/ -J zap-report.json
