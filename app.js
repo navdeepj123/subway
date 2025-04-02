@@ -110,7 +110,7 @@ app.post('/register', function (req, res) {
         var sql = `INSERT INTO users(name,password) VALUES (?, ?)`;
         conn.query(sql, [name, password], function (error, results) {
             if (error) {
-                console.error('Error inserting record:', error);
+                console.error('Error inserting record:', error)}})}});
 
 app.post('/register', (req, res) => {
     const { username, password } = req.body;
