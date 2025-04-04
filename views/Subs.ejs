@@ -573,46 +573,44 @@
   <div id="customizeOverlay" class="overlay" onclick="closeCustomizeModal()"></div>
 
 
-<script>
+  <script>
     function openPopup(name, cal, protein, carbs, fat, sodium, extras) {
-    document.getElementById('popupTitle').innerText = name;
-    document.getElementById('popupCalories').innerText = cal;
-    document.getElementById('popupProtein').innerText = protein;
-    document.getElementById('popupFat').innerText = fat;
-    document.getElementById('popupSodium').innerText = sodium;
-    document.getElementById('popupExtras').innerText = extras;
+        document.getElementById('popupTitle').innerText = name;
+        document.getElementById('popupCalories').innerText = cal;
+        document.getElementById('popupProtein').innerText = protein;
+        document.getElementById('popupFat').innerText = fat;
+        document.getElementById('popupSodium').innerText = sodium;
+        document.getElementById('popupExtras').innerText = extras;
 
-    // Convert strings to numeric values
-    const calVal = parseInt(cal);         // e.g. "480 kcal" → 480
-    const proteinVal = parseInt(protein); // e.g. "26g" → 26
-    const fatVal = parseFloat(fat);       // e.g. "10g" → 10
-    const sodiumVal = parseInt(sodium);   // e.g. "820mg" → 820
+        // Convert strings to numeric values
+        const calVal = parseInt(cal);         // e.g. "480 kcal" → 480
+        const proteinVal = parseInt(protein); // e.g. "26g" → 26
+        const fatVal = parseFloat(fat);       // e.g. "10g" → 10
+        const sodiumVal = parseInt(sodium);   // e.g. "820mg" → 820
 
-    // Calculate percentage widths for bars
-    const calPercent = Math.min((calVal / 600) * 100, 100);
-    const proteinPercent = Math.min((proteinVal / 40) * 100, 100);
-    const fatPercent = Math.min((fatVal / 30) * 100, 100);
-    const sodiumPercent = Math.min((sodiumVal / 1000) * 100, 100); // 1000mg max
+        // Calculate percentage widths for bars
+        const calPercent = Math.min((calVal / 600) * 100, 100);
+        const proteinPercent = Math.min((proteinVal / 40) * 100, 100);
+        const fatPercent = Math.min((fatVal / 30) * 100, 100);
+        const sodiumPercent = Math.min((sodiumVal / 1000) * 100, 100); // 1000mg max
 
-    // Set bar widths + colors
-    document.getElementById('calBar').style.width = calPercent + "%";
-    document.getElementById('calBar').style.backgroundColor = "#ffc107";
+        // Set bar widths + colors
+        document.getElementById('calBar').style.width = calPercent + "%";
+        document.getElementById('calBar').style.backgroundColor = "#ffc107";
 
-    document.getElementById('proteinBar').style.width = proteinPercent + "%";
-    document.getElementById('proteinBar').style.backgroundColor = "#28a745";
+        document.getElementById('proteinBar').style.width = proteinPercent + "%";
+        document.getElementById('proteinBar').style.backgroundColor = "#28a745";
 
-    document.getElementById('fatBar').style.width = fatPercent + "%";
-    document.getElementById('fatBar').style.backgroundColor = "#dc3545";
+        document.getElementById('fatBar').style.width = fatPercent + "%";
+        document.getElementById('fatBar').style.backgroundColor = "#dc3545";
 
-    document.getElementById('sodiumBar').style.width = sodiumPercent + "%";
-    document.getElementById('sodiumBar').style.backgroundColor = "#17a2b8";
+        document.getElementById('sodiumBar').style.width = sodiumPercent + "%";
+        document.getElementById('sodiumBar').style.backgroundColor = "#17a2b8";
 
-    // Show the popup
-    document.getElementById('infoPopup').style.display = 'block';
-    document.getElementById('overlay').style.display = 'block';
-}
-
-
+        // Show the popup
+        document.getElementById('infoPopup').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+    }
 
     function closePopup() {
         document.getElementById('infoPopup').style.display = 'none';
@@ -621,168 +619,174 @@
 </script>
 
 <script>
-   function updateTotal(form) {
-    const basePrice = parseFloat(form.basePrice.value);
-    const quantity = parseInt(form.quantity.value) || 1;
-    let toppingsCost = 0;
-    let selectedToppings = [];
-
-    form.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
-        toppingsCost += parseFloat(cb.dataset.price);
-        selectedToppings.push(cb.value);
-    });
-
-    const total = ((basePrice + toppingsCost) * quantity).toFixed(2);
-    const totalElem = form.querySelector(".total");
-
-    totalElem.textContent = total;
-    form.totalPrice.value = total;
-
-    // Highlight total briefly
-    totalElem.classList.add("highlight");
-    setTimeout(() => totalElem.classList.remove("highlight"), 300);
-
-    // Update topping preview
-    const previewDiv = form.querySelector(".topping-preview");
-    previewDiv.innerHTML = "";
-    selectedToppings.forEach(topping => {
-        const badge = document.createElement("span");
-        badge.className = "topping-badge";
-        badge.textContent = topping;
-        previewDiv.appendChild(badge);
-    });
-}
-
-function handleToppingChange(changedCheckbox) {
-    const form = changedCheckbox.closest("form");
-    const maxToppings = 3;
-    const checkboxes = form.querySelectorAll('input[type="checkbox"]');
-    const checked = form.querySelectorAll('input[type="checkbox"]:checked');
-
-    if (checked.length > maxToppings) {
-        changedCheckbox.checked = false;
-        alert("You can select up to 3 toppings only.");
-    }
-
-    updateTotal(form);
-}
-
-</script>
-
-<script>
     let currentForm = null;
     let selectedToppings = [];
-    let basePrice = 9.90;
+    let basePrice = 0;
+
+    // Open topping modal
     function openToppingModal(button) {
-    currentForm = button.closest("form");
-    basePrice = parseFloat(currentForm.querySelector('input[name="basePrice"]').value);
+        currentForm = button.closest("form");
+        basePrice = parseFloat(currentForm.querySelector('input[name="basePrice"]').value);
+        
+        // Reset checkboxes when opening modal
+        document.querySelectorAll('#toppingForm input[type="checkbox"]').forEach(cb => {
+            cb.checked = false;
+        });
+        
+        document.getElementById('toppingModal').style.display = 'block';
+        document.getElementById('toppingOverlay').style.display = 'block';
+        updateToppingTotal();
+    }
 
-    document.getElementById('toppingModal').style.display = 'block';
-    document.getElementById('toppingOverlay').style.display = 'block';
-    updateToppingTotal();
-}
-
-
+    // Close topping modal
     function closeToppingModal() {
         document.getElementById('toppingModal').style.display = 'none';
         document.getElementById('toppingOverlay').style.display = 'none';
     }
 
+    // Update topping total with actual prices
     function updateToppingTotal() {
         const checkboxes = document.querySelectorAll('#toppingForm input[type="checkbox"]:checked');
-        let total = basePrice;
+        let toppingTotal = 0;
+        
         checkboxes.forEach(cb => {
-            total += parseFloat(cb.getAttribute('data-price'));
+            toppingTotal += parseFloat(cb.dataset.price) || 0;
         });
+        
+        const quantity = currentForm ? parseInt(currentForm.querySelector('input[name="quantity"]').value) || 1 : 1;
+        const total = (basePrice + toppingTotal) * quantity;
+        
         document.getElementById('toppingTotal').innerText = total.toFixed(2);
     }
 
+    // Limit toppings to 3 and update total
     document.querySelectorAll('#toppingForm input[type="checkbox"]').forEach(cb => {
         cb.addEventListener('change', () => {
             const checked = document.querySelectorAll('#toppingForm input[type="checkbox"]:checked');
             if (checked.length > 3) {
                 cb.checked = false;
-                alert("Only 3 toppings allowed.");
+                alert("Maximum of 3 toppings allowed.");
             }
             updateToppingTotal();
         });
     });
 
+    // Apply toppings with proper price calculation
     function applyToppings() {
-    const checked = document.querySelectorAll('#toppingForm input[type="checkbox"]:checked');
-    const selectedToppings = Array.from(checked).map(cb => cb.value);
-    const toppingCost = Array.from(checked).reduce((sum, cb) => sum + parseFloat(cb.getAttribute('data-price')), 0);
-    const quantity = parseInt(currentForm.querySelector('input[name="quantity"]').value) || 1;
-    const total = ((basePrice + toppingCost) * quantity).toFixed(2);
+        const checked = document.querySelectorAll('#toppingForm input[type="checkbox"]:checked');
+        selectedToppings = Array.from(checked).map(cb => ({
+            name: cb.value,
+            price: parseFloat(cb.dataset.price) || 0
+        }));
+        
+        // Calculate total toppings cost
+        const toppingsCost = selectedToppings.reduce((sum, topping) => sum + topping.price, 0);
+        
+        const quantity = parseInt(currentForm.querySelector('input[name="quantity"]').value) || 1;
+        const total = (basePrice + toppingsCost) * quantity;
 
-    // Update current form fields
-    currentForm.querySelector('input[name="totalPrice"]').value = total;
-    currentForm.querySelector('input[name="selectedToppings"]').value = selectedToppings.join(', ');
-    currentForm.querySelector('.main-total').innerText = total;
+        // Update form fields
+        currentForm.querySelector('input[name="totalPrice"]').value = total.toFixed(2);
+        currentForm.querySelector('input[name="selectedToppings"]').value = 
+            selectedToppings.map(t => `${t.name} ($${t.price.toFixed(2)})`).join(', ');
+        currentForm.querySelector('.main-total').innerText = total.toFixed(2);
 
-    // Update badge preview
-    const badgeContainer = currentForm.querySelector('.topping-preview');
-    badgeContainer.innerHTML = "";
-    selectedToppings.forEach(topping => {
-        const badge = document.createElement('span');
-        badge.className = 'topping-badge';
-        badge.innerText = topping;
-        badgeContainer.appendChild(badge);
-    });
+        // Update topping preview badges
+        const badgeContainer = currentForm.querySelector('.topping-preview');
+        badgeContainer.innerHTML = "";
+        selectedToppings.forEach(topping => {
+            const badge = document.createElement('span');
+            badge.className = 'topping-badge';
+            badge.innerText = `${topping.name} (+$${topping.price.toFixed(2)})`;
+            badgeContainer.appendChild(badge);
+        });
 
-    closeToppingModal();
-}
-
-
-   function updateMainTotal() {
-    if (currentForm) {
-        applyToppings(); // Live price update only for selected form
+        closeToppingModal();
     }
-}
 
+    // Update total when quantity changes
+    function updateMainTotal() {
+        if (!currentForm) return;
+        
+        const quantity = parseInt(currentForm.querySelector('input[name="quantity"]').value) || 1;
+        const basePrice = parseFloat(currentForm.querySelector('input[name="basePrice"]').value);
+        
+        // Calculate toppings cost from existing selections
+        let toppingsCost = 0;
+        const toppingBadges = currentForm.querySelectorAll('.topping-badge');
+        toppingBadges.forEach(badge => {
+            const match = badge.textContent.match(/\+\$([\d.]+)/);
+            if (match) toppingsCost += parseFloat(match[1]);
+        });
+        
+        const total = (basePrice + toppingsCost) * quantity;
+        currentForm.querySelector('input[name="totalPrice"]').value = total.toFixed(2);
+        currentForm.querySelector('.main-total').innerText = total.toFixed(2);
+    }
+
+    // Initialize quantity change listeners
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('input[name="quantity"]').forEach(input => {
+            input.addEventListener('change', updateMainTotal);
+        });
+    });
 </script>
 
 <script>
+    // Open customization modal
     function openCustomizeModal(button) {
-    currentForm = button.closest("form");
-
-    document.getElementById('customizeModal').style.display = 'block';
-    document.getElementById('customizeOverlay').style.display = 'block';
-}
-
-function applyCustomization() {
-    const bread = document.getElementById("bread").value;
-    const cheese = document.getElementById("cheese").value;
-    const sauce = document.getElementById("sauce").value;
-    const toasted = document.getElementById("toasted").value;
-
-    if (!currentForm.querySelector('input[name="customOptions"]')) {
-        const hidden = document.createElement("input");
-        hidden.type = "hidden";
-        hidden.name = "customOptions";
-        currentForm.appendChild(hidden);
+        currentForm = button.closest("form");
+        document.getElementById('customizeModal').style.display = 'block';
+        document.getElementById('customizeOverlay').style.display = 'block';
     }
 
-    currentForm.querySelector('input[name="customOptions"]').value =
-        `Bread: ${bread}, Cheese: ${cheese}, Sauce: ${sauce}, Toasted: ${toasted}`;
+    // Close customization modal
+    function closeCustomizeModal() {
+        document.getElementById('customizeModal').style.display = 'none';
+        document.getElementById('customizeOverlay').style.display = 'none';
+    }
 
-    const badgeHTML = `
-        <span class="customize-badge">Bread: ${bread}</span>
-        <span class="customize-badge">Cheese: ${cheese}</span>
-        <span class="customize-badge">Sauce: ${sauce}</span>
-        <span class="customize-badge">Toasted: ${toasted}</span>
-    `;
-    const previewArea = currentForm.querySelector('.topping-preview');
-    previewArea.innerHTML += badgeHTML;
+    // Apply customization options
+    function applyCustomization() {
+        const bread = document.getElementById("bread").value;
+        const cheese = document.getElementById("cheese").value;
+        const sauce = document.getElementById("sauce").value;
+        const toasted = document.getElementById("toasted").value;
 
-    closeCustomizeModal();
-}
+        // Create or update hidden input for customization
+        if (!currentForm.querySelector('input[name="customOptions"]')) {
+            const hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.name = "customOptions";
+            currentForm.appendChild(hidden);
+        }
 
-    </script>
-    
+        currentForm.querySelector('input[name="customOptions"]').value =
+            JSON.stringify({
+                bread,
+                cheese,
+                sauce,
+                toasted
+            });
 
+        // Update preview area with badges
+        const previewArea = currentForm.querySelector('.topping-preview');
+        
+        // Remove existing customization badges if any
+        const existingBadges = previewArea.querySelectorAll('.customize-badge');
+        existingBadges.forEach(badge => badge.remove());
+        
+        // Add new badges
+        const badgeHTML = `
+            <span class="customize-badge">Bread: ${bread}</span>
+            <span class="customize-badge">Cheese: ${cheese}</span>
+            <span class="customize-badge">Sauce: ${sauce}</span>
+            <span class="customize-badge">Toasted: ${toasted}</span>
+        `;
+        previewArea.insertAdjacentHTML('beforeend', badgeHTML);
 
-    </div>
-</section>
+        closeCustomizeModal();
+    }
+</script>
 
 <%- include("partials/footer.ejs") %>

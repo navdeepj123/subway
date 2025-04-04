@@ -1,71 +1,56 @@
 <%- include("partials/header.ejs") %>
-<link rel="stylesheet" href="/public/css/payment.css">
 
 <div class="payment-container">
-    <h1>Pay</h1>
+    <h1>Complete Payment</h1>
     
-    <div class="payment-card">
-        <h2>Card</h2>
+    <form id="payment-form">
+        <input type="hidden" name="orderTotal" value="<%= total %>">
+        <input type="hidden" name="orderItems" value="<%= JSON.stringify(cart) %>">
         
-        <div class="card-types">
-            <span class="card-type active">VISA</span>
-            <span class="card-type">Mastercard</span>
-            <span class="card-type">AMEX</span>
+        <div>
+            <label>Card Number</label>
+            <input type="text" name="card_number" placeholder="4242 4242 4242 4242" required>
         </div>
         
-        <form action="/process-payment" method="POST" id="payment-form">
-           
-            
-            <div class="form-group">
-                <label for="name">Name on card</label>
-                <input type="text" id="name" name="name" required>
-                <div class="divider"></div>
-            </div>
-            
-            <div class="form-group">
-                <label for="card_number">Card number</label>
-                <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456" required>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group half-width">
-                    <label>Expiry date</label>
-                    <input type="text" name="expiry" placeholder="MM/YY" required>
-                </div>
-                
-                <div class="form-group half-width">
-                    <label>Security code (CVV)</label>
-                    <input type="text" name="cvv" placeholder="123" required>
-                </div>
-            </div>
-            
-            <button type="submit" class="pay-button">Pay</button>
-        </form>
-        
-        <div class="alternative-payments">
-            <h3>Alternative Payments</h3>
-            <div class="payment-option">
-                <input type="radio" id="ideal" name="alt_payment" value="ideal">
-                <label for="ideal">iDeal</label>
-            </div>
-            <div class="payment-option">
-                <input type="radio" id="sofort" name="alt_payment" value="sofort">
-                <label for="sofort">Sofort</label>
-            </div>
+        <div>
+            <label>Expiry (MM/YY)</label>
+            <input type="text" name="expiry" placeholder="12/25" required>
         </div>
-    </div>
+        
+        <div>
+            <label>CVV</label>
+            <input type="text" name="cvv" placeholder="123" required>
+        </div>
+        
+        <button type="submit">Pay $<%= total.toFixed(2) %></button>
+    </form>
 </div>
 
-<%- include("partials/footer.ejs") %>
-
 <script>
-    // Format card number input
-    document.getElementById('card_number').addEventListener('input', function(e) {
-        this.value = this.value.replace(/\s/g, '').replace(/(\d{4})/g, '$1 ').trim();
-    });
-    
-    // Format expiry date input
-    document.querySelector('input[name="expiry"]').addEventListener('input', function(e) {
-        this.value = this.value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2');
+    document.getElementById('payment-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        btn.disabled = true;
+        
+        try {
+            const response = await fetch('/process-payment', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(Object.fromEntries(new FormData(e.target)))
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                window.location.href = '/order-success';
+            } else {
+                alert('Payment failed');
+            }
+        } catch (error) {
+            alert('Network error');
+        } finally {
+            btn.disabled = false;
+        }
     });
 </script>
+
+<%- include("partials/footer.ejs") %>

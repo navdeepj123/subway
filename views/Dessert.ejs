@@ -39,10 +39,8 @@
     }
 
     .menu-item {
-
         background: #fff;
         border-radius: 16px;
-
         padding: 20px;
         text-align: center;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -78,14 +76,12 @@
         margin: 4px 0;
     }
 
-
     .menu-item input[type="number"] {
         width: 60px;
         padding: 6px;
         margin-top: 8px;
         border: 1px solid #ccc;
         border-radius: 6px;
-
     }
 
     .menu-item button {
@@ -195,9 +191,12 @@
             <h3>Chocolate Cake</h3>
             <p>Decadent chocolate cake with rich and creamy frosting.</p>
             <p>Price: $6.99</p>
-            <form action="/add-to-cart" method="POST">
+            <form action="/add-to-cart" method="POST" class="non-customizable">
                 <input type="hidden" name="name" value="Chocolate Cake">
-                <input type="hidden" name="price" value="6.99">
+                <input type="hidden" name="basePrice" value="6.99">
+                <input type="hidden" name="totalPrice" value="6.99">
+                <input type="hidden" name="selectedToppings" value="None">
+                <input type="hidden" name="customOptions" value="None">
                 <input type="number" name="quantity" value="1" min="1" required>
                 <button type="submit">Add to Cart</button>
                 <button type="button" class="info-btn"
@@ -211,9 +210,12 @@
             <h3>Tiramisu</h3>
             <p>Classic tiramisu with coffee-soaked ladyfingers and mascarpone.</p>
             <p>Price: $8.99</p>
-            <form action="/add-to-cart" method="POST">
+            <form action="/add-to-cart" method="POST" class="non-customizable">
                 <input type="hidden" name="name" value="Tiramisu">
-                <input type="hidden" name="price" value="8.99">
+                <input type="hidden" name="basePrice" value="8.99">
+                <input type="hidden" name="totalPrice" value="8.99">
+                <input type="hidden" name="selectedToppings" value="None">
+                <input type="hidden" name="customOptions" value="None">
                 <input type="number" name="quantity" value="1" min="1" required>
                 <button type="submit">Add to Cart</button>
                 <button type="button" class="info-btn"
@@ -227,9 +229,12 @@
             <h3>Molten Lava Cake</h3>
             <p>Warm cake with gooey chocolate center and ice cream.</p>
             <p>Price: $6.99</p>
-            <form action="/add-to-cart" method="POST">
+            <form action="/add-to-cart" method="POST" class="non-customizable">
                 <input type="hidden" name="name" value="Molten Lava Cake">
-                <input type="hidden" name="price" value="6.99">
+                <input type="hidden" name="basePrice" value="6.99">
+                <input type="hidden" name="totalPrice" value="6.99">
+                <input type="hidden" name="selectedToppings" value="None">
+                <input type="hidden" name="customOptions" value="None">
                 <input type="number" name="quantity" value="1" min="1" required>
                 <button type="submit">Add to Cart</button>
                 <button type="button" class="info-btn"
@@ -243,9 +248,12 @@
             <h3>Fudge Brownie Sundae</h3>
             <p>Brownie chunks with vanilla ice cream and hot fudge.</p>
             <p>Price: $8.99</p>
-            <form action="/add-to-cart" method="POST">
+            <form action="/add-to-cart" method="POST" class="non-customizable">
                 <input type="hidden" name="name" value="Fudge Brownie Sundae">
-                <input type="hidden" name="price" value="8.99">
+                <input type="hidden" name="basePrice" value="8.99">
+                <input type="hidden" name="totalPrice" value="8.99">
+                <input type="hidden" name="selectedToppings" value="None">
+                <input type="hidden" name="customOptions" value="None">
                 <input type="number" name="quantity" value="1" min="1" required>
                 <button type="submit">Add to Cart</button>
                 <button type="button" class="info-btn"
@@ -259,17 +267,18 @@
             <h3>Chocolate Mousse</h3>
             <p>Silky mousse topped with whipped cream and chips.</p>
             <p>Price: $5.99</p>
-            <form action="/add-to-cart" method="POST">
+            <form action="/add-to-cart" method="POST" class="non-customizable">
                 <input type="hidden" name="name" value="Chocolate Mousse">
-                <input type="hidden" name="price" value="5.99">
+                <input type="hidden" name="basePrice" value="5.99">
+                <input type="hidden" name="totalPrice" value="5.99">
+                <input type="hidden" name="selectedToppings" value="None">
+                <input type="hidden" name="customOptions" value="None">
                 <input type="number" name="quantity" value="1" min="1" required>
                 <button type="submit">Add to Cart</button>
                 <button type="button" class="info-btn"
                     onclick="openPopup('Chocolate Mousse', '390 kcal', '36g', '19g', '200mg', 'Milk chocolate, cream, cocoa chips')">ℹ️ Info</button>
             </form>
         </div>
-
-
     </div>
 </section>
 
@@ -323,6 +332,27 @@
             }
         });
     }
+
+    // Ensure proper price calculation before form submission
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('form.non-customizable').forEach(form => {
+            const quantityInput = form.querySelector('input[name="quantity"]');
+            const basePriceInput = form.querySelector('input[name="basePrice"]');
+            const totalPriceInput = form.querySelector('input[name="totalPrice"]');
+            
+            quantityInput.addEventListener('change', function() {
+                const quantity = parseInt(this.value) || 1;
+                const basePrice = parseFloat(basePriceInput.value);
+                totalPriceInput.value = (basePrice * quantity).toFixed(2);
+            });
+            
+            form.addEventListener('submit', function(e) {
+                const quantity = parseInt(quantityInput.value) || 1;
+                const basePrice = parseFloat(basePriceInput.value);
+                totalPriceInput.value = (basePrice * quantity).toFixed(2);
+            });
+        });
+    });
 </script>
 
 <%- include("partials/footer.ejs") %>

@@ -1,7 +1,7 @@
 const express = require('express');
-const app = express();
 const session = require('express-session');
 const db = require('./dbConfig');
+const app = express();
 
 // Setup view engine
 app.set('view engine', 'ejs');
@@ -11,25 +11,16 @@ app.use('/public', express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Session middleware (only declare it once)
 app.use(session({ secret: 'yoursecret', resave: true, saveUninitialized: true }));
 
 // Initialize cart in session if not exists
-
-
-app.use(session({
-    secret: 'yoursecret',
-    resave: true,
-    saveUninitialized: true
-}));
-
-// Init cart session
-
 app.use((req, res, next) => {
     if (!req.session.cart) req.session.cart = [];
     next();
 });
 
-// Restrict access
+// Restrict access middleware
 app.use(['/logout', '/reviews', '/cart', '/checkout', '/payment'], (req, res, next) => {
     if (!req.session.loggedin) return res.redirect('/login');
     next();
@@ -44,7 +35,7 @@ app.get('/openingHours', (req, res) => res.render('openingHours', { title: 'Open
 app.get('/login', (req, res) => res.render('login', { title: 'Login', session: req.session, errorMessage: null }));
 app.get('/register', (req, res) => res.render('register', { title: 'Register', session: req.session }));
 
-// Auth
+// Authentication
 app.post('/auth', (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -55,30 +46,19 @@ app.post('/auth', (req, res) => {
         if (results.length > 0) {
             req.session.loggedin = true;
             req.session.username = username;
-
-            res.redirect('/menu');
-
-            res.redirect('/menu'); // ✅ Redirect to menu after login
-
+            res.redirect('/subs');
         } else {
             res.render('login', { errorMessage: 'Incorrect Username and/or Password!' });
         }
     });
 });
 
-
-// Registration
-
 // User Registration
-
 app.post('/register', (req, res) => {
     const { username, password } = req.body;
     if (username && password) {
         db.query('INSERT INTO users(name, password) VALUES (?, ?)', [username, password], (err) => {
-            if (err) {
-                console.error('Error inserting record:', err);
-                return res.render('register', { title: 'Register', errorMessage: 'Error registering user. Try again later.' });
-            }
+            if (err) return res.render('register', { title: 'Register', errorMessage: 'Error registering user. Try again later.' });
             res.render('login', { errorMessage: 'Registration successful. Please log in.' });
         });
     } else {
@@ -86,8 +66,7 @@ app.post('/register', (req, res) => {
     }
 });
 
-
-// Render food pages
+// Food Pages
 app.get('/menu', (req, res) => res.render('menu', { title: 'Menu', session: req.session }));
 app.get('/subs', (req, res) => res.render('subs', { title: 'Subs', session: req.session }));
 app.get('/wraps', (req, res) => res.render('wraps', { title: 'Wraps', session: req.session }));
@@ -104,13 +83,10 @@ app.post('/process-payment', (req, res) => {
     });
 });
 
-
 // Logout
 app.get('/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
+    req.session.destroy(() => res.redirect('/'));
 });
-
 
 // Reviews
 app.get('/reviews', (req, res) => {
@@ -119,7 +95,6 @@ app.get('/reviews', (req, res) => {
         res.render('reviews', { reviews, session: req.session });
     });
 });
-
 app.post('/submit-review', (req, res) => {
     if (!req.session.loggedin) return res.redirect('/login');
     const { name, rating, comment } = req.body;
@@ -129,44 +104,44 @@ app.post('/submit-review', (req, res) => {
     });
 });
 
-// Cart & Checkout
+// Add to cart route
+app.post("/add-to-cart", (req, res) => {
+    const { name, basePrice, totalPrice, quantity, selectedToppings } = req.body;
 
-// Menu Pages
-app.get('/menu', (req, res) => {
-    if (!req.session.loggedin) return res.redirect('/login');
-    res.render('menu', { title: 'Menu', session: req.session });
-});
-app.get('/subs', (req, res) => res.render('subs', { title: 'Subs', session: req.session }));
-app.get('/wraps', (req, res) => res.render('wraps', { title: 'Wraps', session: req.session }));
-app.get('/drinks', (req, res) => res.render('drinks', { title: 'Drinks', session: req.session }));
-app.get('/dessert', (req, res) => res.render('dessert', { title: 'Dessert', session: req.session }));
+    // Convert numeric values
+    const basePriceNum = parseFloat(basePrice) || 0;
+    const totalPriceNum = parseFloat(totalPrice) || basePriceNum;  // Ensure total price isn't zero
+    const quantityNum = parseInt(quantity) || 1;
 
-// Cart
+    // Check if item already exists in cart
+    const existingItem = req.session.cart.find(item => item.name === name && item.selectedToppings === selectedToppings);
 
-app.get('/cart', (req, res) => {
-    const cart = req.session.cart || [];
-    const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-    res.render('cart', { cart, total });
-});
-
-app.post('/add-to-cart', (req, res) => {
-    const { name, price, quantity } = req.body;
-    if (!req.session.cart) req.session.cart = [];
-    const existingItem = req.session.cart.find(item => item.name === name);
     if (existingItem) {
-        existingItem.quantity += parseInt(quantity);
+        // If the item exists, update the quantity & recalculate total price
+        existingItem.quantity += quantityNum;
+        existingItem.totalPrice = (existingItem.basePrice + (existingItem.toppingsCost || 0)) * existingItem.quantity;
     } else {
-        req.session.cart.push({ name, price: parseFloat(price), quantity: parseInt(quantity) });
+        // Add new item to cart
+        req.session.cart.push({
+            name,
+            basePrice: basePriceNum,
+            totalPrice: totalPriceNum,
+            quantity: quantityNum,
+            selectedToppings: selectedToppings || "None"
+        });
     }
-    res.redirect(req.get('Referer') || '/');
+
+    console.log("Updated Cart:", req.session.cart);
+    res.redirect("/cart");  // Redirect user to the cart page
 });
 
-app.post('/remove-from-cart', (req, res) => {
-    req.session.cart.splice(req.body.index, 1);
-    res.redirect('/cart');
+// View cart route
+app.get("/cart", (req, res) => {
+    res.render("cart", { cart: req.session.cart });
 });
 
-
+// Checkout
+app.get('/checkout', (req, res) => res.render('checkout', { cart: req.session.cart || [], total: req.session.total || 0 }));
 app.post('/checkout', (req, res) => {
     const cart = req.session.cart || [];
     if (cart.length === 0) return res.redirect('/cart');
@@ -178,15 +153,5 @@ app.post('/checkout', (req, res) => {
     });
 });
 
-
-// Checkout
-app.get('/checkout', (req, res) => res.render('checkout', { cart: req.session.cart || [], total: req.session.total || 0 }));
-
-// Order Confirmation
-
-app.get('/order-confirmation', (req, res) => {
-    res.render('orderConfirmation', { title: 'Order Confirmation', message: 'Your order has been placed successfully!', username: req.session.username || 'Guest' });
-});
-
 // Start Server
-app.listen(3000, () => console.log('Node app is running on port 3000'));
+app.listen(4000, () => console.log('Node app is running on port 4000'));

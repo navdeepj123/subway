@@ -178,9 +178,12 @@
             <h3>Veggie Delight</h3>
             
             <p>Price: $6.90</p>
-            <form action="/add-to-cart" method="POST">
+            <form action="/add-to-cart" method="POST" class="non-customizable">
                 <input type="hidden" name="name" value="Veggie Delight Wrap">
-                <input type="hidden" name="price" value="6.90">
+                <input type="hidden" name="basePrice" value="6.90">
+                <input type="hidden" name="totalPrice" value="6.90">
+                <input type="hidden" name="selectedToppings" value="None">
+                <input type="hidden" name="customOptions" value="None">
                 <input type="number" name="quantity" value="1" min="1" required>
                 <button type="submit">Add to Cart</button>
                 <button type="button" class="info-btn"
@@ -194,9 +197,12 @@
             <h3>Chipotle Meatball & Pepperoni</h3>
             
             <p>Price: $10.00</p>
-            <form action="/add-to-cart" method="POST">
+            <form action="/add-to-cart" method="POST" class="non-customizable">
                 <input type="hidden" name="name" value="Chipotle Meatball & Pepperoni Wrap">
-                <input type="hidden" name="price" value="10.00">
+                <input type="hidden" name="basePrice" value="10.00">
+                <input type="hidden" name="totalPrice" value="10.00">
+                <input type="hidden" name="selectedToppings" value="None">
+                <input type="hidden" name="customOptions" value="None">
                 <input type="number" name="quantity" value="1" min="1" required>
                 <button type="submit">Add to Cart</button>
                 <button type="button" class="info-btn"
@@ -210,9 +216,12 @@
             <h3>Spicy Chicken</h3>
             
             <p>Price: $7.99</p>
-            <form action="/add-to-cart" method="POST">
+            <form action="/add-to-cart" method="POST" class="non-customizable">
                 <input type="hidden" name="name" value="Spicy Chicken Wrap">
-                <input type="hidden" name="price" value="7.99">
+                <input type="hidden" name="basePrice" value="7.99">
+                <input type="hidden" name="totalPrice" value="7.99">
+                <input type="hidden" name="selectedToppings" value="None">
+                <input type="hidden" name="customOptions" value="None">
                 <input type="number" name="quantity" value="1" min="1" required>
                 <button type="submit">Add to Cart</button>
                 <button type="button" class="info-btn"
@@ -226,9 +235,12 @@
             <h3>Leg Ham</h3>
             
             <p>Price: $9.99</p>
-            <form action="/add-to-cart" method="POST">
+            <form action="/add-to-cart" method="POST" class="non-customizable">
                 <input type="hidden" name="name" value="Leg Ham Wrap">
-                <input type="hidden" name="price" value="9.99">
+                <input type="hidden" name="basePrice" value="9.99">
+                <input type="hidden" name="totalPrice" value="9.99">
+                <input type="hidden" name="selectedToppings" value="None">
+                <input type="hidden" name="customOptions" value="None">
                 <input type="number" name="quantity" value="1" min="1" required>
                 <button type="submit">Add to Cart</button>
                 <button type="button" class="info-btn"
@@ -269,6 +281,27 @@
         document.getElementById('infoPopup').style.display = 'none';
         document.getElementById('overlay').style.display = 'none';
     }
+
+    // Ensure proper price calculation before form submission
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('form.non-customizable').forEach(form => {
+            const quantityInput = form.querySelector('input[name="quantity"]');
+            const basePriceInput = form.querySelector('input[name="basePrice"]');
+            const totalPriceInput = form.querySelector('input[name="totalPrice"]');
+            
+            quantityInput.addEventListener('change', function() {
+                const quantity = parseInt(this.value) || 1;
+                const basePrice = parseFloat(basePriceInput.value);
+                totalPriceInput.value = (basePrice * quantity).toFixed(2);
+            });
+            
+            form.addEventListener('submit', function(e) {
+                const quantity = parseInt(quantityInput.value) || 1;
+                const basePrice = parseFloat(basePriceInput.value);
+                totalPriceInput.value = (basePrice * quantity).toFixed(2);
+            });
+        });
+    });
 </script>
 
 <%- include("partials/footer.ejs") %>
