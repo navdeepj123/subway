@@ -1,152 +1,205 @@
-/* General body styling */
-body {
-    background-color: #f8f9fa; /* Light gray background */
-    font-family: Arial, sans-serif;
+/* ===== BASE STYLES ===== */
+.login-page {
+    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    height: 100vh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #f5f5f5;
+}
+
+/* ===== HEADER POSITIONING ===== */
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #00563F; /* Subway green */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* ===== MAIN CONTENT WRAPPER ===== */
+.login-wrapper {
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-/* Login container styling */
-.login-container {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 350px;
-    text-align: center;
-}
-
-/* Login title */
-.login-container h2 {
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #333; /* Dark gray */
-}
-
-/* Form group styling */
-.form-group {
-    margin-bottom: 15px;
-    text-align: left;
-}
-
-/* Labels */
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 14px;
-    color: #555;
-}
-
-/* Input fields */
-.form-group input {
+    padding: 80px 20px 60px; /* Accounts for header/footer */
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    outline: none;
-    transition: border-color 0.3s ease;
 }
 
-/* Input focus effect */
-.form-group input:focus {
-    border-color: #00DC09; /* Green */
+/* ===== LOGIN CONTAINER ===== */
+.login-container {
+    display: flex;
+    max-width: 900px;
+    width: 100%;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
-/* Password container */
-.password-container {
+/* ===== IMAGE SECTION ===== */
+.image-section {
+    width: 50%;
+    background: url('/public/Images/LR.jpeg') center/cover no-repeat;
+    display: flex;
+    align-items: flex-end;
+    padding: 40px;
+    color: white;
     position: relative;
 }
 
-/* Eye icon for password */
-.password-container .eye-icon {
+.image-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 86, 14, 0.7); /* Subway green overlay */
+}
+
+.image-content {
+    position: relative;
+    z-index: 2;
+}
+
+.image-content h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #FFC72C; /* Subway yellow */
+}
+
+.image-content p {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* ===== FORM SECTION ===== */
+.form-section {
+    width: 50%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #00563F; /* Subway green */
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* ===== FORM ELEMENTS ===== */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    font-size: 0.9rem;
+    color: #555;
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    background: #f9f9f9;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    border-color: #00563F;
+    box-shadow: 0 0 0 2px rgba(0, 86, 63, 0.1);
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.toggle-password {
     position: absolute;
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
+    background: none;
+    border: none;
     cursor: pointer;
-    color: #666;
+    font-size: 1rem;
+    color: #777;
 }
 
-/* Remember me checkbox */
-.remember-me {
+.form-check {
     display: flex;
     align-items: center;
-    margin-bottom: 15px;
+    margin: 15px 0;
 }
 
-.remember-me input {
-    margin-right: 8px;
-    cursor: pointer;
+.form-check input {
+    margin-right: 10px;
 }
 
-.remember-me label {
-    font-size: 14px;
+.form-check label {
+    font-size: 0.9rem;
     color: #555;
-    cursor: pointer;
 }
 
-/* Button container */
-.button-group {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-/* Login button */
-.btn-login {
-    width: 48%;
+/* ===== BUTTON ===== */
+.login-btn {
+    width: 100%;
     padding: 12px;
-    background-color: #00DC09; /* Green */
+    background: #00563F; /* Subway green */
     color: white;
+    font-size: 1rem;
+    font-weight: bold;
     border: none;
-    border-radius: 5px;
-    font-size: 16px;
+    border-radius: 4px;
     cursor: pointer;
     transition: background 0.3s ease;
+    margin-top: 10px;
 }
 
-.btn-login:hover {
-    background-color: #00b307;
+.login-btn:hover {
+    background: #004334;
 }
 
-/* Registration button */
-.btn-register {
-    width: 48%;
-    padding: 12px;
-    background-color: #030c16; /* Blue */
+/* ===== FOOTER ===== */
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #00563F;
     color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
+    padding: 15px 0;
     text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.3s ease;
+    z-index: 1000;
 }
 
-.btn-register:hover {
-    background-color: #0056b3;
-}
-
-/* Responsive Design */
-@media (max-width: 480px) {
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
     .login-container {
-        width: 90%;
+        flex-direction: column;
+        max-width: 95%;
+    }
+
+    .image-section,
+    .form-section {
+        width: 100%;
+    }
+
+    .image-section {
+        height: 200px;
         padding: 20px;
     }
 
-    .button-group {
-        flex-direction: column;
-    }
-
-    .btn-login,
-    .btn-register {
-        width: 100%;
+    .form-section {
+        padding: 30px;
     }
 }

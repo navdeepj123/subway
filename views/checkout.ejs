@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Your Restaurant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #007bff;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .checkout-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e1e5eb;
+        }
+        
+        .checkout-header h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+        
+        .order-summary {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .order-summary h2 {
+            margin-bottom: 20px;
+            color: var(--dark);
+            font-size: 1.5rem;
+        }
+        
+        .order-items {
+            margin-bottom: 20px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #e1e5eb;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-info {
+            flex: 2;
+        }
+        
+        .item-name {
+            font-weight: 500;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .item-extras {
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+        
+        .item-price {
+            color: var(--dark);
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .item-quantity {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+        
+        .order-total {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e1e5eb;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .checkout-form {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .checkout-form h2 {
+            margin-bottom: 20px;
+            color: var(--dark);
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background: #0069d9;
+        }
+        
+        .payment-methods {
+            margin: 20px 0;
+        }
+        
+        .payment-method {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #e1e5eb;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-method:hover {
+            border-color: var(--primary);
+        }
+        
+        .payment-method input {
+            margin-right: 15px;
+        }
+        
+        .payment-method img {
+            height: 30px;
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="checkout-header">
+            <h1>Checkout</h1>
+            <p>Review your order and complete your purchase</p>
+        </div>
+        
+        <div class="checkout-grid">
+            <div class="order-summary">
+                <h2>Order Summary</h2>
+                
+                <div class="order-items">
+                    <% if (cart.length > 0) { %>
+                        <% cart.forEach(item => { %>
+                            <div class="order-item">
+                                <div class="item-info">
+                                    <span class="item-name"><%= item.name %></span>
+                                    <% if (item.selectedToppings && item.selectedToppings !== "None") { %>
+                                        <span class="item-extras">Toppings: <%= item.selectedToppings %></span>
+                                    <% } %>
+                                    <% if (item.customOptions) { %>
+                                        <span class="item-extras">Custom: <%= item.customOptions %></span>
+                                    <% } %>
+                                    <span class="item-quantity">Qty: <%= item.quantity %></span>
+                                </div>
+                                <span class="item-price">$<%= item.totalPrice.toFixed(2) %></span>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p>Your cart is empty</p>
+                    <% } %>
+                </div>
+                
+                <div class="order-total">
+                    <span>Total:</span>
+                    <span>$<%= cart.reduce((sum, item) => sum + item.totalPrice, 0).toFixed(2) %></span>
+                </div>
+            </div>
+            
+            <div class="checkout-form">
+                <h2>Payment Information</h2>
+                
+                <form id="payment-form">
+                    <input type="hidden" name="orderTotal" value="<%= cart.reduce((sum, item) => sum + item.totalPrice, 0).toFixed(2) %>">
+                    <input type="hidden" name="orderItems" value="<%= JSON.stringify(cart) %>">
+                    
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="form-control" required>
+                    </div>
+                    
+                    <div class="payment-methods">
+                        <h3>Payment Method</h3>
+                        
+                        <label class="payment-method">
+                            <input type="radio" name="paymentMethod" value="card" checked>
+                            <img src="https://cdn-icons-png.flaticon.com/512/196/196578.png" alt="Credit Card">
+                            <span>Credit/Debit Card</span>
+                        </label>
+                    </div>
+                    
+                    <div id="card-details">
+                        <div class="form-group">
+                            <label for="card-number">Card Number</label>
+                            <input type="text" id="card-number" name="cardNumber" class="form-control" placeholder="4242 4242 4242 4242" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="card-name">Name on Card</label>
+                            <input type="text" id="card-name" name="cardName" class="form-control" required>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label for="expiry">Expiry Date</label>
+                                <input type="text" id="expiry" name="expiry" class="form-control" placeholder="12/25" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="cvv">CVV</label>
+                                <input type="text" id="cvv" name="cvv" class="form-control" placeholder="123" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn">Complete Payment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('payment-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            
+            try {
+                btn.disabled = true;
+                btn.textContent = 'Processing...';
+                
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    cardNumber: document.getElementById('card-number').value.replace(/\s/g, ''),
+                    cardName: document.getElementById('card-name').value,
+                    expiry: document.getElementById('expiry').value,
+                    cvv: document.getElementById('cvv').value,
+                    orderTotal: document.querySelector('input[name="orderTotal"]').value,
+                    orderItems: JSON.parse(document.querySelector('input[name="orderItems"]').value)
+                };
+
+                const response = await fetch('/process-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    window.location.href = `/order-confirmation?id=${result.orderId}`;
+                } else {
+                    alert(result.error || 'Payment failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again or contact support.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Complete Payment';
+            }
+        });
+
+        // Format card number input
+        document.getElementById('card-number').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\s/g, '')
+                .replace(/(\d{4})/g, '$1 ')
+                .trim()
+                .substring(0, 19);
+        });
+
+        // Format expiry date input
+        document.getElementById('expiry').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '')
+                .replace(/(\d{2})(\d)/, '$1/$2')
+                .substring(0, 5);
+        });
+
+        // Format CVV input
+        document.getElementById('cvv').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '').substring(0, 4);
+        });
+    </script>
+</body>
+</html>
