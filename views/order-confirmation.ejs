@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #28a745;
+            --secondary: #6c757d;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .success-icon {
+            font-size: 80px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .order-details {
+            margin: 30px 0;
+            text-align: left;
+            border-top: 1px solid #e1e5eb;
+            padding-top: 20px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e1e5eb;
+        }
+        
+        .order-total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 2px solid #e1e5eb;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background 0.3s;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">✓</div>
+        <h1>Order Confirmed!</h1>
+        <p>Thank you for your purchase. Your order has been received and is being processed.</p>
+        <p>Order ID: #<%= order.id %></p>
+        
+        <div class="order-details">
+            <h3>Order Summary</h3>
+            <% order.items.forEach(item => { %>
+                <div class="order-item">
+                    <span><%= item.name %> (Qty: <%= item.quantity %>)</span>
+                    <span>$<%= (item.price * item.quantity).toFixed(2) %></span>
+                </div>
+            <% }); %>
+            
+            <div class="order-total">
+                <span>Total:</span>
+                <span>$<%= order.total_amount.toFixed(2) %></span>
+            </div>
+        </div>
+        
+        <p>An email confirmation has been sent to <strong><%= order.customer_email %></strong>.</p>
+        <a href="/" class="btn">Back to Home</a>
+    </div>
+</body>
+</html>

@@ -1,162 +1,157 @@
-var express = require('express');
-var app = express();
-var session = require('express-session');
-var mysql = require('mysql');
-var conn = require('./dbConfig');
+const express = require('express');
+const session = require('express-session');
+const db = require('./dbConfig');
+const app = express();
 
+// Setup view engine
 app.set('view engine', 'ejs');
 
-app.use(session({
-    secret: 'yoursecret',
-    resave: true,
-    saveUninitialized: true
-}));
-
+// Middleware
 app.use('/public', express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Home Route
-app.get('/', function (req, res) {
-    res.render('home', { title: 'Home' });
+// Session middleware (only declare it once)
+app.use(session({ secret: 'yoursecret', resave: true, saveUninitialized: true }));
+
+// Initialize cart in session if not exists
+app.use((req, res, next) => {
+    if (!req.session.cart) req.session.cart = [];
+    next();
 });
 
-// Login and Register Routes
-app.get('/login', function (req, res) {
-    res.render('login', { title: 'Login' });
-});
-app.get('/register', function (req, res) {
-    res.render("register", { title: 'Register' });
+// Restrict access middleware
+app.use(['/logout', '/reviews', '/cart', '/checkout', '/payment'], (req, res, next) => {
+    if (!req.session.loggedin) return res.redirect('/login');
+    next();
 });
 
-// Route to authenticate user login
-app.post('/auth', function (req, res) {
-    let name = req.body.username;
-    let password = req.body.password;
-    
-    if (!name || !password) {
-        return res.send('Please enter Username and Password!');
+// Pages
+app.get('/', (req, res) => res.render('home', { title: 'Home', session: req.session }));
+app.get('/contactUs', (req, res) => res.render('contactUs', { title: 'Contact Us', session: req.session }));
+app.get('/privacyPolicy', (req, res) => res.render('privacyPolicy', { title: 'Privacy Policy', session: req.session }));
+app.get('/learnmore', (req, res) => res.render('learnmore', { title: 'Learn More', session: req.session }));
+app.get('/openingHours', (req, res) => res.render('openingHours', { title: 'Opening Hours', session: req.session }));
+app.get('/login', (req, res) => res.render('login', { title: 'Login', session: req.session, errorMessage: null }));
+app.get('/register', (req, res) => res.render('register', { title: 'Register', session: req.session }));
+
+// Authentication
+app.post('/auth', (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.render('login', { errorMessage: 'Please enter both Username and Password!' });
     }
-
-    conn.query('SELECT * FROM users WHERE name = ? AND password=?', [name, password], function (error, results) {
-        if (error) {
-            console.error('Database error:', error);
-            return res.status(500).send('Internal Server Error');
-        }
+    db.query('SELECT * FROM users WHERE name = ? AND password = ?', [username, password], (err, results) => {
+        if (err) return res.status(500).send('Internal Server Error');
         if (results.length > 0) {
             req.session.loggedin = true;
-            req.session.username = name;
-            res.redirect('/menu');  // ✅ Redirect to Menu page after login
+            req.session.username = username;
+            res.redirect('/subs');
         } else {
-            res.send('Incorrect Username and/or Password!');
+            res.render('login', { errorMessage: 'Incorrect Username and/or Password!' });
         }
     });
 });
 
-// ✅ New Route for Menu Page (Fix for Missing Menu Items)
-app.get('/menu', (req, res) => {
-    if (!req.session.loggedin) {
-        return res.redirect('/login');
+// User Registration
+app.post('/register', (req, res) => {
+    const { username, password } = req.body;
+    if (username && password) {
+        db.query('INSERT INTO users(name, password) VALUES (?, ?)', [username, password], (err) => {
+            if (err) return res.render('register', { title: 'Register', errorMessage: 'Error registering user. Try again later.' });
+            res.render('login', { errorMessage: 'Registration successful. Please log in.' });
+        });
+    } else {
+        res.render('register', { title: 'Register', errorMessage: 'Please fill in all fields.' });
     }
-
-    // Example menu items (replace with actual database query if needed)
-    let menuItems = [
-        { name: "Burger", price: "$5.99" },
-        { name: "Pizza", price: "$8.99" },
-        { name: "Pasta", price: "$7.49" },
-        { name: "Coke", price: "$1.99" }
-    ];
-
-    res.render('menu', { title: 'Menu', session: req.session, menuItems });
 });
 
-// Route to display reviews along with likes and comments
+// Food Pages
+app.get('/menu', (req, res) => res.render('menu', { title: 'Menu', session: req.session }));
+app.get('/subs', (req, res) => res.render('subs', { title: 'Subs', session: req.session }));
+app.get('/wraps', (req, res) => res.render('wraps', { title: 'Wraps', session: req.session }));
+app.get('/drinks', (req, res) => res.render('drinks', { title: 'Drinks', session: req.session }));
+app.get('/dessert', (req, res) => res.render('dessert', { title: 'Dessert', session: req.session }));
+
+// Payment
+app.get('/payment', (req, res) => res.render('payment'));
+app.post('/process-payment', (req, res) => {
+    const { name, card_number, expiry, cvv, amount } = req.body;
+    db.query('INSERT INTO payments (name, card_number, expiry, cvv, amount) VALUES (?, ?, ?, ?, ?)', [name, card_number, expiry, cvv, amount], (err) => {
+        if (err) return res.send('Payment failed. Please try again.');
+        res.send('<h2>Payment Successful!</h2><a href="/payment">Make another payment</a>');
+    });
+});
+
+// Logout
+app.get('/logout', (req, res) => {
+    req.session.destroy(() => res.redirect('/'));
+});
+
+// Reviews
 app.get('/reviews', (req, res) => {
-    conn.query('SELECT * FROM `submit_review` ORDER BY CreatedAt DESC', (error, reviews) => {
-        if (error) {
-            console.error('Database error:', error);
-            return res.status(500).send('Internal Server Error');
-        }
-
-        // Fetch rating counts for summary
-        conn.query('SELECT Rating, COUNT(*) as count FROM `submit_review` GROUP BY Rating', (err, results) => {
-            if (err) {
-                console.error('Database error:', err);
-                return res.status(500).send('Internal Server Error');
-            }
-            let ratingCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-            let totalReviews = reviews.length;
-            results.forEach(row => {
-                let starCount = row.Rating.length;
-                if (starCount >= 1 && starCount <= 5) {
-                    ratingCounts[starCount] = row.count;
-                }
-            });
-
-            // Fetch all comments from comments table
-            conn.query('SELECT * FROM `comments` ORDER BY created_at ASC', (error2, comments) => {
-                if (error2) {
-                    console.error('Database error:', error2);
-                    return res.status(500).send('Internal Server Error');
-                }
-                res.render('reviews', { reviews, session: req.session, ratingCounts, totalReviews, comments });
-            });
-        });
+    db.query('SELECT * FROM submit_review ORDER BY CreatedAt DESC', (error, reviews) => {
+        if (error) return res.status(500).send('Internal Server Error');
+        res.render('reviews', { reviews, session: req.session });
     });
 });
-
-// Route to submit a new review
 app.post('/submit-review', (req, res) => {
-    if (!req.session.loggedin) {
-        return res.redirect('/login');
-    }
+    if (!req.session.loggedin) return res.redirect('/login');
     const { name, rating, comment } = req.body;
-    const createdAt = new Date();
-    conn.query('INSERT INTO `submit_review` (`Name`, `Rating`, `Comment`, `CreatedAt`) VALUES (?, ?, ?, ?)',
-        [name, rating, comment, createdAt],
-        (error) => {
-            if (error) {
-                console.error('Database error:', error);
-                return res.status(500).send('Internal Server Error');
-            }
-            res.redirect('/reviews');
-        });
-});
-
-// Route to like a review
-app.post('/like-review', (req, res) => {
-    const { review_id } = req.body;
-    conn.query('UPDATE `submit_review` SET likes = likes + 1 WHERE id = ?', [review_id], (error) => {
-        if (error) {
-            console.error('Database error:', error);
-            return res.status(500).send('Internal Server Error');
-        }
+    db.query('INSERT INTO submit_review (Name, Rating, Comment) VALUES (?, ?, ?)', [name, rating, comment], err => {
+        if (err) return res.status(500).send('Internal Server Error');
         res.redirect('/reviews');
     });
 });
 
-// Route to add a comment to a review
-app.post('/comment-review', (req, res) => {
-    const { review_id, comment } = req.body;
-    if (!req.session.loggedin) {
-        return res.redirect('/login');
-    }
-    conn.query('INSERT INTO `comments` (review_id, username, text) VALUES (?, ?, ?)',
-        [review_id, req.session.username, comment],
-        (error) => {
-            if (error) {
-                console.error('Database error:', error);
-                return res.status(500).send('Internal Server Error');
-            }
-            res.redirect('/reviews');
+// Add to cart route
+app.post("/add-to-cart", (req, res) => {
+    const { name, basePrice, totalPrice, quantity, selectedToppings } = req.body;
+
+    // Convert numeric values
+    const basePriceNum = parseFloat(basePrice) || 0;
+    const totalPriceNum = parseFloat(totalPrice) || basePriceNum;  // Ensure total price isn't zero
+    const quantityNum = parseInt(quantity) || 1;
+
+    // Check if item already exists in cart
+    const existingItem = req.session.cart.find(item => item.name === name && item.selectedToppings === selectedToppings);
+
+    if (existingItem) {
+        // If the item exists, update the quantity & recalculate total price
+        existingItem.quantity += quantityNum;
+        existingItem.totalPrice = (existingItem.basePrice + (existingItem.toppingsCost || 0)) * existingItem.quantity;
+    } else {
+        // Add new item to cart
+        req.session.cart.push({
+            name,
+            basePrice: basePriceNum,
+            totalPrice: totalPriceNum,
+            quantity: quantityNum,
+            selectedToppings: selectedToppings || "None"
         });
+    }
+
+    console.log("Updated Cart:", req.session.cart);
+    res.redirect("/cart");  // Redirect user to the cart page
 });
 
-// Logout route
-app.get('/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
+// View cart route
+app.get("/cart", (req, res) => {
+    res.render("cart", { cart: req.session.cart });
 });
 
-app.listen(3000);
-console.log('Node app is running on port 3000');
+// Checkout
+app.get('/checkout', (req, res) => res.render('checkout', { cart: req.session.cart || [], total: req.session.total || 0 }));
+app.post('/checkout', (req, res) => {
+    const cart = req.session.cart || [];
+    if (cart.length === 0) return res.redirect('/cart');
+    const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    db.query('INSERT INTO orders (username, items, total_price) VALUES (?, ?, ?)', [req.session.username, JSON.stringify(cart), total], (err) => {
+        if (err) return res.status(500).send('Error processing order');
+        req.session.cart = [];
+        res.redirect('/order-confirmation');
+    });
+});
+
+// Start Server
+app.listen(4000, () => console.log('Node app is running on port 4000'));
