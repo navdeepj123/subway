@@ -1,11 +1,18 @@
-name: Deploy Express App to Apache Server
+name: Deploy Express App with PM2 and Run ZAP Scan
 
 on:
   push:
     branches:
-      - main  # Change this if using a different branch
+      - main
 
 jobs:
+  # -----------------------
+  # 🚀 DEPLOY your express.js app to the remote server ~ it connects to your server using ssh ~ stops any existing PM2 process for the process for the app 
+#Delete old files and update with latest code 
+# Everything is secured using GitHub Secrets like SERVER_HOST, USERNAME, and PASSWORD. This makes your deployment and scanning automated, secure, and efficient.
+
+
+  # -----------------------
   deploy:
     runs-on: ubuntu-latest
 
@@ -13,38 +20,80 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # ✅ Install SSH and SSHPass for secure file transfer
       - name: Install SSH & SSHPass
         run: sudo apt-get install -y sshpass
 
+      # ✅ Debug SSH Variables (optional for troubleshooting)
       - name: Debug SSH Variables
         run: |
           echo "Server Host: ${{ secrets.SERVER_HOST }}"
           echo "Server Username: ${{ secrets.SERVER_USERNAME }}"
 
-      - name: Install Node.js Dependencies
-        run: |
-          npm install
-
+      # ✅ Transfer Files to the Server
       - name: Transfer Files to Server
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
-          sshpass -p "$SERVER_PASSWORD" scp -r * $SERVER_USERNAME@$SERVER_HOST:/var/www/express-app
+          sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
+            echo "✅ Successfully connected to $SERVER_HOST"
+            # Ensure PM2 is installed globally
+            sudo npm install -g pm2 || true
+            # Create or navigate to project directory
+            sudo mkdir -p /var/www/express-app
+            cd /var/www/express-app
+            # Stop PM2 process if running
+            npx pm2 stop subway-app || true
+            # Remove old files safely
+            sudo rm -rf /var/www/express-app/* || true
+            exit
+          EOF
+          # Securely copy new files from GitHub to the server
+          sshpass -p "$SERVER_PASSWORD" scp -r * $SERVER_USERNAME@$SERVER_HOST:/var/www/express-app/
 
-      - name: Start Express App on Server
+      # ✅ Install Dependencies and Restart App
+      - name: Install Dependencies and Restart App
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
           sshpass -p "$SERVER_PASSWORD" ssh -tt -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST << 'EOF'
+            echo "🚀 Installing Dependencies and Restarting PM2..."
+            # Go to project folder
             cd /var/www/express-app
-            npm install
-            pm2 stop all || true  # Prevents errors if no PM2 process is running
-            pm2 start app.js --name "express-app"
-            pm2 save
+            # Install production dependencies
+            npm install --production
+            # Start or restart the app with PM2
+            npx pm2 start app.js --name subway-app || npx pm2 restart subway-app
+            # Save PM2 process list to survive reboots
+            npx pm2 save
+            exit
           EOF
 
+  # -----------------------
+  # 🔎 RUN OWASP ZAP SCAN ~It installs Docker on the runner ~ Pulls the OWASP ZAP Docker image ~ Scans your deployed website for common vulnerabilities
+  # Saves the result as a JSON report
+  # -----------------------
+  zap-scan:
+   runs-on: ubuntu-latest
+
+   steps:
+    - name: Debug Environment
+      run: |
+        echo "Operating System: $(uname -a)"
+        echo "Runner Version: $RUNNER_VERSION"
+    # Install Docker using the official script to avoid dependency issues
+    - name: Install Docker
+      run: |
+        curl -fsSL https://get.docker.com -o get-docker.sh
+        sudo sh get-docker.sh
+        docker --version
+    # Run OWASP ZAP Full Scan using the correct image
+    - name: Run OWASP ZAP Full Scan
+      run: |
+        docker pull zaproxy/zap-stable
+        docker run -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-full-scan.py -t http://${{ secrets.SERVER_HOST }}/ -J zap-report.json
 

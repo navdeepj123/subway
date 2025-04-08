@@ -20,11 +20,14 @@
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            margin-top: 30px;
+            margin-bottom: 30px;
         }
 
         h1 {
             text-align: center;
             color: #333;
+            margin-bottom: 30px;
         }
 
         .cart-items {
@@ -39,20 +42,58 @@
             align-items: center;
             padding: 15px;
             border-bottom: 1px solid #ddd;
+            flex-wrap: wrap;
         }
 
         .cart-item:last-child {
             border-bottom: none;
         }
 
+        .item-details {
+            flex: 2;
+            min-width: 200px;
+        }
+
+        .item-pricing {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 250px;
+        }
+
         .cart-item .name {
             font-size: 18px;
             color: #333;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
 
-        .cart-item .price {
+        .cart-item .price-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-item .base-price {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .cart-item .toppings-price {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .cart-item .total-price {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .cart-item .quantity {
             font-size: 16px;
             color: #555;
+            margin: 0 15px;
         }
 
         form {
@@ -66,6 +107,7 @@
             padding: 8px 16px;
             cursor: pointer;
             border-radius: 4px;
+            transition: background-color 0.3s;
         }
 
         button:hover {
@@ -75,9 +117,15 @@
         .total {
             display: flex;
             justify-content: flex-end;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
-            margin-top: 20px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .total span:first-child {
+            margin-right: 20px;
         }
 
         .cart-footer {
@@ -88,29 +136,41 @@
 
         .cart-footer a {
             text-decoration: none;
-            background-color: #4CAF50;
             color: white;
             padding: 12px 24px;
             border-radius: 4px;
             font-weight: bold;
+            transition: background-color 0.3s;
         }
 
-        .cart-footer a:hover {
-            background-color: #45a049;
+        .continue-shopping {
+            background-color: #6c757d;
         }
 
-        .cart-footer a:nth-child(2) {
-            background-color: #008CBA;
+        .continue-shopping:hover {
+            background-color: #5a6268;
         }
 
-        .cart-footer a:nth-child(2):hover {
-            background-color: #007bb5;
+        .checkout {
+            background-color: #28a745;
+        }
+
+        .checkout:hover {
+            background-color: #218838;
+        }
+
+        /* Toppings and Customizations */
+        .toppings, .customizations {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0;
         }
 
         /* Responsive Styles */
         @media (max-width: 768px) {
             .container {
                 width: 95%;
+                padding: 15px;
             }
 
             .cart-item {
@@ -118,57 +178,82 @@
                 align-items: flex-start;
             }
 
-            .cart-item .name,
-            .cart-item .price {
-                margin-bottom: 10px;
-            }
-
-            .total {
-                font-size: 16px;
+            .item-pricing {
+                width: 100%;
+                margin-top: 10px;
+                justify-content: space-between;
             }
 
             .cart-footer {
                 flex-direction: column;
-                align-items: center;
             }
 
             .cart-footer a {
-                margin-bottom: 10px;
                 width: 100%;
                 text-align: center;
+                margin-bottom: 10px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Your Cart</h1>
-
+        <h1>Your Shopping Cart</h1>
+    
         <ul class="cart-items">
             <% if (cart.length > 0) { %>
                 <% cart.forEach((item, index) => { %>
                     <li class="cart-item">
-                        <span class="name"><%= item.name %></span>
-                        <span class="price">$<%= item.price.toFixed(2) %></span>
-                        <form action="/remove-from-cart" method="POST" style="display:inline;">
-                            <input type="hidden" name="index" value="<%= index %>">
-                            <button type="submit">Remove</button>
-                        </form>
+                        <div class="item-details">
+                            <span class="name"><%= item.name %></span>
+                            <% if (item.selectedToppings && item.selectedToppings !== "None") { %>
+                                <div class="toppings">
+                                    <strong>Toppings:</strong> <%= item.selectedToppings %>
+                                </div>
+                            <% } %>
+                            <% if (item.customOptions) { %>
+                                <div class="customizations">
+                                    <strong>Customizations:</strong> <%= item.customOptions %>
+                                </div>
+                            <% } %>
+                        </div>
+                        <div class="item-pricing">
+                            <div class="price-info">
+                                <% if (item.basePrice) { %>
+                                    <span class="base-price">Base: $<%= item.basePrice.toFixed(2) %></span>
+                                <% } %>
+                                <% if (item.toppingsCost && item.toppingsCost > 0) { %>
+                                    <span class="toppings-price">Toppings: +$<%= item.toppingsCost.toFixed(2) %></span>
+                                <% } %>
+                                <span class="total-price">Total: $<%= item.totalPrice.toFixed(2) %></span>
+                            </div>
+                            <span class="quantity">Qty: <%= item.quantity %></span>
+                            <form action="/remove-from-cart" method="POST">
+                                <input type="hidden" name="index" value="<%= index %>">
+                                <button type="submit">Remove</button>
+                            </form>
+                        </div>
                     </li>
                 <% }); %>
             <% } else { %>
-                <li class="cart-item">Your cart is empty.</li>
+                <li class="cart-item" style="justify-content: center; padding: 30px;">
+                    Your cart is empty. Start shopping to add items!
+                </li>
             <% } %>
         </ul>
-
-        <div class="total">
-            <span>Total:</span>
-            <span>$<%= total.toFixed(2) %></span>
-        </div>
-
+    
+        <% if (cart.length > 0) { %>
+            <div class="total">
+                <span>Grand Total:</span>
+                <span>$<%= cart.reduce((sum, item) => sum + item.totalPrice, 0).toFixed(2) %></span>
+            </div>
+        <% } %>
+    
         <div class="cart-footer">
-            <a href="/subs">Continue Shopping</a>
-            <a href="/checkout">Proceed to Checkout</a>
+            <a href="/subs" class="continue-shopping">Continue Shopping</a>
+            <% if (cart.length > 0) { %>
+                <a href="/checkout" class="checkout">Proceed to Checkout</a>
+            <% } %>
         </div>
     </div>
 </body>

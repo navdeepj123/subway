@@ -1,6 +1,6 @@
 /* Background image for the body */
 body {
-    background-image: url(/public/Images/subway.jpg);
+    background-image: url(/public/Images/subway.webp);
     background-size: cover;
     font-family: Arial, sans-serif;
     margin: 0;
@@ -15,17 +15,6 @@ h1 {
     color: #800020; /* Wine color */
 }
 
-/* Container styles */
-.container {
-    width: 80%;
-    margin: 50px auto;
-    text-align: center;
-    background-color: #f3f1e8;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
 /* General paragraph styles */
 p {
     color: #444;
@@ -35,7 +24,7 @@ p {
 /* Navbar styles */
 .navbar-nav {
     margin: 0;
-    padding: 0;
+    padding: 1px 0;
     position: relative;
     display: flex;
     list-style-type: none;
@@ -50,11 +39,12 @@ p {
     color: white;
     text-decoration: none;
     padding: 10px;
+    font-weight: bold;
 }
 
 .nav-link:hover {
-    background-color: white;
-    color: red;
+    background-color: #800020; /* Wine color */
+    color: white;
 }
 
 /* Styles for additional information */
@@ -81,17 +71,11 @@ p {
 
 /* Footer styles */
 .site-footer {
-    background-color: #f3f1e8; /* Light beige background */
-    padding: 20px;
+    background-color: #333;
+    color: white;
+    padding: 15px 0;
     text-align: center;
     width: 100%;
-    position: fixed; /* Set position to fixed */
+    position: relative; /* Remove fixed positioning */
     bottom: 0;
-    left: 0;
-    z-index: 1000;
-}
-
-/* Add padding to the bottom of the content area */
-.container {
-    padding-bottom: 60px; /* Adjust this value to match the height of your footer */
 }

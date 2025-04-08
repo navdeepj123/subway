@@ -1,91 +1,159 @@
-<%- include("partials/header2.ejs") %> <!-- Includes the header -->
+<%- include("partials/header2.ejs") %>
 
 <!-- Cart Button at the top -->
-<div style="text-align: right; padding: 10px;">
-    <button class="btn btn-primary" onclick="window.location.href='/cart'">
-        🛒 View Cart
-    </button>
-</div>
+<a href="/cart" class="cart-btn">
+    <img src="https://img.icons8.com/ios/452/shopping-cart.png" alt="cart" width="30" height="30">
+    Cart
+</a>
 
 <style>
-    /* CSS styles for the menu */
+    body {
+        background: #f0f4f8;
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .menu-heading {
+        font-size: 36px;
+        color: #222;
+        text-align: center;
+        margin: 40px 0 20px;
+    }
+
     .menu {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: center;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 30px;
+        padding: 20px 40px 60px;
+        max-width: 1400px;
+        margin: auto;
     }
 
     .menu-item {
-        width: 250px;
-        height: 350px;
-        background-color: #fff;
-        border: 1px solid #ddd;
+        background: #fff;
+        border-radius: 16px;
         padding: 20px;
         text-align: center;
-        transition: transform 0.3s, box-shadow 0.3s;
-        border-radius: 10px;
-        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
     }
 
     .menu-item:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        transform: translateY(-6px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
     }
 
     .menu-item img {
-        max-width: 100%;
-        max-height: 100%;
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
         border-radius: 10px;
+        margin-bottom: 10px;
     }
 
     .menu-item h3 {
         font-size: 20px;
-        margin: 10px 0;
+        color: #333;
+        margin: 10px 0 5px;
     }
 
     .menu-item p {
-        font-size: 16px;
+        font-size: 14px;
+        color: #666;
+        margin: 4px 0;
+    }
+
+    .menu-item input[type="number"] {
+        width: 60px;
+        padding: 6px;
+        margin-top: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+    }
+
+    .menu-item button {
+        margin-top: 10px;
+        background-color: #007bff;
+        color: white;
+        padding: 10px 18px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .menu-item button:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .cart-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(to right, #007bff, #00b4d8);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        font-weight: bold;
+        z-index: 999;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .cart-btn img {
+        margin-right: 10px;
+        width: 24px;
+        height: 24px;
     }
 </style>
 
-<section id="Drinks" class="menu">
-    <h2 align="center">Drinks Menu</h2>
+<section id="Drinks">
+    <h2 class="menu-heading">Drinks Menu</h2>
+    <div class="menu">
 
-    <div class="menu-item">
-        <img src="https://th.bing.com/th/id/R.afe43d5e13e9066c7fe8fc083813b009?rik=nF8Dpom5FKH99w&pid=ImgRaw&r=0" alt="Cola">
-        <h3>Cola</h3>
-        <p>Classic cola served with ice.</p>
-        <p>Price: $2.49</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Cola">
-            <input type="hidden" name="price" value="2.49">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
+        <% const drinks = [
+            { name: 'Cola', price: 2.49, image: 'https://th.bing.com/th/id/R.afe43d5e13e9066c7fe8fc083813b009?rik=nF8Dpom5FKH99w&pid=ImgRaw&r=0' },
+            { name: 'Strawberry Shake', price: 5.49, image: 'https://th.bing.com/th/id/OIP.o7GoU7_bU3GRdyoPa7mEXQHaE8?pid=ImgDet&rs=1' },
+            { name: 'Latte', price: 4.49, image: 'https://www.nescafe.com/in/sites/default/files/2022-06/Latte_0.png' },
+            { name: 'Mango Smoothie', price: 4.99, image: 'https://th.bing.com/th/id/OIP.yRWndmhKtrlHVqusSl29KgHaFj?pid=ImgDet&rs=1' },
+            { name: 'Cappuccino', price: 3.99, image: 'https://th.bing.com/th/id/OIP.PCT4H4UkbrmyHzfpumP80QHaFb?pid=ImgDet&rs=1' }
+        ]; %>
+
+        <% drinks.forEach(drink => { %>
+            <div class="menu-item">
+                <img src="<%= drink.image %>" alt="<%= drink.name %>">
+                <h3><%= drink.name %></h3>
+                <p>Price: $<%= drink.price.toFixed(2) %></p>
+                <form action="/add-to-cart" method="POST">
+                    <input type="hidden" name="name" value="<%= drink.name %>">
+                    <input type="hidden" name="basePrice" value="<%= drink.price %>">
+                    <input type="hidden" name="totalPrice" value="<%= drink.price %>">
+                    <label>Quantity:
+                        <input type="number" name="quantity" value="1" min="1" onchange="updateDrinkTotal(this)" required>
+                    </label>
+                    <p><strong>Total:</strong> $<span class="drink-total"><%= drink.price.toFixed(2) %></span></p>
+                    <button type="submit">Add to Cart</button>
+                </form>
+            </div>
+        <% }); %>
+
     </div>
-
-    <div class="menu-item">
-        <img src="https://th.bing.com/th/id/OIP.yRWndmhKtrlHVqusSl29KgHaFj?pid=ImgDet&rs=1" alt="Mango Smoothie">
-        <h3>Mango Smoothie</h3>
-        <p>Smooth and creamy mango smoothie.</p>
-        <p>Price: $4.99</p>
-        <form action="/add-to-cart" method="POST">
-            <input type="hidden" name="name" value="Mango Smoothie">
-            <input type="hidden" name="price" value="4.99">
-            <input type="number" name="quantity" value="1" min="1" required>
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-    </div>
-
-        <div class="menu-item" data-name="Cappuccino" data-price="3.99">
-            <img src="https://th.bing.com/th/id/OIP.PCT4H4UkbrmyHzfpumP80QHaFb?pid=ImgDet&rs=1" alt="Cappuccino">
-            <h3>Cappuccino</h3>
-            <p>Rich and frothy cappuccino.</p>
-            <p>Price: $3.99</p>
-            <button onclick="addToCart(this)">Add to Cart</button>
-        </div>
-    </section>
 </section>
 
-<%- include("partials/footer.ejs") %> <!-- Includes the footer -->
+<script>
+function updateDrinkTotal(input) {
+    const form = input.closest("form");
+    const base = parseFloat(form.querySelector('input[name="basePrice"]').value);
+    const qty = parseInt(input.value) || 1;
+    const total = (base * qty).toFixed(2);
+    form.querySelector('input[name="totalPrice"]').value = total;
+    form.querySelector('.drink-total').textContent = total;
+}
+</script>
+
+<%- include("partials/footer.ejs") %>
