@@ -7,7 +7,8 @@ on:
 
 jobs:
   # -----------------------
-  # 🚀 DEPLOY EXPRESS APP
+  # 🚀 DEPLOY your express.js app to the remote server ~ it connects to your server using ssh ~ stops any existing PM2 process for the process for the app 
+#Delete old files and update with latest code 
   # -----------------------
   deploy:
     runs-on: ubuntu-latest
@@ -70,7 +71,8 @@ jobs:
           EOF
 
   # -----------------------
-  # 🔎 RUN OWASP ZAP SCAN
+  # 🔎 RUN OWASP ZAP SCAN ~It installs Docker on the runner ~ Pulls the OWASP ZAP Docker image ~ Scans your deployed website for common vulnerabilities
+  # Saves the result as a JSON report
   # -----------------------
   zap-scan:
    runs-on: ubuntu-latest
@@ -91,3 +93,4 @@ jobs:
       run: |
         docker pull zaproxy/zap-stable
         docker run -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-full-scan.py -t http://${{ secrets.SERVER_HOST }}/ -J zap-report.json
+
