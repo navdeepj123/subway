@@ -9,6 +9,9 @@ jobs:
   # -----------------------
   # 🚀 DEPLOY your express.js app to the remote server ~ it connects to your server using ssh ~ stops any existing PM2 process for the process for the app 
 #Delete old files and update with latest code 
+# Everything is secured using GitHub Secrets like SERVER_HOST, USERNAME, and PASSWORD. This makes your deployment and scanning automated, secure, and efficient.
+
+
   # -----------------------
   deploy:
     runs-on: ubuntu-latest
