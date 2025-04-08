@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opening & Closing Hours</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+            margin: 20px;
+        }
+
+        .hours-container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hours-container h2 {
+            font-size: 28px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .hours-container p {
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .filter-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-container input {
+            padding: 8px;
+            width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .hours-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .hours-table th, .hours-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .hours-table th {
+            background-color: #4CAF50;
+            color: #fff;
+            font-size: 18px;
+        }
+
+        .hours-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .hours-table tr:hover {
+            background-color: #ddd;
+        }
+
+        .highlight {
+            background-color: #ffeb3b !important;
+            font-weight: bold;
+        }
+
+        .holiday-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .contact-info {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .contact-info a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .hours-container {
+                padding: 20px;
+            }
+
+            .hours-table {
+                display: none;
+            }
+
+            .mobile-view {
+                display: block;
+            }
+
+            .day-item {
+                background-color: #fff;
+                padding: 10px;
+                margin: 5px 0;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-view {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Include Header -->
+    <%- include("partials/header.ejs") %>
+
+    <div class="hours-container">
+        <h2>Opening & Closing Hours</h2>
+        <p>Check our working hours below:</p>
+
+        <div class="filter-container">
+            <input type="text" id="searchInput" placeholder="Search by day...">
+        </div>
+
+        <table class="hours-table" id="hoursTable">
+            <tr>
+                <th>Day</th>
+                <th>Opening Time</th>
+                <th>Closing Time</th>
+            </tr>
+            <tr data-day="Monday">
+                <td>Monday</td>
+                <td>8:00 AM</td>
+                <td>10:00 PM</td>
+            </tr>
+            <tr data-day="Tuesday">
+                <td>Tuesday</td>
+                <td>8:00 AM</td>
+                <td>10:00 PM</td>
+            </tr>
+            <tr data-day="Wednesday">
+                <td>Wednesday</td>
+                <td>8:00 AM</td>
+                <td>10:00 PM</td>
+            </tr>
+            <tr data-day="Thursday">
+                <td>Thursday</td>
+                <td>8:00 AM</td>
+                <td>10:00 PM</td>
+            </tr>
+            <tr data-day="Friday">
+                <td>Friday</td>
+                <td>8:00 AM</td>
+                <td>11:00 PM</td>
+            </tr>
+            <tr data-day="Saturday">
+                <td>Saturday</td>
+                <td>9:00 AM</td>
+                <td>11:00 PM</td>
+            </tr>
+            <tr data-day="Sunday">
+                <td>Sunday</td>
+                <td>9:00 AM</td>
+                <td>9:00 PM</td>
+            </tr>
+        </table>
+
+        <div class="mobile-view">
+            <div class="day-item">Monday: 8:00 AM - 10:00 PM</div>
+            <div class="day-item">Tuesday: 8:00 AM - 10:00 PM</div>
+            <div class="day-item">Wednesday: 8:00 AM - 10:00 PM</div>
+            <div class="day-item">Thursday: 8:00 AM - 10:00 PM</div>
+            <div class="day-item">Friday: 8:00 AM - 11:00 PM</div>
+            <div class="day-item">Saturday: 9:00 AM - 11:00 PM</div>
+            <div class="day-item">Sunday: 9:00 AM - 9:00 PM</div>
+        </div>
+
+        <div class="holiday-section">
+            <h3>Special Holiday Hours</h3>
+            <p>Christmas: 9:00 AM - 6:00 PM</p>
+            <p>New Year: 10:00 AM - 8:00 PM</p>
+        </div>
+
+        <div class="contact-info">
+            <p>For more details, contact us at <a href="tel:123456789">123-456-789</a></p>
+            <p>Find us on <a href="https://maps.google.com" target="_blank">Google Maps</a></p>
+        </div>
+    </div>
+
+    <!-- Include Footer -->
+    <%- include("partials/footer.ejs") %>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+            let rows = document.querySelectorAll("#hoursTable tr");
+            rows.forEach(row => {
+                if (row.dataset.day === today) {
+                    row.classList.add("highlight");
+                }
+            });
+
+            document.getElementById("searchInput").addEventListener("keyup", function() {
+                let filter = this.value.toLowerCase();
+                rows.forEach(row => {
+                    let day = row.dataset.day ? row.dataset.day.toLowerCase() : "";
+                    row.style.display = day.includes(filter) ? "" : "none";
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

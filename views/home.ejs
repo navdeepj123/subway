@@ -1,25 +1,204 @@
-<%- include ("partials/header.ejs") %> <!-- Includes the header -->
-
-<html> 
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Welcome to Subway</title> 
-    <link rel="stylesheet" href="/public/css/styles.css"> <!-- Link to the CSS file for styling -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Subway</title>
+    <link rel="stylesheet" href="/public/css/styles.css"> <!-- Link to CSS file -->
 </head>
 <body>
-    <div class="container">
-        <h1 style="color:#800020;">Welcome to Subway</h1> 
-        <p>Welcome to Subway, your ultimate destination for Sub discovery and appreciation! At Subway, explore, and share your love for the world of Subway.</p> <!-- Introduction paragraph -->
-        <p>Discover our healthy Subs,with your personalise adding stuffs and enjoy with family and friends and spend time together.</p> <!-- Overview of the offerings on Subway -->
 
-        <h2 style="color:#800020;"><u>Who are we?</u></h2> 
-        <p> Website is to provide fast food services focused on sandwiches (subs) and other related food items.  
-            Subway is known for offering fresh, made-to-order sandwiches where customers can customize their meals with a variety of breads, meats, vegetables, and condiments.
-            Overall, the main purpose of this website is to deliver fresh, customizable, and health-conscious meal options in a fast and convenient manner.
-        </p>
-        
-        <a href="learnmore">Learn More</a> <!-- Link to learn more about Subway -->
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <!-- Subway Logo -->
+        <a href="/" class="logo">
+            <img src="public\Images\images.jpeg" alt="Subway Logo">
+        </a>
+        <ul class="nav-links">
+            <li><a href="/openingHours">Opening Hours</a></li>
+            <li><a href="/login">Login/Register</a></li>
+            <li><a href="/privacyPolicy">Privacy Policy</a></li>
+            <li><a href="/contactUs">Contact Us</a></li>
+        </ul>
+    </nav>
 
-        <%- include ("partials/footer.ejs") %> <!-- Includes the footer -->
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Fresh & Healthy, Just for You</h1>
+            <p>Delicious, customizable meals made with the freshest ingredients.</p>
+        </div>
     </div>
+
+    <!-- Menu Categories -->
+    <div class="container">
+        <h2 class="menu-heading">Explore Our Menu</h2>
+        <div class="menu-container">
+            <div class="menu-item">
+                <a href="/subs">
+                    <img src="/public\Images\subs.jpg" alt="Subs">
+                    <h3>Subs</h3>
+                </a>
+            </div>
+            <div class="menu-item">
+                <a href="/wraps">
+                    <img src="/public\Images\wrap.jpeg" alt="Wraps">
+                    <h3>Wraps</h3>
+                </a>
+            </div>
+            <div class="menu-item">
+                <a href="/drinks">
+                    <img src="/public\Images\drink.jpeg" alt="Drinks">
+                    <h3>Drinks</h3>
+                </a>
+            </div>
+            <div class="menu-item">
+
+
+                <a href="/dessert">
+                    <img src="/public\Images\dess.jpeg" alt="Dessert">
+                    <h3>Dessert</h3>
+
+                <a href="/desserts">
+
+               
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Subway. All rights reserved.</p>
+    </footer>
+
+    <style>
+        /* Navigation Bar */
+        .navbar {
+            background: #0a0327;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Subway Logo */
+        .logo img {
+            height: 80px; /* Adjust the height as needed */
+            width: auto;
+            display: block;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-links li {
+            margin: 0 15px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: url('/public/images/hero-bg.jpg') no-repeat center center/cover;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 100, 0, 0.7); /* Green Overlay */
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        /* Menu Section */
+        .menu-heading {
+            text-align: center;
+            color: #008000; /* Green */
+            font-size: 2rem;
+            margin-top: 40px;
+        }
+
+        .menu-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .menu-item {
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .menu-item a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .menu-item img {
+            width: 100%;
+            height: 180px;
+            border-radius: 10px;
+            border: 3px solid #008000; /* Green border */
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .menu-item img:hover {
+            transform: scale(1.1);
+        }
+
+        .menu-item h3 {
+            margin-top: 10px;
+            color: #008000; /* Green */
+            font-size: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #008000; /* Green */
+            color: white;
+            margin-top: 40px;
+        }
+    </style>
+
 </body>
-</html>  
+</html>

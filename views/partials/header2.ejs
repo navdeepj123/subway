@@ -17,10 +17,11 @@
 
 <body>
     <!-- Navigation bar -->
-    <nav class="navbar navbar-expand-lg navbar-red bg-red"> <!-- Bootstrap navigation bar with custom red background -->
+    <nav class="navbar navbar-expand-lg navbar-red bg-red"> <!-- Bootstrap navigation bar with custom background -->
         <div>
             <!-- List of navigation links -->
             <ul class="navbar-nav">
+
                 <!-- Navigation link to Subs page -->
                 <li class="nav-item">
                     <a class="nav-link" href="/Subs">Subs</a>
@@ -39,8 +40,48 @@
                 </li>
                 <!-- Navigation link to Logout page -->
                 <li class="nav-item">
+                    <a class="nav-link" href="/payment">payment</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/logout">Logout</a>
                 </li>
+
+                <% if (!session.loggedin) { %>
+                    <!-- Show before login -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/menu">Menu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reviews">Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/openingHours">Opening Hours</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login/Register</a>
+                    </li>
+                <% } else { %>
+                    <!-- Show after login -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/subs">Subs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/wraps">Wraps</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/drinks">Drinks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dessert">Dessert</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                <% } %>
+
             </ul>
         </div>
     </nav>
